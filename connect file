@@ -1,0 +1,1 @@
+	f, err :=os.OpenFile("/dev/ttyUSB0", os.O_WRONLY, os.ModeDevice)
