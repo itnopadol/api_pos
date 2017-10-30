@@ -39,7 +39,7 @@ func main() {
 	r.Use(cors.Default())
 
 	r.GET("/item/:id", ctrl.GetItemById)
-	r.GET("/menu/:id/", ctrl.GetItemsByMenuId)
+	r.GET("/menu/:id", ctrl.GetItemsByMenuId)
 	r.GET("/menu", ctrl.GetMenu)
 
 	r.POST("/sale/change", ctrl.ShowChangeAmount)
