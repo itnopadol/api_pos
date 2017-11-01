@@ -1,15 +1,10 @@
 package hw
 
-
 import (
-"bufio"
-//"github.com/gotmc/libusb"
-"github.com/knq/escpos"
-"log"
-//"os"
-"unicode"
-	//"github.com/gotmc/libusb"
-	//"github.com/gotmc/libusb"
+	"bufio"
+	"github.com/knq/escpos"
+	"log"
+	"unicode"
 )
 
 type PosPrinter struct {
@@ -271,7 +266,7 @@ func (pos *PosPrinter) End() error {
 	return nil
 }
 func (pos *PosPrinter) WriteStringLines(str string) {
-	 midLine := pos.ConvertUnicodeToThaiAscii1Lines(str)
+	midLine := pos.ConvertUnicodeToThaiAscii1Lines(str)
 	pos.Write(string(midLine))
 
 	//pos.LineFeed()

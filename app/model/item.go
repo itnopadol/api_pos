@@ -9,15 +9,17 @@ import (
 type Item struct {
 	Id      int
 	Name    string   `json:"name" db:"name"`
+	ShortName	string `json:"short_name" db:"short_name"`
 	NameEn  string   `json:"name_en,omitempty" db:"name_en"`
 	NameCn  string   `json:"name_cn,omitempty" db:"name_cn"`
+	Price   float32  `json:"price" db:"price"`
 	Unit    string   `json:"unit"`
 	UnitEn  string   `json:"unit_en,omitempty" db:"unit_en"`
 	UnitCn  string   `json:"unit_cn,omitempty" db:"unit_cn"`
 	MenuId  uint64   `json:"menu_id,omitempty" db:"menu_id"`
 	MenuSeq int      `json:"menu_seq,omitempty" db:"menu_seq"`
 	Image   string   `json:"image" db:"image"`
-	Price   float32  `json:"price" db:"price"`
+	SendKitchen int `json:"send_kitchen" db:"send_kitchen"`
 	Active  int 	 `json:"active" db:"active"`
 	Prices []*PricesSub `json:"prices_sub"`
 }

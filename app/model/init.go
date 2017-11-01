@@ -4,6 +4,11 @@ import (
 	"math"
 )
 
+
+var (
+	H        *Host
+)
+
 func init(){
 
 }

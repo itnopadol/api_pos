@@ -77,7 +77,6 @@ func SearchSales(c *gin.Context){
 
 }
 
-
 func SearchSaleById(c *gin.Context){
 	log.Println("call Get SearchSaleById")
 	c.Keys = headerKeys
@@ -99,3 +98,4 @@ func SearchSaleById(c *gin.Context){
 	}
 
 }
+
