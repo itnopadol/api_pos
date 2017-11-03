@@ -2,8 +2,8 @@ package ctrl
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-gonic/gin"
-	"github.com/itnopadol/hapos_api/app/model"
-	"github.com/itnopadol/hapos_api/app/resp"
+	"github.com/itnopadol/api_pos/app/model"
+	"github.com/itnopadol/api_pos/app/resp"
 	"strconv"
 	"log"
 	"net/http"

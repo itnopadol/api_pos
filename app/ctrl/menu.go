@@ -3,8 +3,8 @@ package ctrl
 import (
 	"github.com/gin-gonic/gin"
 	"log"
-	"github.com/itnopadol/hapos_api/app/model"
-	"github.com/itnopadol/hapos_api/app/resp"
+	"github.com/itnopadol/api_pos/app/model"
+	"github.com/itnopadol/api_pos/app/resp"
 	"net/http"
 )
 

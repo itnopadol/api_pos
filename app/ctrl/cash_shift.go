@@ -3,7 +3,7 @@ package ctrl
 import (
 	"github.com/gin-gonic/gin"
 	"fmt"
-	"github.com/itnopadol/hapos_api/app/model"
+	"github.com/itnopadol/api_pos/app/model"
 	"github.com/itnopadol/bc_api/bc_api/bean/resp"
 	"net/http"
 )
@@ -17,7 +17,7 @@ func SaveShift(c *gin.Context){
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	s := newShift.SaveShift(dbc)
+	ch := newShift.SaveShift(dbc)
 
 	rs := Resp.Response{}
 	if err != nil {
@@ -26,7 +26,7 @@ func SaveShift(c *gin.Context){
 		c.JSON(http.StatusNotFound, rs)
 	}else{
 		rs.Status = "success"
-		rs.Data = s
+		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
@@ -41,7 +41,7 @@ func UpdateShift(c *gin.Context){
 		fmt.Println(err.Error())
 	}
 
-	s := newShift.UpdateShift(dbc)
+	ch := newShift.UpdateShift(dbc)
 
 	rs := Resp.Response{}
 	if err != nil {
@@ -50,7 +50,7 @@ func UpdateShift(c *gin.Context){
 		c.JSON(http.StatusNotFound, rs)
 	}else{
 		rs.Status = "success"
-		rs.Data = s
+		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
@@ -65,7 +65,7 @@ func ClosedShift(c *gin.Context){
 		fmt.Println(err.Error())
 	}
 
-	s := newShift.ClosedShift(dbc)
+	ch := newShift.ClosedShift(dbc)
 
 	rs := Resp.Response{}
 	if err != nil {
@@ -74,7 +74,7 @@ func ClosedShift(c *gin.Context){
 		c.JSON(http.StatusNotFound, rs)
 	}else{
 		rs.Status = "success"
-		rs.Data = s
+		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
@@ -83,12 +83,14 @@ func ShiftDetails(c *gin.Context){
 	fmt.Println("Call GET ShiftDetails")
 	c.Keys = headerKeys
 
-	hostid := c.Param("host_id")
-	host_id := hostid//strconv.ParseInt(strId, 10, 64)
+	host_code := c.Request.URL.Query().Get("host_code")
+	doc_date := c.Request.URL.Query().Get("doc_date")
 
-	s := new(model.Shift)
+	//host_code := hostcode//strconv.ParseInt(strId, 10, 64)
 
-	err := s.ShiftDetails(dbc,host_id)
+	ch := new(model.Shift)
+
+	 err := ch.ShiftDetails(dbc,host_code,doc_date)
 	rs := Resp.Response{}
 	if err != nil {
 		rs.Status = "error"
@@ -96,7 +98,7 @@ func ShiftDetails(c *gin.Context){
 		c.JSON(http.StatusNotFound, rs)
 	}else{
 		rs.Status = "success"
-		rs.Data = s
+		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
@@ -111,9 +113,9 @@ func SearchShiftByKeyword(c *gin.Context){
 	docdate := c.Param("doc_date")
 	doc_date := docdate//strconv.ParseInt(strId, 10, 64)
 
-	s := new(model.Shift)
+	ch := new(model.Shift)
 
-	shifts, err := s.SearchShiftByKeyword(dbc,host_id,doc_date)
+	shifts, err := ch.SearchShiftByKeyword(dbc,host_id,doc_date)
 	rs := Resp.Response{}
 	if err != nil {
 		rs.Status = "error"

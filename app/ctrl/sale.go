@@ -2,8 +2,8 @@ package ctrl
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/itnopadol/hapos_api/app/model"
-	"github.com/itnopadol/hapos_api/app/resp"
+	"github.com/itnopadol/api_pos/app/model"
+	"github.com/itnopadol/api_pos/app/resp"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -62,8 +62,12 @@ func SearchSales(c *gin.Context){
 	log.Println("call Get SearchSales")
 	c.Keys = headerKeys
 
+	host_code := c.Request.URL.Query().Get("host_code")
+	doc_date := c.Request.URL.Query().Get("doc_date")
+	keyword := c.Request.URL.Query().Get("keyword")
+
 	NewSale := new(model.Sale)
-	sales, err := NewSale.SearchSales(dbc)
+	sales, err := NewSale.SearchSales(dbc,host_code,doc_date,keyword)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"

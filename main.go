@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gin-contrib/cors.v1"
-	"github.com/itnopadol/hapos_api/app/ctrl"
-	_ "github.com/itnopadol/hapos_api/app/model"
+	"github.com/itnopadol/api_pos/app/ctrl"
+	_ "github.com/itnopadol/api_pos/app/model"
 )
 
 type item struct {
@@ -15,16 +15,6 @@ type item struct {
 type items struct {
 	items []item
 }
-
-const (
-	printerIP = "192.168.0.206:9100"
-	dbPort = "5432"
-	dbHost = "localhost"
-	dbUser = "paybox"
-	dbPass = "paybox"
-	dbName = "paybox_vending"
-	sslMode = "disable"
-)
 
 func main() {
 
@@ -40,10 +30,10 @@ func main() {
 	r.GET("/sales", ctrl.SearchSales)
 	r.GET("/sale/:id", ctrl.SearchSaleById)
 
-	r.POST("/shift", ctrl.SaveShift)
-	r.PUT("/shift", ctrl.UpdateShift)
+	r.POST("/shift/open", ctrl.SaveShift)
+	r.PUT("/shift/update", ctrl.UpdateShift)
 	r.PUT("/shift/closed", ctrl.ClosedShift)
-	r.GET("/shift/:host_id", ctrl.ShiftDetails)
+	r.GET("/shift/search", ctrl.ShiftDetails)
 
 	r.Run(":8888")
 
