@@ -37,6 +37,9 @@ type Sale struct {
 	CancelBy 		string `json:"cancel_by" db:"cancel_by"`
 	CancelDatetime 	*time.Time `json:"cancel_datetime" db:"cancel_datetime"`
 
+	SumCashAmount float64 `json:"sum_cash_amount" db:"sum_cash_amount"`
+	SumChangeAmount float64 `json:"sum_change_amount" db:"sum_change_amount"`
+
 	SaleSubs []*SaleSub `json:"sale_subs"`
 }
 
@@ -406,6 +409,95 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 
 	return nil
 }
+
+//
+//func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, doc_date string)(sales []*Sale, err error){
+//	s.DocDate = doc_date
+//
+//	fmt.Println("DOCDATE = ",doc_date,s.DocDate)
+//
+//	f, err := net.Dial("tcp", "192.168.0.206:9100")
+//
+//	if err != nil {
+//		panic(err)
+//	}
+//	defer f.Close()
+//
+//	w := bufio.NewWriter(f)
+//	p := escpos.New(w)
+//
+//	pt := hw.PosPrinter{p,w}
+//	pt.Init()
+//	pt.SetLeftMargin(20)
+//	//pt.PrintRegistrationBitImage(0, 0)
+//	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+//
+//	//////////////////////////////////////////////////////////////////////////////////////
+//	pt.SetCharaterCode(26)
+//	pt.SetAlign("center")
+//	pt.SetTextSize(0, 0)
+//	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
+//	pt.LineFeed()
+//	pt.SetTextSize(0, 0)
+//	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
+//	makeline(pt)
+//	///////////////////////////////////////////////////////////////////////////////////
+//	sql := `select id,host_code,doc_date,
+//			(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount,
+//			(select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_change_amount,
+//			(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as all_cash_amount1,
+//			(select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as all_change_amount1
+//			from sale a where doc_date = '2017/11/03' and is_cancel = 0 order by host_code`
+//	err = db.Select(&sales, sql)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	pt.SetFont("B")
+//	pt.WriteStringLines("   ลำดับ" )
+//	pt.WriteStringLines("     ")
+//	pt.WriteStringLines("   จุดขาย")
+//	pt.WriteStringLines("  ")
+//	pt.WriteStringLines("   มูลค่าเงินสด" )
+//	pt.WriteStringLines("    ")
+//	pt.WriteStringLines("   มูลค่าใช้จ่าย\n" )
+//	pt.FormfeedN(3)
+//	makeline(pt)
+//	///////////////////////////////////////////////////////////////////////////////////
+//	var vLineNumber int
+//	for _, s := range sales{
+//		pt.SetAlign("left")
+//		vLineNumber = vLineNumber+1
+//		pt.SetFont("B")
+//		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+".")
+//		pt.WriteStringLines("           "+s.HostCode)
+//		pt.WriteStringLines("        "+strconv.FormatFloat(s.CashAmount, 'f', -1, 64) )
+//		pt.WriteStringLines("             "+strconv.FormatFloat(s.ExpensesAmount, 'f', -1, 64)+"\n")
+//		pt.FormfeedN(3)
+//	}
+//	makeline(pt)
+//	////////////////////////////////////////////////////////////////////////////////////
+//
+//	fmt.Println("SumCashAmount = ",shifts[0].SumCashAmount)
+//	pt.SetFont("B")
+//	pt.WriteStringLines("รวมเป็นเงิน ")
+//	pt.WriteStringLines("                 ")
+//	pt.WriteStringLines(strconv.FormatFloat(shifts[0].SumCashAmount, 'f', -1, 64)+" บาท")
+//	pt.WriteStringLines("        ")
+//	pt.WriteStringLines(strconv.FormatFloat(shifts[0].SumExpensesAmount, 'f', -1, 64)+" บาท\n")
+//	makeline(pt)
+//	// Footer Area
+//	pt.SetFont("A")
+//	pt.SetAlign("center")
+//	pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
+//	pt.Formfeed()
+//	pt.Write("*** Completed ***")
+//	pt.Formfeed()
+//	pt.Cut()
+//	pt.End()
+//
+//	return nil, nil
+//}
 
 //func makeline(pt hw.PosPrinter) {
 //	pt.SetTextSize(0,0)

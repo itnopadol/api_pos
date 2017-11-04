@@ -4,8 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"fmt"
 	"github.com/itnopadol/api_pos/app/model"
-	"github.com/itnopadol/bc_api/bc_api/bean/resp"
+	"github.com/itnopadol/api_pos/app/resp"
 	"net/http"
+	"log"
+	"github.com/itnopadol/bc_api/bc_api/bean/resp"
 )
 
 func SaveShift(c *gin.Context){
@@ -126,4 +128,26 @@ func SearchShiftByKeyword(c *gin.Context){
 		rs.Data = shifts
 		c.JSON(http.StatusOK, rs)
 	}
+}
+
+
+func PrintSendDailyTotal(c *gin.Context){
+	log.Println("call Get SearchSales")
+	c.Keys = headerKeys
+
+	doc_date := c.Request.URL.Query().Get("doc_date")
+
+	NewSale := new(model.Shift)
+	sales, err := NewSale.PrintSendDailyTotal(dbc,doc_date)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :"+ err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = sales
+		c.JSON(http.StatusOK, rs)
+	}
+
 }

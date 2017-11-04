@@ -81,29 +81,6 @@ func SearchSales(c *gin.Context){
 
 }
 
-
-func PrintSaleDaily(c *gin.Context){
-	log.Println("call Get SearchSales")
-	c.Keys = headerKeys
-
-	doc_date := c.Request.URL.Query().Get("doc_date")
-
-
-	NewSale := new(model.Sale)
-	sales, err := NewSale.PrintSaleDaily(dbc,doc_date,model.H)
-	rs := resp.Response{}
-	if err != nil {
-		rs.Status = "error"
-		rs.Message = "No Content and Error :"+ err.Error()
-		c.JSON(http.StatusNotFound, rs)
-	}else{
-		rs.Status = "success"
-		rs.Data = sales
-		c.JSON(http.StatusOK, rs)
-	}
-
-}
-
 func SearchSaleById(c *gin.Context){
 	log.Println("call Get SearchSaleById")
 	c.Keys = headerKeys

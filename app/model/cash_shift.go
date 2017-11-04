@@ -27,7 +27,9 @@ type Shift struct {
 	Edited time.Time `json:"edited" db:"edited"`
 	ClosedBy string `json:"closed_by" db:"closed_by"`
 	Closed time.Time `json:"closed" db:"closed"`
-	Sale []*Sale `json:"sale"`
+
+	SumCashAmount float64 `json:"sum_cash_amount" db:"sum_cash_amount"`
+	SumExpensesAmount float64 `json:"sum_expenses_amount" db:"sum_expenses_amount"`
 }
 
 
@@ -39,9 +41,11 @@ func (ch *Shift)SaveShift(db *sqlx.DB) error{
 	ch.DocDate = DocDate
 	ch.Created = now
 
+	fmt.Println("HostCode = ",ch.HostCode)
+
 	var checkCount int
-	sqlCheckExist := `select count(host_code) as vCount from cash_shift where doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.DocDate)
+	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -78,8 +82,8 @@ func (ch *Shift)UpdateShift(db *sqlx.DB) error{
 	ch.Edited = now
 
 	var checkCount int
-	sqlCheckExist := `select count(host_code) as vCount from cash_shift where doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.DocDate)
+	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -116,8 +120,8 @@ func (ch *Shift)ClosedShift(db *sqlx.DB) error{
 	fmt.Println("host_code = ",ch.HostCode)
 
 	var checkCount int
-	sqlCheckExist := `select count(host_code) as vCount from cash_shift where doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.DocDate)
+	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -175,8 +179,10 @@ func makeline(pt hw.PosPrinter) {
 	pt.WriteStringLines("-----------------------------------------\n")
 }
 
-func (s *Sale)PrintSaleDaily(db *sqlx.DB, doc_date string, h *Host)(sales []*Sale, err error){
+func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift, err error){
 	s.DocDate = doc_date
+
+	fmt.Println("DOCDATE = ",doc_date,s.DocDate)
 
 	f, err := net.Dial("tcp", "192.168.0.206:9100")
 
@@ -197,46 +203,51 @@ func (s *Sale)PrintSaleDaily(db *sqlx.DB, doc_date string, h *Host)(sales []*Sal
 	//////////////////////////////////////////////////////////////////////////////////////
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
-	pt.SetTextSize(1, 1)
+	pt.SetTextSize(0, 0)
 	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
-	pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
+	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
-	sql := `select id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where doc_date = ?  order by id`
-	err = db.Select(&sales, sql, doc_date)
+	sql := `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = '2017/11/04' order by host_code`
+	err = db.Select(&shifts, sql)
 	if err != nil {
 		return nil, err
 	}
 
 	pt.SetFont("B")
-	pt.WriteStringLines("   รายการสินค้า" )
+	pt.WriteStringLines("   ลำดับ" )
 	pt.WriteStringLines("     ")
-	pt.WriteStringLines("   จำนวน/หน่วย")
+	pt.WriteStringLines("   จุดขาย")
 	pt.WriteStringLines("  ")
-	pt.WriteStringLines("   ราคา" )
+	pt.WriteStringLines("   มูลค่าเงินสด" )
 	pt.WriteStringLines("    ")
-	pt.WriteStringLines("   รวม\n" )
+	pt.WriteStringLines("   มูลค่าใช้จ่าย\n" )
 	pt.FormfeedN(3)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	var vLineNumber int
-	for _, sale := range sales{
-
+	for _, s := range shifts{
+		pt.SetAlign("left")
 		vLineNumber = vLineNumber+1
 		pt.SetFont("B")
-		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+"."+sale.DocNo )
-		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+"."+sale.DocNo )
-		pt.WriteStringLines("     "+strconv.FormatFloat(sale.TotalAmount, 'f', -1, 64)+"\n")
+		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+".")
+		pt.WriteStringLines("           "+s.HostCode)
+		pt.WriteStringLines("        "+strconv.FormatFloat(s.CashAmount, 'f', -1, 64) )
+		pt.WriteStringLines("             "+strconv.FormatFloat(s.ExpensesAmount, 'f', -1, 64)+"\n")
 		pt.FormfeedN(3)
 	}
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
+
+	fmt.Println("SumCashAmount = ",shifts[0].SumCashAmount)
 	pt.SetFont("B")
 	pt.WriteStringLines("รวมเป็นเงิน ")
-	pt.WriteStringLines("                                   ")
-	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
+	pt.WriteStringLines("                 ")
+	pt.WriteStringLines(strconv.FormatFloat(shifts[0].SumCashAmount, 'f', -1, 64)+" บาท")
+	pt.WriteStringLines("        ")
+	pt.WriteStringLines(strconv.FormatFloat(shifts[0].SumExpensesAmount, 'f', -1, 64)+" บาท\n")
 	makeline(pt)
 	// Footer Area
 	pt.SetFont("A")
