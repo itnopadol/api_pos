@@ -4,6 +4,11 @@ import (
 	"time"
 	"github.com/jmoiron/sqlx"
 	"fmt"
+	"strconv"
+	"net"
+	"bufio"
+	"github.com/knq/escpos"
+	"github.com/itnopadol/api_pos/hw"
 )
 
 type Shift struct {
@@ -22,6 +27,7 @@ type Shift struct {
 	Edited time.Time `json:"edited" db:"edited"`
 	ClosedBy string `json:"closed_by" db:"closed_by"`
 	Closed time.Time `json:"closed" db:"closed"`
+	Sale []*Sale `json:"sale"`
 }
 
 
@@ -160,4 +166,87 @@ func (ch *Shift)SearchShiftByKeyword(db *sqlx.DB, host_code string, doc_date str
 		return  nil, err
 	}
 	return shifts, nil
+}
+
+
+func makeline(pt hw.PosPrinter) {
+	pt.SetTextSize(0,0)
+	pt.SetFont("A")
+	pt.WriteStringLines("-----------------------------------------\n")
+}
+
+func (s *Sale)PrintSaleDaily(db *sqlx.DB, doc_date string, h *Host)(sales []*Sale, err error){
+	s.DocDate = doc_date
+
+	f, err := net.Dial("tcp", "192.168.0.206:9100")
+
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	p := escpos.New(w)
+
+	pt := hw.PosPrinter{p,w}
+	pt.Init()
+	pt.SetLeftMargin(20)
+	//pt.PrintRegistrationBitImage(0, 0)
+	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	pt.SetCharaterCode(26)
+	pt.SetAlign("center")
+	pt.SetTextSize(1, 1)
+	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
+	pt.LineFeed()
+	pt.SetTextSize(0, 0)
+	pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+	sql := `select id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where doc_date = ?  order by id`
+	err = db.Select(&sales, sql, doc_date)
+	if err != nil {
+		return nil, err
+	}
+
+	pt.SetFont("B")
+	pt.WriteStringLines("   รายการสินค้า" )
+	pt.WriteStringLines("     ")
+	pt.WriteStringLines("   จำนวน/หน่วย")
+	pt.WriteStringLines("  ")
+	pt.WriteStringLines("   ราคา" )
+	pt.WriteStringLines("    ")
+	pt.WriteStringLines("   รวม\n" )
+	pt.FormfeedN(3)
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+	var vLineNumber int
+	for _, sale := range sales{
+
+		vLineNumber = vLineNumber+1
+		pt.SetFont("B")
+		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+"."+sale.DocNo )
+		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+"."+sale.DocNo )
+		pt.WriteStringLines("     "+strconv.FormatFloat(sale.TotalAmount, 'f', -1, 64)+"\n")
+		pt.FormfeedN(3)
+	}
+	makeline(pt)
+	////////////////////////////////////////////////////////////////////////////////////
+	pt.SetFont("B")
+	pt.WriteStringLines("รวมเป็นเงิน ")
+	pt.WriteStringLines("                                   ")
+	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
+	makeline(pt)
+	// Footer Area
+	pt.SetFont("A")
+	pt.SetAlign("center")
+	pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
+	pt.Formfeed()
+	pt.Write("*** Completed ***")
+	pt.Formfeed()
+	pt.Cut()
+	pt.End()
+
+	return nil, nil
 }

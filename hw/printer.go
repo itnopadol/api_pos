@@ -12,7 +12,6 @@ type PosPrinter struct {
 	Writer *bufio.Writer
 }
 
-
 func (pos *PosPrinter) SetCharaterCode(code byte) {
 	pos.WriteRaw([]byte{0x1B, 0x74, code})
 }

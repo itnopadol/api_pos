@@ -8,7 +8,6 @@ import (
 	"github.com/knq/escpos"
 	"net"
 	"github.com/itnopadol/api_pos/hw"
-//	"strconv"
 	"strconv"
 )
 
@@ -46,6 +45,7 @@ type SaleSub struct {
 	SaleId    int  `json:"-" db:"sale_id"`
 	ItemId    int `json:"item_id" db:"item_id"`
 	ItemName  string  `json:"item_name" db:"item_name"`
+	ShortName	string `json:"short_name" db:"short_name"`
 	Price     float64 `json:"price" db:"price"`
 	Qty       int     `json:"qty" db:"qty"`
 	Unit      string  `json:"unit" db:"unit"`
@@ -156,7 +156,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 	s.Id = uint64(id)
 	fmt.Println("s.MachineId =", s.Id)
 
-	sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?)`
+	sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,short_name,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?)`
 	for _, ss := range s.SaleSubs {
 		fmt.Println("start for range s.SaleSubs")
 		rs, err = db.Exec(sql2,
@@ -164,6 +164,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 			ss.Line,
 			ss.ItemId,
 			ss.ItemName,
+			ss.ShortName,
 			ss.Price,
 			ss.Qty,
 			ss.Unit,
@@ -177,10 +178,10 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 		fmt.Println("Insert sale_sub line ", ss)
 	}
 	//พิมพ์ บิล และ ใบจัดสินค้า
-	//config := new(Config)
-	//config = GetConfig(db)
+	config := new(Config)
+	config = GetConfig(db)
 	//err = PrintBill(s, config, db)
-	//err = printPickup(s, config, db)
+	err = printPickup(s, config, db)
 
 	}else{
 		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", nil
@@ -200,7 +201,7 @@ func (s *Sale)SearchSales(db *sqlx.DB,host_code string,doc_date string,keyword s
 
 	for _, sub := range sales{
 		fmt.Println("SaleID = ",sub.Id)
-		sqlsub := `select sale_id,line,item_id,item_name,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ?`
+		sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ?`
 		err = db.Select(&sub.SaleSubs,sqlsub,sub.Id)
 		if err != nil {
 			return nil, err
@@ -218,7 +219,7 @@ func (s *Sale)SearchSaleById(db *sqlx.DB, id int64) error{
 	}
 
 	fmt.Println("SaleID = ",s.Id)
-	sqlsub := `select sale_id,line,item_id,item_name,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ? `
+	sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ? `
 	err = db.Select(&s.SaleSubs,sqlsub,id)
 	if err != nil {
 		return  err
@@ -353,24 +354,45 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.SetTextSize(1, 1)
 	pt.WriteStringLines("คิวเลขที่ : "+strconv.Itoa(s.QueId))
 	pt.LineFeed()
+	pt.SetTextSize(0, 1)
 	pt.WriteStringLines("Kitchen Slip")
 
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
+	pt.SetFont("B")
+	pt.SetAlign("left")
+	pt.WriteStringLines("  รายการสินค้า" )
+	pt.WriteStringLines("   ")
+	pt.WriteStringLines("     จำนวน/หน่วย")
+	pt.WriteStringLines("    ")
+	pt.WriteStringLines("   สถานะ\n" )
+	pt.FormfeedN(3)
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
 
 	for _, sub := range s.SaleSubs {
 		var vLineNumber int
+		var vAtHome string
 
-		vLineNumber = sub.Line+1
-		pt.SetTextSize(1,1)
-		pt.SetAlign("left")
-		pt.WriteStringLines("   "+strconv.Itoa(vLineNumber)+"."+sub.ItemName )
-		pt.WriteStringLines("		")
-		pt.WriteStringLines("   "+strconv.Itoa(sub.Qty)+" "+sub.Unit+"\n")
-		pt.FormfeedN(3)
-		pt.SetTextSize(1,1)
+		if (sub.IsAtHome==1){
+			vAtHome = "Home"
+		}else{
+			vAtHome = "-"
+		}
+		if (sub.IsKitchen==1) {
+			vLineNumber = sub.Line + 1
+			pt.SetTextSize(0, 1)
+			pt.SetFont("A")
+			pt.SetAlign("left")
+			pt.WriteStringLines("   " + strconv.Itoa(vLineNumber) + "." + sub.ShortName)
+			pt.WriteStringLines("   ")
+			pt.WriteStringLines("     " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
+			pt.WriteStringLines("        " + vAtHome + "\n")
+			pt.FormfeedN(3)
+			pt.SetTextSize(1, 1)
+		}
 	}
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
@@ -385,11 +407,87 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	return nil
 }
 
-func makeline(pt hw.PosPrinter) {
-	pt.SetTextSize(0,0)
-	pt.SetFont("A")
-	pt.WriteStringLines("-----------------------------------------\n")
-}
+//func makeline(pt hw.PosPrinter) {
+//	pt.SetTextSize(0,0)
+//	pt.SetFont("A")
+//	pt.WriteStringLines("-----------------------------------------\n")
+//}
+
+//func (s *Sale)PrintSaleDaily(db *sqlx.DB, doc_date string, h *Host)(sales []*Sale, err error){
+//	s.DocDate = doc_date
+//
+//	f, err := net.Dial("tcp", "192.168.0.206:9100")
+//
+//	if err != nil {
+//		panic(err)
+//	}
+//	defer f.Close()
+//
+//	w := bufio.NewWriter(f)
+//	p := escpos.New(w)
+//
+//	pt := hw.PosPrinter{p,w}
+//	pt.Init()
+//	pt.SetLeftMargin(20)
+//	//pt.PrintRegistrationBitImage(0, 0)
+//	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+//
+//	//////////////////////////////////////////////////////////////////////////////////////
+//	pt.SetCharaterCode(26)
+//	pt.SetAlign("center")
+//	pt.SetTextSize(1, 1)
+//	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
+//	pt.LineFeed()
+//	pt.SetTextSize(0, 0)
+//	pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
+//	makeline(pt)
+//	///////////////////////////////////////////////////////////////////////////////////
+//	sql := `select id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where doc_date = ?  order by id`
+//	err = db.Select(&sales, sql, doc_date)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	pt.SetFont("B")
+//	pt.WriteStringLines("   รายการสินค้า" )
+//	pt.WriteStringLines("     ")
+//	pt.WriteStringLines("   จำนวน/หน่วย")
+//	pt.WriteStringLines("  ")
+//	pt.WriteStringLines("   ราคา" )
+//	pt.WriteStringLines("    ")
+//	pt.WriteStringLines("   รวม\n" )
+//	pt.FormfeedN(3)
+//	makeline(pt)
+//	///////////////////////////////////////////////////////////////////////////////////
+//	var vLineNumber int
+//	for _, sale := range sales{
+//
+//		vLineNumber = vLineNumber+1
+//		pt.SetFont("B")
+//		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+"."+sale.DocNo )
+//		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+"."+sale.DocNo )
+//		pt.WriteStringLines("     "+strconv.FormatFloat(sale.TotalAmount, 'f', -1, 64)+"\n")
+//		pt.FormfeedN(3)
+//	}
+//	makeline(pt)
+//	////////////////////////////////////////////////////////////////////////////////////
+//	pt.SetFont("B")
+//	pt.WriteStringLines("รวมเป็นเงิน ")
+//	pt.WriteStringLines("                                   ")
+//	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
+//	makeline(pt)
+//	// Footer Area
+//	pt.SetFont("A")
+//	pt.SetAlign("center")
+//	pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
+//	pt.Formfeed()
+//	pt.Write("*** Completed ***")
+//	pt.Formfeed()
+//	pt.Cut()
+//	pt.End()
+//
+//	return nil, nil
+//}
 
 //func PrintPickup(s *Sale, db *sqlx.DB)error{
 //	const (

@@ -8,6 +8,7 @@ import (
 
 type Item struct {
 	Id      int
+	Code 	string `json:"code" db:"code"`
 	Name    string   `json:"name" db:"name"`
 	ShortName	string `json:"short_name" db:"short_name"`
 	NameEn  string   `json:"name_en,omitempty" db:"name_en"`
@@ -19,7 +20,7 @@ type Item struct {
 	MenuId  uint64   `json:"menu_id,omitempty" db:"menu_id"`
 	MenuSeq int      `json:"menu_seq,omitempty" db:"menu_seq"`
 	Image   string   `json:"image" db:"image"`
-	SendKitchen int `json:"send_kitchen" db:"send_kitchen"`
+	IsKitchen int `json:"is_kitchen" db:"is_kitchen"`
 	Active  int 	 `json:"active" db:"active"`
 	Prices []*PricesSub `json:"prices_sub"`
 }
