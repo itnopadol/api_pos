@@ -181,10 +181,10 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 		fmt.Println("Insert sale_sub line ", ss)
 	}
 	//พิมพ์ บิล และ ใบจัดสินค้า
-	config := new(Config)
-	config = GetConfig(db)
+	//config := new(Config)
+	//config = GetConfig(db)
 	//err = PrintBill(s, config, db)
-	err = printPickup(s, config, db)
+	//err = printPickup(s, config, db)
 
 	}else{
 		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", nil
