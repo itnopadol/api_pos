@@ -67,11 +67,11 @@ func (i *Item) ByMenuId(db *sqlx.DB, id int64) ([]*Lang, error) {
 		items := []*Item{}
 		switch l.Id {
 		case 1:
-			sql = `SELECT id, name, unit, menu_seq, image, price, active FROM item WHERE active = 1 and  menu_id = ?`
+			sql = `SELECT id, name, unit, menu_seq, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ?`
 		case 2:
-			sql = `SELECT id, name_en as name, unit_en as unit, menu_seq, image, price, active FROM item WHERE active = 1 and  menu_id = ?`
+			sql = `SELECT id, name_en as name, unit_en as unit, menu_seq, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ?`
 		case 3:
-			sql = `SELECT id, name_cn as name, unit_cn as unit, menu_seq, image, price, active FROM item WHERE active = 1 and  menu_id = ?`
+			sql = `SELECT id, name_cn as name, unit_cn as unit, menu_seq, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ?`
 		}
 		fmt.Println("case:", l.Id, l.Name, sql, id)
 		err := db.Select(&items, sql, id)
