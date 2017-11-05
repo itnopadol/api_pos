@@ -135,7 +135,7 @@ func LastQueId(db *sqlx.DB) (que_id int){
 	err := db.Get(&que_id,sql)
 	if err != nil {
 		fmt.Println(err)
-		return 1
+		return  que_id
 	}
 
 	fmt.Println("Last No = ",que_id)
