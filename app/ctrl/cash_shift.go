@@ -7,7 +7,6 @@ import (
 	"github.com/itnopadol/api_pos/app/resp"
 	"net/http"
 	"log"
-	"github.com/itnopadol/bc_api/bc_api/bean/resp"
 )
 
 func SaveShift(c *gin.Context){
@@ -21,7 +20,7 @@ func SaveShift(c *gin.Context){
 	}
 	ch := newShift.SaveShift(dbc)
 
-	rs := Resp.Response{}
+	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :"+ err.Error()
@@ -45,7 +44,7 @@ func UpdateShift(c *gin.Context){
 
 	ch := newShift.UpdateShift(dbc)
 
-	rs := Resp.Response{}
+	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :"+ err.Error()
@@ -69,7 +68,7 @@ func ClosedShift(c *gin.Context){
 
 	ch := newShift.ClosedShift(dbc)
 
-	rs := Resp.Response{}
+	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :"+ err.Error()
@@ -93,7 +92,7 @@ func ShiftDetails(c *gin.Context){
 	ch := new(model.Shift)
 
 	 err := ch.ShiftDetails(dbc,host_code,doc_date)
-	rs := Resp.Response{}
+	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :"+ err.Error()
@@ -118,7 +117,7 @@ func SearchShiftByKeyword(c *gin.Context){
 	ch := new(model.Shift)
 
 	shifts, err := ch.SearchShiftByKeyword(dbc,host_id,doc_date)
-	rs := Resp.Response{}
+	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :"+ err.Error()
