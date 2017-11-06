@@ -355,7 +355,6 @@ var printerIP string
 //	return nil
 //}
 
-
 func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 
 	f, err := net.Dial("tcp", c.Printer1Port)

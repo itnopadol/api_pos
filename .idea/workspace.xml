@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1a1ae10-9936-4c0c-9cc6-f48802070bbd" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/ctrl/sale.go" afterPath="$PROJECT_DIR$/app/ctrl/sale.go" />
-      <change beforePath="$PROJECT_DIR$/app/model/cash_shift.go" afterPath="$PROJECT_DIR$/app/model/cash_shift.go" />
-      <change beforePath="$PROJECT_DIR$/app/model/item.go" afterPath="$PROJECT_DIR$/app/model/item.go" />
       <change beforePath="$PROJECT_DIR$/app/model/sale.go" afterPath="$PROJECT_DIR$/app/model/sale.go" />
-      <change beforePath="$PROJECT_DIR$/hw/printer.go" afterPath="$PROJECT_DIR$/hw/printer.go" />
-      <change beforePath="$PROJECT_DIR$/main.go" afterPath="$PROJECT_DIR$/main.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,25 +28,25 @@
       <file leaf-file-name="sale.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/sale.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="207" column="0" lean-forward="true" selection-start-line="207" selection-start-column="0" selection-end-line="207" selection-end-column="0" />
+            <state relative-caret-position="120">
+              <caret line="356" column="0" lean-forward="true" selection-start-line="356" selection-start-column="0" selection-end-line="356" selection-end-column="0" />
               <folding>
                 <element signature="e#15#166#0" expanded="true" />
-                <marker date="1509981539731" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
-                <marker date="1509981539731" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
-                <marker date="1509981539731" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
-                <marker date="1509981539731" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
-                <marker date="1509981539731" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
-                <marker date="1509981539731" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
-                <marker date="1509981539731" expanded="true" signature="18977:20128" ph="select id,ho... sale" />
-                <marker date="1509981539731" expanded="true" signature="19019:19097" ph="select sum(p... sale" />
-                <marker date="1509981539731" expanded="true" signature="19129:19210" ph="select sum(c... sale" />
-                <marker date="1509981539731" expanded="true" signature="19244:19322" ph="select sum(p... sale" />
-                <marker date="1509981539731" expanded="true" signature="19326:19407" ph="select sum(c... sale" />
-                <marker date="1509981539731" expanded="true" signature="19433:19567" ph="select sum(p... sale" />
-                <marker date="1509981539731" expanded="true" signature="19591:19728" ph="select sum(c... sale" />
-                <marker date="1509981539731" expanded="true" signature="19754:19888" ph="select sum(p... sale" />
-                <marker date="1509981539731" expanded="true" signature="19893:20030" ph="select sum(c... sale" />
+                <marker date="1509982645847" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
+                <marker date="1509982645847" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
+                <marker date="1509982645847" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
+                <marker date="1509982645847" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
+                <marker date="1509982645847" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
+                <marker date="1509982645847" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
+                <marker date="1509982645847" expanded="true" signature="18976:20127" ph="select id,ho... sale" />
+                <marker date="1509982645847" expanded="true" signature="19018:19096" ph="select sum(p... sale" />
+                <marker date="1509982645847" expanded="true" signature="19128:19209" ph="select sum(c... sale" />
+                <marker date="1509982645847" expanded="true" signature="19243:19321" ph="select sum(p... sale" />
+                <marker date="1509982645847" expanded="true" signature="19325:19406" ph="select sum(c... sale" />
+                <marker date="1509982645847" expanded="true" signature="19432:19566" ph="select sum(p... sale" />
+                <marker date="1509982645847" expanded="true" signature="19590:19727" ph="select sum(c... sale" />
+                <marker date="1509982645847" expanded="true" signature="19753:19887" ph="select sum(p... sale" />
+                <marker date="1509982645847" expanded="true" signature="19892:20029" ph="select sum(c... sale" />
               </folding>
             </state>
           </provider>
@@ -369,21 +363,21 @@
           <caret line="205" column="44" lean-forward="true" selection-start-line="205" selection-start-column="44" selection-end-line="205" selection-end-column="44" />
           <folding>
             <element signature="e#15#166#0" expanded="true" />
-            <marker date="1509981539731" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
-            <marker date="1509981539731" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
-            <marker date="1509981539731" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
-            <marker date="1509981539731" expanded="true" signature="18977:20128" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="19019:19097" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19129:19210" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19244:19322" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19326:19407" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19433:19567" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19591:19728" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19754:19888" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19893:20030" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
+            <marker date="1509982645847" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
+            <marker date="1509982645847" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
+            <marker date="1509982645847" expanded="true" signature="18976:20127" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="19018:19096" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19128:19209" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19243:19321" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19325:19406" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19432:19566" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19590:19727" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19753:19887" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19892:20029" ph="select sum(c... sale" />
           </folding>
         </state>
       </provider>
@@ -423,21 +417,21 @@
           <caret line="113" column="0" lean-forward="true" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
           <folding>
             <element signature="e#15#166#0" expanded="true" />
-            <marker date="1509981539731" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
-            <marker date="1509981539731" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
-            <marker date="1509981539731" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
-            <marker date="1509981539731" expanded="true" signature="18977:20128" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="19019:19097" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19129:19210" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19244:19322" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19326:19407" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19433:19567" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19591:19728" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19754:19888" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19893:20030" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
+            <marker date="1509982645847" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
+            <marker date="1509982645847" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
+            <marker date="1509982645847" expanded="true" signature="18976:20127" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="19018:19096" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19128:19209" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19243:19321" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19325:19406" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19432:19566" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19590:19727" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19753:19887" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19892:20029" ph="select sum(c... sale" />
           </folding>
         </state>
       </provider>
@@ -733,25 +727,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/sale.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="207" column="0" lean-forward="true" selection-start-line="207" selection-start-column="0" selection-end-line="207" selection-end-column="0" />
+        <state relative-caret-position="120">
+          <caret line="356" column="0" lean-forward="true" selection-start-line="356" selection-start-column="0" selection-end-line="356" selection-end-column="0" />
           <folding>
             <element signature="e#15#166#0" expanded="true" />
-            <marker date="1509981539731" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
-            <marker date="1509981539731" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
-            <marker date="1509981539731" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
-            <marker date="1509981539731" expanded="true" signature="18977:20128" ph="select id,ho... sale" />
-            <marker date="1509981539731" expanded="true" signature="19019:19097" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19129:19210" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19244:19322" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19326:19407" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19433:19567" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19591:19728" ph="select sum(c... sale" />
-            <marker date="1509981539731" expanded="true" signature="19754:19888" ph="select sum(p... sale" />
-            <marker date="1509981539731" expanded="true" signature="19893:20030" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="4866:5002" ph="INSERT INTO sale_sub... " />
+            <marker date="1509982645847" expanded="true" signature="6079:6339" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="6515:6663" ph="select sale_... sale_sub" />
+            <marker date="1509982645847" expanded="true" signature="6871:7049" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="6871:7075" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="7181:7329" ph="select sale_... sale_sub" />
+            <marker date="1509982645847" expanded="true" signature="18976:20127" ph="select id,ho... sale" />
+            <marker date="1509982645847" expanded="true" signature="19018:19096" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19128:19209" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19243:19321" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19325:19406" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19432:19566" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19590:19727" ph="select sum(c... sale" />
+            <marker date="1509982645847" expanded="true" signature="19753:19887" ph="select sum(p... sale" />
+            <marker date="1509982645847" expanded="true" signature="19892:20029" ph="select sum(c... sale" />
           </folding>
         </state>
       </provider>
