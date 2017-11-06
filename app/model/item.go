@@ -46,10 +46,15 @@ func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 	}
 
 	fmt.Println("Item Name = ",i.Name )
+
+	vLen := len(i.Name)
+
+	fmt.Println("Lenght = ", vLen/3)
 	// ดึงข้อมูลราคาทั้งหมดของสินค้ารายการนี้
 	sizes := []*PricesSub{}
 	sql = `SELECT * FROM price_sub WHERE active = 1 and item_id = ?`
 	fmt.Println("Price = ", sql)
+	fmt.Println("Lenght = ", vLen)
 	err = db.Select(&sizes, sql, id)
 	if err != nil {
 		return err

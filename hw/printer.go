@@ -1,10 +1,13 @@
 package hw
 
 import (
+	"encoding/base64"
 	"bufio"
 	"github.com/knq/escpos"
 	"log"
 	"unicode"
+	"strconv"
+	"fmt"
 )
 
 type PosPrinter struct {
@@ -288,4 +291,98 @@ func (pos *PosPrinter) ConvertUnicodeToThaiAscii1Lines(str string) ( midLines []
 		}
 	}
 	return
+}
+
+func (e *PosPrinter) SendMoveX(x uint16) {
+	e.Write(string([]byte{0x1b, 0x24, byte(x % 256), byte(x / 256)}))
+}
+
+// send move y
+func (e *PosPrinter) SendMoveY(y uint16) {
+	e.Write(string([]byte{0x1d, 0x24, byte(y % 256), byte(y / 256)}))
+}
+
+
+func (e *PosPrinter) SetPrintPic() {
+	e.Write(fmt.Sprintf("\x1D*%c%c%v", 2, 2, "11111000001010101111100000101010"))
+}
+
+
+func (e *PosPrinter) PrintPic() {
+	e.Write(fmt.Sprintf("\x1D/%c", 0))
+}
+
+func (e *PosPrinter) OpenCashBox() {
+	e.Write(fmt.Sprintf("\x1Bp%c%c%c", 0, 2, 4))
+	e.Write(fmt.Sprintf("\x10\x14%c%c%c", 1, 0, 1))
+}
+
+
+// used to send graphics headers
+func (e *PosPrinter) gSend(m byte, fn byte, data []byte) {
+	l := len(data) + 2
+
+	e.Write("\x1b(L")
+	e.WriteRaw([]byte{byte(l % 256), byte(l / 256), m, fn})
+	e.WriteRaw(data)
+}
+
+// write an image
+func (e *PosPrinter) Image(params map[string]string, data string) {
+	// send alignment to printer
+	if align, ok := params["align"]; ok {
+		e.SetAlign(align)
+	}
+
+	// get width
+	wstr, ok := params["width"]
+	if !ok {
+		log.Fatal("No width specified on image")
+	}
+
+	// get height
+	hstr, ok := params["height"]
+	if !ok {
+		log.Fatal("No height specified on image")
+	}
+
+	// convert width
+	width, err := strconv.Atoi(wstr)
+	if err != nil {
+		log.Fatal("Invalid image width %s", wstr)
+	}
+
+	// convert height
+	height, err := strconv.Atoi(hstr)
+	if err != nil {
+		log.Fatal("Invalid image height %s", hstr)
+	}
+
+	// decode data frome b64 string
+	dec, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Image len:%d w: %d h: %d\n", len(dec), width, height)
+
+	// $imgHeader = self::dataHeader(array($img -> getWidth(), $img -> getHeight()), true);
+	// $tone = '0';
+	// $colors = '1';
+	// $xm = (($size & self::IMG_DOUBLE_WIDTH) == self::IMG_DOUBLE_WIDTH) ? chr(2) : chr(1);
+	// $ym = (($size & self::IMG_DOUBLE_HEIGHT) == self::IMG_DOUBLE_HEIGHT) ? chr(2) : chr(1);
+	//
+	// $header = $tone . $xm . $ym . $colors . $imgHeader;
+	// $this -> graphicsSendData('0', 'p', $header . $img -> toRasterFormat());
+	// $this -> graphicsSendData('0', '2');
+
+	header := []byte{
+		byte('0'), 0x01, 0x01, byte('1'),
+	}
+
+	a := append(header, dec...)
+
+	e.gSend(byte('0'), byte('p'), a)
+	e.gSend(byte('0'), byte('2'), []byte{})
+
 }

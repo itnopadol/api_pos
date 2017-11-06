@@ -186,8 +186,10 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 
 	//var today = time.Now()
 	//date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
+	config := new(Config)
+	config = GetConfig(db)
 
-	f, err := net.Dial("tcp", "192.168.0.206:9100")
+	f, err := net.Dial("tcp", config.Printer1Port)
 
 	if err != nil {
 		panic(err)
@@ -213,8 +215,8 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
-	sql := `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = '2017/11/04' order by host_code`
-	err = db.Select(&shifts, sql)
+	sql := `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = ? order by host_code`
+	err = db.Select(&shifts, sql, s.DocDate)
 	if err != nil {
 		return nil, err
 	}
