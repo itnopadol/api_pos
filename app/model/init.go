@@ -115,7 +115,7 @@ func GenDocno(db *sqlx.DB,host_code string)(doc_no string) {
 }
 
 func GetLastDocNo(db *sqlx.DB, host_code string) (last_no int, err error){
-	sql := `select cast(right(ifnull(max(doc_no),0),4) as int)+1 maxno from sale where host_code = ? and year(doc_date) = year(CURDATE()) and month(doc_date) = month(CURDATE()) and day(doc_date) = day(CURDATE())`
+	sql := `select CONVERT(right(ifnull(max(doc_no),0),4),UNSIGNED INTEGER)+1 as maxno from sale where host_code = ? and year(doc_date) = year(CURDATE()) and month(doc_date) = month(CURDATE()) and day(doc_date) = day(CURDATE())`
 
 	fmt.Println("Query = ",sql)
 	err = db.Get(&last_no,sql,host_code)

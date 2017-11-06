@@ -16,6 +16,10 @@ func GetItemById(c *gin.Context) {
 	log.Println("call GET Item")
 	c.Keys = headerKeys
 
+	str := fmt.Sprintf("%2d%s/%s", 1, "Espresso Cold", "Take Home")
+
+	fmt.Println("Test Text String"+str)
+
 	strId := c.Param("id")
 	id, _ := strconv.ParseInt(strId, 10, 64)
 	err := item.Get(dbc, id)

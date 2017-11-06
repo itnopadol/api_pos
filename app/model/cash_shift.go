@@ -184,6 +184,9 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 
 	fmt.Println("DOCDATE = ",doc_date,s.DocDate)
 
+	//var today = time.Now()
+	//date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
+
 	f, err := net.Dial("tcp", "192.168.0.206:9100")
 
 	if err != nil {
