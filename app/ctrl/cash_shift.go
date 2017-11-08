@@ -60,6 +60,7 @@ func ClosedShift(c *gin.Context){
 	fmt.Println("Call PUT ClosedShift")
 	c.Keys = headerKeys
 
+
 	newShift := &model.Shift{}
 	err := c.BindJSON(newShift)
 	if err != nil {

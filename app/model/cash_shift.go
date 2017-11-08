@@ -111,13 +111,11 @@ func (ch *Shift)UpdateShift(db *sqlx.DB) error{
 }
 
 func (ch *Shift)ClosedShift(db *sqlx.DB) error{
-	now := time.Now()
-	fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
+	//now := time.Now()
+	//fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
 
-	ch.Closed = now
-
-	fmt.Println("docdate = ",ch.DocDate)
-	fmt.Println("host_code = ",ch.HostCode)
+	//fmt.Println("docdate = ",ch.DocDate)
+	//fmt.Println("host_code = ",ch.HostCode)
 
 	var checkCount int
 	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
@@ -154,13 +152,10 @@ func (ch *Shift)ShiftDetails(db *sqlx.DB, host_code string, doc_date string) err
 	fmt.Println("sql = ",sql)
 	err := db.Get(ch, sql, host_code, doc_date)
 	if err != nil {
-		fmt.Println(err.Error())
 		return err
 	}
-
 	return nil
 }
-
 
 func (ch *Shift)SearchShiftByKeyword(db *sqlx.DB, host_code string, doc_date string)(shifts []*Shift, err error){
 	sql := `select host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,ifnull(my_description,'') as my_description,is_closed,created_by,created from cash_shift where  host_code = ? order by docdate desc limit 20`
@@ -171,7 +166,6 @@ func (ch *Shift)SearchShiftByKeyword(db *sqlx.DB, host_code string, doc_date str
 	}
 	return shifts, nil
 }
-
 
 func makeline(pt hw.PosPrinter) {
 	pt.SetTextSize(0,0)

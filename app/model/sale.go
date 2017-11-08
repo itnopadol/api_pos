@@ -53,6 +53,7 @@ type SaleSub struct {
 	ItemId    int `json:"item_id" db:"item_id"`
 	ItemName  string  `json:"item_name" db:"item_name"`
 	ShortName	string `json:"short_name" db:"short_name"`
+	Description string `json:"description" db:"description"`
 	Price     float64 `json:"price" db:"price"`
 	Qty       int     `json:"qty" db:"qty"`
 	Unit      string  `json:"unit" db:"unit"`
@@ -166,7 +167,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 	var checkPrintSlipKitchen int
 	checkPrintSlipKitchen = 0
 
-	sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,short_name,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?)`
+	sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,short_name,description,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
 	for _, ss := range s.SaleSubs {
 		fmt.Println("start for range s.SaleSubs")
 		rs, err = db.Exec(sql2,
@@ -175,6 +176,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 			ss.ItemId,
 			ss.ItemName,
 			ss.ShortName,
+			ss.Description,
 			ss.Price,
 			ss.Qty,
 			ss.Unit,
@@ -200,7 +202,8 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 
 	fmt.Println("Port1 ",config.Printer1Port)
 	fmt.Println("Port2 " ,config.Printer2Port)
-	err = PrintInvoice(s, config, db)
+	//err = PrintInvoice(s, config, db)
+	err = PrintBill(s, config, db)
 	if (checkPrintSlipKitchen>0){
 		err = printPickup(s, config, db)
 	}
@@ -224,7 +227,7 @@ func (s *Sale)SearchSales(db *sqlx.DB,host_code string,doc_date string,keyword s
 
 	for _, sub := range sales{
 		fmt.Println("SaleID = ",sub.Id)
-		sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ?`
+		sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ?`
 		err = db.Select(&sub.SaleSubs,sqlsub,sub.Id)
 		if err != nil {
 			return nil, err
@@ -242,7 +245,7 @@ func (s *Sale)SearchSaleById(db *sqlx.DB, id int64) error{
 	}
 
 	fmt.Println("SaleID = ",s.Id)
-	sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ? `
+	sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ? `
 	err = db.Select(&s.SaleSubs,sqlsub,id)
 	if err != nil {
 		return  err
@@ -268,92 +271,93 @@ func GetConfig(db *sqlx.DB)(config *Config){
 var vQueID int
 var printerIP string
 
-//func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
-//
-//	f, err := net.Dial("tcp", c.Printer1Port)
-//
-//	if err != nil {
-//		panic(err)
-//	}
-//	defer f.Close()
-//
-//	w := bufio.NewWriter(f)
-//	p := escpos.New(w)
-//
-//	pt := hw.PosPrinter{p,w}
-//	pt.Init()
-//	pt.SetLeftMargin(20)
-//	//pt.PrintRegistrationBitImage(0, 0)
-//	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
-//
-//	//////////////////////////////////////////////////////////////////////////////////////
-//	pt.SetCharaterCode(26)
-//	pt.SetAlign("center")
-//	pt.SetTextSize(1, 1)
-//	pt.WriteStringLines("คิวเลขที่ : "+strconv.Itoa(s.QueId))
-//	pt.LineFeed()
-//	pt.SetTextSize(0, 0)
-//	/////////////////////////////////////////////////////////////////////////////////////
-//	pt.SetFont("B")
-//	pt.WriteStringLines(c.CompanyName+"\n")
-//	pt.SetAlign("left")
-//	pt.WriteStringLines("เลขประจำตัวผู้เสียภาษี : "+c.TaxId)
-//	pt.SetAlign("right")
-//
-//	pt.WriteStringLines("	Cashier : "+s.CreateBy)
-//
-//	pt.WriteStringLines("       วันที่ :"+s.Created.Format("02-01-2006 15:04:05"))
-//	pt.WriteStringLines("   เลขที่ : "+s.DocNo)
-//	pt.WriteStringLines("      Pos Id : "+s.HostCode+"\n")
-//	pt.LineFeed()
-//	makeline(pt)
-//	///////////////////////////////////////////////////////////////////////////////////
-//
-//	pt.SetFont("B")
-//	pt.WriteStringLines("  ")
-//	pt.WriteStringLines("รายการ" )
-//	pt.WriteStringLines("                 ")
-//	pt.WriteStringLines("จำนวน/หน่วย")
-//	pt.WriteStringLines("     ")
-//	pt.WriteStringLines("ราคา" )
-//	pt.WriteStringLines("    ")
-//	pt.WriteStringLines("รวม\n" )
-//	pt.FormfeedN(3)
-//	makeline(pt)
-//	///////////////////////////////////////////////////////////////////////////////////
-//	for _, sub := range s.SaleSubs {
-//		var vLineNumber int
-//
-//		vLineNumber = sub.Line+1
-//
-//		pt.SetFont("B")
-//		pt.WriteStringLines("  "+strconv.Itoa(vLineNumber)+"."+sub.ItemName )
-//		pt.WriteStringLines("    "+strconv.Itoa(sub.Qty)+" "+sub.Unit)
-//		pt.WriteStringLines("      ")
-//		pt.WriteStringLines(strconv.FormatFloat(sub.Price, 'f', -1, 64))
-//		pt.WriteStringLines("      ")
-//		pt.WriteStringLines(strconv.FormatFloat(sub.Amount, 'f', -1, 64)+"\n")
-//		pt.FormfeedN(3)
-//	}
-//	makeline(pt)
-//	////////////////////////////////////////////////////////////////////////////////////
-//	pt.SetFont("B")
-//	pt.WriteStringLines("รวมเป็นเงิน ")
-//	pt.WriteStringLines("                                   ")
-//	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
-//	makeline(pt)
-//	// Footer Area
-//	pt.SetFont("A")
-//	pt.SetAlign("center")
-//	pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
-//	pt.Formfeed()
-//	pt.Write("*** Completed ***")
-//	pt.Formfeed()
-//	pt.Cut()
-//	pt.End()
-//
-//	return nil
-//}
+func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
+
+	f, err := net.Dial("tcp", c.Printer1Port)
+
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	p := escpos.New(w)
+
+	pt := hw.PosPrinter{p,w}
+	pt.Init()
+	pt.SetLeftMargin(20)
+	//pt.PrintRegistrationBitImage(0, 0)
+	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	pt.SetCharaterCode(26)
+	pt.SetAlign("center")
+	pt.SetFont("B")
+	pt.WriteStringLines(c.CompanyName+"\n")
+	pt.SetAlign("center")
+	pt.WriteStringLines(c.Address+"\n")
+	pt.SetAlign("center")
+	pt.WriteStringLines("ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ\n")
+	pt.WriteStringLines("เลขประตัวผู้เสียภาษี "+c.TaxId+"\n")
+	pt.WriteStringLines("ใบกำกับภาษีอย่างย่อ\n")
+	pt.SetAlign("left")
+	pt.WriteStringLines(" เลขเครื่อง : "+s.HostCode+"\n")
+	pt.WriteStringLines(" พนักงาน : "+s.CreateBy)
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+	var CountItem int
+	var CountQty int
+	for _, subcount := range s.SaleSubs {
+		CountItem = CountItem+1
+		CountQty = CountQty+subcount.Qty
+	}
+
+	fmt.Println("CountItem =",CountItem, CountQty )
+	///////////////////////////////////////////////////////////////////////////////////
+	for _, sub := range s.SaleSubs {
+		var vAtHome string
+
+		if (sub.IsAtHome==1){
+			vAtHome = "H"
+		}else{
+			vAtHome = ""
+		}
+		pt.SetFont("B")
+		if (sub.Description==""){
+			pt.WriteStringLines(" "+sub.ItemName+"\n")
+		}else{
+			pt.WriteStringLines(" "+sub.ItemName+" ("+sub.Description+" )"+"\n")
+		}
+		if (vAtHome == "H"){
+			pt.WriteStringLines(" "+strconv.FormatFloat(sub.Price, 'f', -1, 64)+"X"+strconv.Itoa(sub.Qty)+" "+sub.Unit+" ("+vAtHome+")")
+		}else{
+			pt.WriteStringLines(" "+strconv.FormatFloat(sub.Price, 'f', -1, 64)+"X"+strconv.Itoa(sub.Qty)+" "+sub.Unit)
+		}
+
+		pt.WriteStringLines("      ")
+		pt.WriteStringLines(strconv.FormatFloat(sub.Amount, 'f', -1, 64)+" V"+"\n")
+		pt.WriteStringLines(" "+strconv.Itoa(CountItem)+"  "+strconv.Itoa(CountQty)+"ชิ้น\n")
+		pt.FormfeedN(3)
+	}
+	makeline(pt)
+	////////////////////////////////////////////////////////////////////////////////////
+	pt.SetFont("B")
+	pt.WriteStringLines(" รวม ")
+	pt.WriteStringLines("                                   ")
+	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
+	makeline(pt)
+	// Footer Area
+	pt.SetFont("A")
+	pt.SetAlign("center")
+	pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
+	pt.Formfeed()
+	pt.Write("*** Completed ***")
+	pt.Formfeed()
+	pt.Cut()
+	pt.End()
+
+	return nil
+}
 
 func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 
@@ -400,11 +404,11 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.SetFont("B")
 	pt.WriteStringLines("  ")
 	pt.WriteStringLines("รายการ" )
-	pt.WriteStringLines("                    ")
+	pt.WriteStringLines("                   ")
 	pt.WriteStringLines("จำนวน/หน่วย")
 	pt.WriteStringLines("  ")
 	pt.WriteStringLines("ราคา" )
-	pt.WriteStringLines("    ")
+	pt.WriteStringLines("   ")
 	pt.WriteStringLines("รวม\n" )
 	pt.FormfeedN(3)
 	makeline(pt)
@@ -414,7 +418,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 	for _, sub := range s.SaleSubs {
 
 		vLen := len(sub.ItemName)
-		vDiff := 28- (vLen/3)
+		vDiff := 25- (vLen/3)
 
 		if (vDiff < 0){
 			vDiffEmpty = 0
@@ -435,7 +439,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 			pt.WriteStringLines("  " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
 			pt.WriteStringLines("    ")
 			pt.WriteStringLines(strconv.FormatFloat(sub.Price, 'f', -1, 64))
-			pt.WriteStringLines("     ")
+			pt.WriteStringLines("    ")
 			pt.WriteStringLines(strconv.FormatFloat(sub.Amount, 'f', -1, 64) + "\n")
 			pt.FormfeedN(3)
 		}else{
@@ -445,7 +449,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 			pt.WriteStringLines("  " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
 			pt.WriteStringLines("    ")
 			pt.WriteStringLines(strconv.FormatFloat(sub.Price, 'f', -1, 64))
-			pt.WriteStringLines("     ")
+			pt.WriteStringLines("    ")
 			pt.WriteStringLines(strconv.FormatFloat(sub.Amount, 'f', -1, 64) + "\n")
 			pt.FormfeedN(3)
 		}
@@ -456,7 +460,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 	////////////////////////////////////////////////////////////////////////////////////
 	pt.SetFont("B")
 	pt.WriteStringLines("รวมเป็นเงิน ")
-	pt.WriteStringLines("                                   ")
+	pt.WriteStringLines("                                 ")
 	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
 	makeline(pt)
 	// Footer Area
