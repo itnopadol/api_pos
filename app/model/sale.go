@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"strings"
+	"bytes"
 )
 
 
@@ -256,7 +257,7 @@ func (s *Sale)SearchSaleById(db *sqlx.DB, id int64) error{
 
 func GetConfig(db *sqlx.DB)(config *Config){
 	cf := new(Config)
-	sql := `select ifnull(company_name,'') as company_name,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port from config`
+	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port from config`
 	fmt.Println("Config = ",sql)
 	err := db.Get(cf,sql)
 	if err != nil {
@@ -268,10 +269,49 @@ func GetConfig(db *sqlx.DB)(config *Config){
 	return config
 }
 
+func Commaf(v float64) string {
+	buf := &bytes.Buffer{}
+	if v < 0 {
+		buf.Write([]byte{'-'})
+		v = 0 - v
+	}
+
+	comma := []byte{','}
+
+	parts := strings.Split(strconv.FormatFloat(v, 'f', 2, 64), ".")
+	pos := 0
+	if len(parts[0])%3 != 0 {
+		pos += len(parts[0]) % 3
+		buf.WriteString(parts[0][:pos])
+		buf.Write(comma)
+	}
+	for ; pos < len(parts[0]); pos += 3 {
+		buf.WriteString(parts[0][pos : pos+3])
+		buf.Write(comma)
+	}
+	buf.Truncate(buf.Len() - 1)
+
+	if len(parts) > 1 {
+		buf.Write([]byte{'.'})
+		buf.WriteString(parts[1])
+	}
+	return buf.String()
+}
+
 var vQueID int
 var printerIP string
 
 func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
+	var vTaxAmount float64
+	var vBeforeTaxAmount float64
+
+	s.TotalAmount = toFixed(s.TotalAmount,2)
+	vTaxAmount = toFixed(s.TotalAmount-((s.TotalAmount*100)/(100+float64(s.TaxRate))),2)
+	vBeforeTaxAmount = toFixed(s.TotalAmount-vTaxAmount,2)
+
+	s.BeforeTaxAmount = vBeforeTaxAmount
+	s.TaxAmount = vTaxAmount
+
 
 	f, err := net.Dial("tcp", c.Printer1Port)
 
@@ -287,7 +327,9 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.Init()
 	pt.SetLeftMargin(20)
 	//pt.PrintRegistrationBitImage(0, 0)
-	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+	//pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+	//pt.WriteRaw([]byte{28, 112, 1, 0})
+	//pt.WriteRaw([]byte{28, 112, 1, 1})
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	pt.SetCharaterCode(26)
@@ -296,13 +338,14 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.WriteStringLines(c.CompanyName+"\n")
 	pt.SetAlign("center")
 	pt.WriteStringLines(c.Address+"\n")
+	fmt.Println(c.Address)
 	pt.SetAlign("center")
 	pt.WriteStringLines("ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ\n")
 	pt.WriteStringLines("เลขประตัวผู้เสียภาษี "+c.TaxId+"\n")
 	pt.WriteStringLines("ใบกำกับภาษีอย่างย่อ\n")
 	pt.SetAlign("left")
 	pt.WriteStringLines(" เลขเครื่อง : "+s.HostCode+"\n")
-	pt.WriteStringLines(" พนักงาน : "+s.CreateBy)
+	pt.WriteStringLines(" พนักงาน : "+s.CreateBy+"\n")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	var CountItem int
@@ -316,6 +359,9 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 	///////////////////////////////////////////////////////////////////////////////////
 	for _, sub := range s.SaleSubs {
 		var vAtHome string
+		var vDiffEmpty int
+		var vDiffOld int
+		var vItemPriceAmount string
 
 		if (sub.IsAtHome==1){
 			vAtHome = "H"
@@ -328,23 +374,51 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 		}else{
 			pt.WriteStringLines(" "+sub.ItemName+" ("+sub.Description+" )"+"\n")
 		}
-		if (vAtHome == "H"){
-			pt.WriteStringLines(" "+strconv.FormatFloat(sub.Price, 'f', -1, 64)+"X"+strconv.Itoa(sub.Qty)+" "+sub.Unit+" ("+vAtHome+")")
-		}else{
-			pt.WriteStringLines(" "+strconv.FormatFloat(sub.Price, 'f', -1, 64)+"X"+strconv.Itoa(sub.Qty)+" "+sub.Unit)
+
+		vItemPriceAmount = " "+strconv.FormatFloat(sub.Price, 'f', 2, 64)+" X "+strconv.Itoa(sub.Qty)+" "+sub.Unit
+
+		vLen := len(vItemPriceAmount)
+		vDiff := 28- (vLen/3)
+
+		if (vDiff < 0){
+			vDiffEmpty = 0
+		}else {
+			vDiffEmpty = vDiff
 		}
 
+		vDiffOld = vDiffEmpty
+
+		fmt.Println("ItemName=",sub.ItemName)
+		fmt.Println("Len",vLen/3)
+		fmt.Println("Diff ",vDiff)
+
+		if (sub.Line == 0 ) {
+			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffEmpty))
+		}else{
+			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffOld))
+		}
 		pt.WriteStringLines("      ")
-		pt.WriteStringLines(strconv.FormatFloat(sub.Amount, 'f', -1, 64)+" V"+"\n")
-		pt.WriteStringLines(" "+strconv.Itoa(CountItem)+"  "+strconv.Itoa(CountQty)+"ชิ้น\n")
+		pt.WriteStringLines(Commaf(sub.Amount)+"V"+"  "+vAtHome+"\n")
 		pt.FormfeedN(3)
 	}
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
-	pt.SetFont("B")
+	pt.SetFont("A")
+	pt.WriteStringLines(" "+strconv.Itoa(CountItem)+" รายการ "+strconv.FormatFloat(float64(CountQty), 'f', 2, 64)+"ชิ้น\n")
 	pt.WriteStringLines(" รวม ")
-	pt.WriteStringLines("                                   ")
-	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
+	pt.WriteStringLines("                          ")
+	//pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', 2, 64)+"\n")
+	pt.WriteStringLines(Commaf(s.TotalAmount)+"\n")
+	////////////////////////////////////////////////////////////////////////////////////
+	pt.SetFont("B")
+	pt.WriteStringLines(" มูลค่าสินค้ามีภาษีมูลค่าเพิ่ม"+"                       "+Commaf(vBeforeTaxAmount)+"\n")
+	pt.WriteStringLines(" ภาษีมูลค่าเพิ่ม"+strconv.Itoa(c.TaxRate)+"%"+"                                "+Commaf(vTaxAmount)+"\n")
+	pt.WriteStringLines(" ชำระด้วยเงินสด" +"                              "+Commaf(s.PayAmount)+"\n")
+	pt.WriteStringLines(" เงินทอน" +"                                      "+Commaf(s.ChangeAmount)+"\n")
+	pt.WriteStringLines(" เลขที่ :"+ s.DocNo+"\n")
+	pt.WriteStringLines(" วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
+	pt.WriteStringLines(" V = สินค้ามีภาษีมูลค่าเพิ่ม"+"\n")
+	pt.WriteStringLines(" ราคานี้รวมภาษีมูลค่าเพิ่มแล้ว"+"\n")
 	makeline(pt)
 	// Footer Area
 	pt.SetFont("A")
@@ -354,6 +428,7 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.Write("*** Completed ***")
 	pt.Formfeed()
 	pt.Cut()
+	pt.OpenCashBox()
 	pt.End()
 
 	return nil
@@ -521,8 +596,9 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 
+	var vLineNumber int
+	vLineNumber = 0
 	for _, sub := range s.SaleSubs {
-		var vLineNumber int
 		var vAtHome string
 
 		if (sub.IsAtHome==1){
@@ -531,7 +607,7 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 			vAtHome = "-"
 		}
 		if (sub.IsKitchen==1) {
-			vLineNumber = sub.Line + 1
+			vLineNumber = vLineNumber+1
 			pt.SetTextSize(0, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")

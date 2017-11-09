@@ -16,9 +16,24 @@ func GetItemById(c *gin.Context) {
 	log.Println("call GET Item")
 	c.Keys = headerKeys
 
-	str := fmt.Sprintf("%2d%s/%s", 1, "Espresso Cold", "Take Home")
+	//s := strconv.FormatFloat(3.00, 'E', -1, 64)
+	//fmt.Println("SSS=",s)
+	//
+	//f := 64.0000
+	//s1 := strconv.FormatFloat(f, 'g', 2, 64)
+	//fmt.Println(s1)
+	//s4 := strconv.FormatFloat(f, 'f', 2, 64)
+	//fmt.Println(s4)
+	//
+	//s2 := strconv.FormatFloat(f, 'g', 2, 64)
+	//fmt.Println(s2)
+	//s3 := strconv.FormatFloat(f, 'f', 2, 64)
+	//fmt.Println(s3)
+	//
+	//i := 5
+	//fl:= float64(i)
+	//fmt.Printf("f is %f\n", fl)
 
-	fmt.Println("Test Text String"+str)
 
 	strId := c.Param("id")
 	id, _ := strconv.ParseInt(strId, 10, 64)

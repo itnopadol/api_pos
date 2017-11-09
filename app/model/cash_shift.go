@@ -203,7 +203,7 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(0, 0)
-	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
+	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate.Format("02-01-2006 15:04:05"))
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
