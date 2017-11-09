@@ -200,10 +200,12 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
 
 	//////////////////////////////////////////////////////////////////////////////////////
+	//vDocDate time.Time
+
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(0, 0)
-	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate.Format("02-01-2006 15:04:05"))
+	pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
