@@ -106,8 +106,8 @@
       <file leaf-file-name="cash_shift.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/cash_shift.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="204" column="26" lean-forward="true" selection-start-line="204" selection-start-column="26" selection-end-line="204" selection-end-column="26" />
+            <state relative-caret-position="128">
+              <caret line="111" column="0" lean-forward="true" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
               <folding>
                 <element signature="e#15#154#0" expanded="true" />
                 <element signature="e#167#1121#0" expanded="false" />
@@ -117,18 +117,11 @@
                 <element signature="n#!!block;n#ShiftDetails#0" expanded="false" />
                 <element signature="n#!!block;n#SearchShiftByKeyword#0" expanded="false" />
                 <element signature="n#!!block;n#makeline#0" expanded="false" />
-                <marker date="1510211611755" expanded="true" signature="1450:1536" ph="select count... cash_shift" />
-                <marker date="1510211611755" expanded="true" signature="1700:1857" ph="INSERT INTO cash_shift... " />
-                <marker date="1510211611755" expanded="true" signature="2144:2190" ph="UPDATE host... " />
-                <marker date="1510211611755" expanded="true" signature="2534:2620" ph="select count... cash_shift" />
-                <marker date="1510211611755" expanded="true" signature="2857:3032" ph="UPDATE cash_shift... " />
-                <marker date="1510211611755" expanded="true" signature="3762:3848" ph="select count... cash_shift" />
-                <marker date="1510211611755" expanded="true" signature="4013:4168" ph="UPDATE cash_shift... " />
-                <marker date="1510211611755" expanded="true" signature="4375:4421" ph="UPDATE host... " />
-                <marker date="1510211611755" expanded="true" signature="5168:5389" ph="select host_... cash_shift" />
-                <marker date="1510211611755" expanded="true" signature="6748:7073" ph="select id,ho... cash_shift" />
-                <marker date="1510211611755" expanded="true" signature="6833:6900" ph="select sum(c... cash_shift" />
-                <marker date="1510211611755" expanded="true" signature="6922:6993" ph="select sum(e... cash_shift" />
+                <element signature="n#!!block;n#PrintSendDailyTotal#0" expanded="false" />
+                <marker date="1510212612563" expanded="true" signature="1700:1857" ph="INSERT INTO cash_shift... " />
+                <marker date="1510212612563" expanded="true" signature="3691:3777" ph="select count... cash_shift" />
+                <marker date="1510212612563" expanded="true" signature="4022:4177" ph="UPDATE cash_shift... " />
+                <marker date="1510212612563" expanded="true" signature="4384:4430" ph="UPDATE host... " />
               </folding>
             </state>
           </provider>
@@ -357,7 +350,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32913387" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32913387" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913387" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -782,8 +775,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/cash_shift.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="204" column="26" lean-forward="true" selection-start-line="204" selection-start-column="26" selection-end-line="204" selection-end-column="26" />
+        <state relative-caret-position="128">
+          <caret line="111" column="0" lean-forward="true" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
           <folding>
             <element signature="e#15#154#0" expanded="true" />
             <element signature="e#167#1121#0" expanded="false" />
@@ -793,18 +786,11 @@
             <element signature="n#!!block;n#ShiftDetails#0" expanded="false" />
             <element signature="n#!!block;n#SearchShiftByKeyword#0" expanded="false" />
             <element signature="n#!!block;n#makeline#0" expanded="false" />
-            <marker date="1510211611755" expanded="true" signature="1450:1536" ph="select count... cash_shift" />
-            <marker date="1510211611755" expanded="true" signature="1700:1857" ph="INSERT INTO cash_shift... " />
-            <marker date="1510211611755" expanded="true" signature="2144:2190" ph="UPDATE host... " />
-            <marker date="1510211611755" expanded="true" signature="2534:2620" ph="select count... cash_shift" />
-            <marker date="1510211611755" expanded="true" signature="2857:3032" ph="UPDATE cash_shift... " />
-            <marker date="1510211611755" expanded="true" signature="3762:3848" ph="select count... cash_shift" />
-            <marker date="1510211611755" expanded="true" signature="4013:4168" ph="UPDATE cash_shift... " />
-            <marker date="1510211611755" expanded="true" signature="4375:4421" ph="UPDATE host... " />
-            <marker date="1510211611755" expanded="true" signature="5168:5389" ph="select host_... cash_shift" />
-            <marker date="1510211611755" expanded="true" signature="6748:7073" ph="select id,ho... cash_shift" />
-            <marker date="1510211611755" expanded="true" signature="6833:6900" ph="select sum(c... cash_shift" />
-            <marker date="1510211611755" expanded="true" signature="6922:6993" ph="select sum(e... cash_shift" />
+            <element signature="n#!!block;n#PrintSendDailyTotal#0" expanded="false" />
+            <marker date="1510212612563" expanded="true" signature="1700:1857" ph="INSERT INTO cash_shift... " />
+            <marker date="1510212612563" expanded="true" signature="3691:3777" ph="select count... cash_shift" />
+            <marker date="1510212612563" expanded="true" signature="4022:4177" ph="UPDATE cash_shift... " />
+            <marker date="1510212612563" expanded="true" signature="4384:4430" ph="UPDATE host... " />
           </folding>
         </state>
       </provider>

@@ -111,12 +111,10 @@ func (ch *Shift)UpdateShift(db *sqlx.DB) error{
 }
 
 func (ch *Shift)ClosedShift(db *sqlx.DB) error{
-	//now := time.Now()
-	//fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
+	now := time.Now()
+	fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
 
-	//fmt.Println("docdate = ",ch.DocDate)
-	//fmt.Println("host_code = ",ch.HostCode)
-
+	ch.Closed = now
 	var checkCount int
 	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
 	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
@@ -124,6 +122,9 @@ func (ch *Shift)ClosedShift(db *sqlx.DB) error{
 		fmt.Println(err.Error())
 		return err
 	}
+
+	fmt.Println("docdate = ",ch.DocDate)
+	fmt.Println("host_code = ",ch.HostCode)
 
 	if (checkCount != 0) {
 		sql := `UPDATE cash_shift set change_amount = ?,cash_amount = ?,expenses_amount = ?, is_closed = ?,closed_by = ?, closed = ? where  host_code = ? and doc_date  = ?`
@@ -196,8 +197,6 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 	pt := hw.PosPrinter{p,w}
 	pt.Init()
 	pt.SetLeftMargin(20)
-	//pt.PrintRegistrationBitImage(0, 0)
-	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	//vDocDate time.Time
