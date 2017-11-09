@@ -29,7 +29,8 @@ func main() {
 	r.POST("/sale", ctrl.SaleSave)
 	r.GET("/sales", ctrl.SearchSales)
 	r.GET("/sale/:id", ctrl.SearchSaleById)
-	//r.GET("/sale/saledaily", ctrl.PrintSaleDailyTotal)
+	r.GET("/sales/saledaily", ctrl.PrintSaleDailyTotal)
+
 
 	r.POST("/shift/open", ctrl.SaveShift)
 	r.PUT("/shift/update", ctrl.UpdateShift)

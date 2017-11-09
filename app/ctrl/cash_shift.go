@@ -137,8 +137,8 @@ func PrintSendDailyTotal(c *gin.Context){
 
 	doc_date := c.Request.URL.Query().Get("doc_date")
 
-	NewSale := new(model.Shift)
-	sales, err := NewSale.PrintSendDailyTotal(dbc,doc_date)
+	NewShift := new(model.Shift)
+	shifts, err := NewShift.PrintSendDailyTotal(dbc,doc_date)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
@@ -146,7 +146,7 @@ func PrintSendDailyTotal(c *gin.Context){
 		c.JSON(http.StatusNotFound, rs)
 	}else{
 		rs.Status = "success"
-		rs.Data = sales
+		rs.Data = shifts
 		c.JSON(http.StatusOK, rs)
 	}
 

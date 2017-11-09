@@ -234,18 +234,18 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, doc_date string)(shifts []*Shift
 		pt.SetFont("B")
 		pt.WriteStringLines("     "+strconv.Itoa(vLineNumber)+".")
 		pt.WriteStringLines("           "+s.HostCode)
-		pt.WriteStringLines("        "+strconv.FormatFloat(s.CashAmount, 'f', -1, 64) )
-		pt.WriteStringLines("             "+strconv.FormatFloat(s.ExpensesAmount, 'f', -1, 64)+"\n")
+		pt.WriteStringLines("        "+CommaFloat(s.CashAmount) )
+		pt.WriteStringLines("             "+CommaFloat(s.ExpensesAmount)+"\n")
 		pt.FormfeedN(3)
 	}
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
 
-	fmt.Println("SumCashAmount = ",shifts[0].SumCashAmount)
+	fmt.Println("SumCashAmount = ",CommaFloat(shifts[0].SumCashAmount))
 	pt.SetFont("B")
 	pt.WriteStringLines("รวมเป็นเงิน ")
 	pt.WriteStringLines("                 ")
-	pt.WriteStringLines(strconv.FormatFloat(shifts[0].SumCashAmount, 'f', -1, 64)+" บาท")
+	pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount)+" บาท")
 	pt.WriteStringLines("        ")
 	pt.WriteStringLines(strconv.FormatFloat(shifts[0].SumExpensesAmount, 'f', -1, 64)+" บาท\n")
 	makeline(pt)
