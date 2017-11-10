@@ -136,8 +136,6 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 		s.BeforeTaxAmount = vBeforeTaxAmount
 		s.TaxAmount = vTaxAmount
 
-		s.CreateBy = "somrod"
-
 		s.DocNo = GenDocno(db,s.HostCode)
 		s.QueId = LastQueId(db)
 
