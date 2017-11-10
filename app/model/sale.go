@@ -46,6 +46,8 @@ type Sale struct {
 	SumChangeAmountAll float64 `json:"sum_change_amount_all" db:"sum_change_amount_all"`
 	NetAmount float64 `json:"net_amount" db:"net_amount"`
 	NetAmountAll float64 `json:"net_amount_all" db:"net_amount_all"`
+	BillCount int `json:"bill_count" db:"bill_count"`
+	BillCountAll int `json:"bill_count_all" db:"bill_count_all"`
 
 	SaleSubs []*SaleSub `json:"sale_subs"`
 }
@@ -140,7 +142,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 		s.QueId = LastQueId(db)
 
 	fmt.Println("*Sale.Save() start")
-	sql1 := `INSERT INTO sale(host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted,create_by,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	sql1 := `INSERT INTO sale(host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted,create_by,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 		fmt.Println("*Sale.Save()",sql1)
 		rs, err := db.Exec(sql1,
 			s.HostCode,
@@ -157,8 +159,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 			s.TaxAmount,
 			s.IsCancel,
 			s.IsPosted,
-			s.CreateBy,
-			s.Created)
+			s.CreateBy)
 	if err != nil {
 		fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
 		return "", err
@@ -335,6 +336,11 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	pt.SetCharaterCode(26)
+	pt.SetAlign("center")
+	pt.SetTextSize(1, 1)
+	pt.WriteStringLines("คิวเลขที่ : "+strconv.Itoa(s.QueId))
+	pt.LineFeed()
+	pt.SetTextSize(0, 0)
 	pt.SetAlign("center")
 	pt.SetFont("B")
 	pt.WriteStringLines(c.CompanyName+"\n")
@@ -637,8 +643,11 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	return nil
 }
 
-func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, doc_date string)(sales []*Sale, err error){
+func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string)(sales []*Sale, err error){
+	var sql string
+
 	s.DocDate = doc_date
+	s.HostCode = host_code
 
 	fmt.Println("DOCDATE = ",doc_date,s.DocDate)
 
@@ -669,7 +678,10 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, doc_date string)(sales []*Sale, e
 	pt.SetTextSize(0, 0)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
-	sql := `select distinct host_code,doc_date,
+	if(s.HostCode == ""){
+		sql = `select distinct host_code,doc_date,
+			(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
+			(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
 			(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount_all,
 			(select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_change_amount_all,
 			(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as net_amount_all,
@@ -677,7 +689,22 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, doc_date string)(sales []*Sale, e
 			(select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_change_amount,
 			(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
 			from sale a where doc_date = ? and is_cancel = 0 order by host_code`
-	err = db.Select(&sales, sql, doc_date)
+		err = db.Select(&sales, sql, doc_date)
+	}else{
+		sql = `	select distinct host_code,doc_date,
+		    (select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
+			(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
+			(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount_all,
+			(select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as sum_change_amount_all,
+			(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as net_amount_all,
+			(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_cash_amount,
+			(select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_change_amount,
+			(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
+			from sale a where host_code = ? and doc_date = ? and is_cancel = 0 order by host_code`
+		err = db.Select(&sales, sql, host_code, doc_date)
+	}
+
+	fmt.Println("sql = ",sql, host_code, doc_date)
 	if err != nil {
 		return nil, err
 	}
@@ -699,23 +726,31 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, doc_date string)(sales []*Sale, e
 		vLineNumber = vLineNumber+1
 		pt.SetFont("B")
 		pt.WriteStringLines("    "+strconv.Itoa(vLineNumber)+"."+s.HostCode)
-		pt.WriteStringLines("        "+strconv.FormatFloat(s.SumCashAmount, 'f', -1, 64) )
-		pt.WriteStringLines("            "+strconv.FormatFloat(s.SumChangeAmount, 'f', -1, 64) )
-		pt.WriteStringLines("             "+strconv.FormatFloat(s.NetAmount, 'f', -1, 64)+"\n")
+		pt.WriteStringLines("      "+CommaFloat(s.SumCashAmount))
+		pt.WriteStringLines("         "+CommaFloat(s.SumChangeAmount))
+		pt.WriteStringLines("          "+CommaFloat(s.NetAmount)+"\n")
 		pt.FormfeedN(3)
 	}
 	makeline(pt)
-	//////////////////////////////////////////////////////////////////////////////////
+	pt.SetAlign("left")
+	pt.SetFont("B")
+	if(s.HostCode==""){
+		pt.WriteStringLines("จำนวนบิลทั้งหมด "+strconv.Itoa(sales[0].BillCountAll)+" บิล\n")
+	}else{
+		pt.WriteStringLines("จำนวนบิลทั้งหมด "+strconv.Itoa(sales[0].BillCount)+" บิล\n")
+	}
 
+	//////////////////////////////////////////////////////////////////////////////////
+	makeline(pt)
 	fmt.Println("SumCashAmount = ",sales[0].SumCashAmount )
 	pt.SetFont("B")
 	pt.WriteStringLines("รวมเป็นเงิน ")
-	pt.WriteStringLines("      ")
-	pt.WriteStringLines(strconv.FormatFloat(sales[0].SumCashAmountAll , 'f', -1, 64))
-	pt.WriteStringLines("            ")
-	pt.WriteStringLines(strconv.FormatFloat(sales[0].SumChangeAmountAll, 'f', -1, 64))
-	pt.WriteStringLines("            ")
-	pt.WriteStringLines(strconv.FormatFloat(sales[0].NetAmountAll, 'f', -1, 64)+"\n")
+	pt.WriteStringLines("    ")
+	pt.WriteStringLines(CommaFloat(sales[0].SumCashAmountAll))
+	pt.WriteStringLines("         ")
+	pt.WriteStringLines(CommaFloat(sales[0].SumChangeAmountAll))
+	pt.WriteStringLines("          ")
+	pt.WriteStringLines(CommaFloat(sales[0].NetAmountAll)+"\n")
 	makeline(pt)
 	pt.Cut()
 	pt.End()

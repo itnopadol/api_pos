@@ -107,10 +107,11 @@ func PrintSaleDailyTotal(c *gin.Context){
 	log.Println("call Get SearchSales")
 	c.Keys = headerKeys
 
+	host_code := c.Request.URL.Query().Get("host_code")
 	doc_date := c.Request.URL.Query().Get("doc_date")
 
 	NewSale := new(model.Sale)
-	sales, err := NewSale.PrintSaleDailyTotal(dbc,doc_date)
+	sales, err := NewSale.PrintSaleDailyTotal(dbc, host_code, doc_date)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
