@@ -654,7 +654,6 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string
 	config := new(Config)
 	config = GetConfig(db)
 
-
 	f, err := net.Dial("tcp", config.Printer1Port)
 
 	if err != nil {
@@ -670,6 +669,7 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string
 	pt.SetLeftMargin(20)
 
 	//////////////////////////////////////////////////////////////////////////////////////
+	pt.WriteRaw([]byte{28, 112, 1, 0})
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(0, 0)
@@ -727,8 +727,8 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string
 		pt.SetFont("B")
 		pt.WriteStringLines("    "+strconv.Itoa(vLineNumber)+"."+s.HostCode)
 		pt.WriteStringLines("      "+CommaFloat(s.SumCashAmount))
-		pt.WriteStringLines("         "+CommaFloat(s.SumChangeAmount))
-		pt.WriteStringLines("          "+CommaFloat(s.NetAmount)+"\n")
+		pt.WriteStringLines("        "+CommaFloat(s.SumChangeAmount))
+		pt.WriteStringLines("        "+CommaFloat(s.NetAmount)+"\n")
 		pt.FormfeedN(3)
 	}
 	makeline(pt)
@@ -747,9 +747,9 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string
 	pt.WriteStringLines("รวมเป็นเงิน ")
 	pt.WriteStringLines("    ")
 	pt.WriteStringLines(CommaFloat(sales[0].SumCashAmountAll))
-	pt.WriteStringLines("         ")
+	pt.WriteStringLines("        ")
 	pt.WriteStringLines(CommaFloat(sales[0].SumChangeAmountAll))
-	pt.WriteStringLines("          ")
+	pt.WriteStringLines("        ")
 	pt.WriteStringLines(CommaFloat(sales[0].NetAmountAll)+"\n")
 	makeline(pt)
 	pt.Cut()

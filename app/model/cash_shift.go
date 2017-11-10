@@ -9,6 +9,10 @@ import (
 	//"bufio"
 	//"github.com/knq/escpos"
 	"github.com/itnopadol/api_pos/hw"
+	"net"
+	"bufio"
+	"github.com/knq/escpos"
+	"strconv"
 )
 
 type Shift struct {
@@ -69,6 +73,14 @@ func (ch *Shift)SaveShift(db *sqlx.DB) error{
 			return err
 		}
 	}else{
+
+		sql := `UPDATE cash_shift set is_closed = 0 ,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
+		_, err = db.Exec(sql, ch.EditedBy, ch.HostCode, ch.DocDate)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+
 		sqlsub := `UPDATE host set status = 1 where host_code = ?`
 		_, err = db.Exec(sqlsub, ch.HostCode)
 		if err != nil {
@@ -181,90 +193,90 @@ func makeline(pt hw.PosPrinter) {
 
 func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date string)(shifts []*Shift, err error){
 	var sql string
-	//s.DocDate = doc_date
-	//s.HostCode = host_code
-	//
-	//fmt.Println("DOCDATE = ",doc_date,s.DocDate)
-	//
-	////var today = time.Now()
-	////date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
-	//config := new(Config)
-	//config = GetConfig(db)
-	//
-	//f, err := net.Dial("tcp", config.Printer1Port)
-	//
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer f.Close()
-	//
-	//w := bufio.NewWriter(f)
-	//p := escpos.New(w)
-	//
-	//pt := hw.PosPrinter{p,w}
-	//pt.Init()
-	//pt.SetLeftMargin(20)
-	//
-	////////////////////////////////////////////////////////////////////////////////////////
-	////vDocDate time.Time
-	//
-	//pt.SetCharaterCode(26)
-	//pt.SetAlign("center")
-	//pt.SetTextSize(0, 0)
-	//pt.WriteStringLines("สรุปยอดขายประจำวัน : "+s.DocDate)
-	//pt.LineFeed()
-	//pt.SetTextSize(0, 0)
-	////pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
-	//makeline(pt)
+	s.DocDate = doc_date
+	s.HostCode = host_code
+
+	fmt.Println("DOCDATE = ",doc_date,s.DocDate)
+
+	//var today = time.Now()
+	//date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
+	config := new(Config)
+	config = GetConfig(db)
+
+	f, err := net.Dial("tcp", config.Printer1Port)
+
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	p := escpos.New(w)
+
+	pt := hw.PosPrinter{p,w}
+	pt.Init()
+	pt.SetLeftMargin(20)
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	//vDocDate time.Time
+
+	pt.SetCharaterCode(26)
+	pt.SetAlign("center")
+	pt.SetTextSize(0, 0)
+	pt.WriteStringLines("สรุปยอดำส่งประจำวัน : "+s.DocDate)
+	pt.LineFeed()
+	pt.SetTextSize(0, 0)
+	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
+	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	if(s.HostCode==""){
 		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = ? order by host_code`
 		err = db.Select(&shifts, sql,s.DocDate)
 	} else{
-		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where host_code = ? and doc_date = ? order by host_code`
+		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where host_code = ? and doc_date = ? order by host_code `
 		err = db.Select(&shifts, sql, s.HostCode, s.DocDate)
 	}
-	fmt.Println("sql = ",sql,s.HostCode,s.DocDate)
+	fmt.Println("sql = ", sql, s.HostCode, s.DocDate)
 	if err != nil {
 		return nil, err
 	}
 
-	//pt.SetFont("B")
-	//pt.SetAlign("left")
-	//pt.WriteStringLines(" จุดขาย")
-	//pt.WriteStringLines("  ")
-	//pt.WriteStringLines("   มูลค่าเงินสด" )
-	//pt.WriteStringLines("    ")
-	//pt.WriteStringLines("   มูลค่าใช้จ่าย\n" )
-	//pt.FormfeedN(3)
-	//makeline(pt)
-	/////////////////////////////////////////////////////////////////////////////////////
-	//var vLineNumber int
-	//for _, s := range shifts{
-	//	vLineNumber = vLineNumber+1
-	//	fmt.Println("Cash =", vLineNumber,s.CashAmount)
-	//	fmt.Println("Expense =",vLineNumber,s.ExpensesAmount)
-	//	pt.SetAlign("left")
-	//
-	//	pt.SetFont("B")
-	//	pt.WriteStringLines(" "+strconv.Itoa(vLineNumber)+"."+s.HostCode)
-	//	pt.WriteStringLines("        "+CommaFloat(s.CashAmount) )
-	//	pt.WriteStringLines("             "+CommaFloat(s.ExpensesAmount)+"\n")
-	//	pt.FormfeedN(3)
-	//}
-	//makeline(pt)
-	//////////////////////////////////////////////////////////////////////////////////////
-	//
-	//fmt.Println("SumCashAmount = ",CommaFloat(shifts[0].SumCashAmount))
-	//pt.SetFont("B")
-	//pt.WriteStringLines("รวมเป็นเงิน ")
-	//pt.WriteStringLines("         ")
-	//pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount)+" บาท")
-	//pt.WriteStringLines("        ")
-	//pt.WriteStringLines(CommaFloat(shifts[0].SumExpensesAmount)+" บาท\n")
-	//makeline(pt)
-	//pt.Cut()
-	//pt.End()
+	pt.SetFont("B")
+	pt.SetAlign("left")
+	pt.WriteStringLines(" จุดขาย")
+	pt.WriteStringLines("  ")
+	pt.WriteStringLines("      มูลค่าเงินสด" )
+	pt.WriteStringLines("         ")
+	pt.WriteStringLines("   มูลค่าใช้จ่าย\n" )
+	pt.FormfeedN(3)
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+	var vLineNumber int
+	for _, s := range shifts{
+		vLineNumber = vLineNumber+1
+		fmt.Println("Cash =", vLineNumber,s.CashAmount)
+		fmt.Println("Expense =",vLineNumber,s.ExpensesAmount)
+		pt.SetAlign("left")
+
+		pt.SetFont("B")
+		pt.WriteStringLines(" "+strconv.Itoa(vLineNumber)+"."+s.HostCode)
+		pt.WriteStringLines("         "+CommaFloat(s.CashAmount) )
+		pt.WriteStringLines("               "+CommaFloat(s.ExpensesAmount)+"\n")
+		pt.FormfeedN(3)
+	}
+	makeline(pt)
+	////////////////////////////////////////////////////////////////////////////////////
+
+	fmt.Println("SumCashAmount = ",CommaFloat(shifts[0].SumCashAmount))
+	pt.SetFont("B")
+	pt.WriteStringLines("รวมเป็นเงิน ")
+	pt.WriteStringLines("    ")
+	pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount)+" บาท")
+	pt.WriteStringLines("           ")
+	pt.WriteStringLines(CommaFloat(shifts[0].SumExpensesAmount)+" บาท\n")
+	makeline(pt)
+	pt.Cut()
+	pt.End()
 
 	return shifts, nil
 }

@@ -139,7 +139,7 @@ func PrintSendDailyTotal(c *gin.Context){
 	doc_date := c.Request.URL.Query().Get("doc_date")
 
 	NewShift := new(model.Shift)
-	shifts, err := NewShift.PrintSendDailyTotal(dbc,host_code, doc_date)
+	shifts, err := NewShift.PrintSendDailyTotal(dbc, host_code, doc_date)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
