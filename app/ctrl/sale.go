@@ -58,6 +58,30 @@ func SaleSave(c *gin.Context) {
 	}
 }
 
+func SaleVoid(c *gin.Context) {
+	log.Println("call POST SaleSave")
+	c.Keys = headerKeys
+
+	NewSale := &model.Sale{}
+	err := c.BindJSON(NewSale)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println("Start Controller Create Quotation")
+	err = NewSale.SaleVoid(dbc)
+
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content: " + err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	} else {
+		rs.Status = "success"
+		rs.Data = err
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
 func SearchSales(c *gin.Context){
 	log.Println("call Get SearchSales")
 	c.Keys = headerKeys

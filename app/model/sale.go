@@ -38,7 +38,7 @@ type Sale struct {
 	PostedBy		string `json:"posted_by" db:"posted_by"`
 	PostedDatetime 	*time.Time `json:"posted_datetime" db:"posted_datetime"`
 	CancelBy 		string `json:"cancel_by" db:"cancel_by"`
-	CancelDatetime 	*time.Time `json:"cancel_datetime" db:"cancel_datetime"`
+	Canceled 	*time.Time `json:"canceled" db:"canceled"`
 
 	SumCashAmount float64 `json:"sum_cash_amount" db:"sum_cash_amount"`
 	SumChangeAmount float64 `json:"sum_change_amount" db:"sum_change_amount"`
@@ -219,6 +219,37 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 	fmt.Println("Save data sucess: sale =", s)
 
 	return s.DocNo, nil
+}
+
+func (s *Sale) SaleVoid(db *sqlx.DB) error {
+	var checkCount int
+	sqlCheckExist := `select count(doc_no) as vCount from sale where id = ?`
+	err := db.Get(&checkCount, sqlCheckExist, s.Id)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	if(checkCount!=0) {
+		fmt.Println("*Sale.Save() start")
+		sql := `Update sale set is_cancel = 1, cancel_by = ?, canceled = CURRENT_TIMESTAMP() where id = ?)`
+		fmt.Println("*Sale.Save()", sql)
+		_, err = db.Exec(sql, s.Id)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+
+		sqlsub := `Update sale_sub set is_cancel = 1 where sale_id = ?)`
+		fmt.Println("*Sale.Save()", sql)
+		_, err = db.Exec(sqlsub, s.Id)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *Sale)SearchSales(db *sqlx.DB,host_code string,doc_date string,keyword string) (sales []*Sale, err error){
@@ -599,8 +630,8 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.WriteStringLines("   ")
 	pt.WriteStringLines("รายการ" )
 	pt.WriteStringLines("               ")
-	pt.WriteStringLines("จำนวน/หน่วย")
-	pt.WriteStringLines("          ")
+	pt.WriteStringLines("     จำนวน/หน่วย")
+	pt.WriteStringLines("     ")
 	pt.WriteStringLines("สถานะ\n" )
 	pt.FormfeedN(3)
 	makeline(pt)
@@ -621,10 +652,9 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 			pt.SetTextSize(0, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")
-			pt.WriteStringLines("   " + strconv.Itoa(vLineNumber) + "." + sub.ShortName)
-			pt.WriteStringLines("   ")
-			pt.WriteStringLines("     " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
-			pt.WriteStringLines("        " + vAtHome + "\n")
+			pt.WriteStringLines("   " + strconv.Itoa(vLineNumber) + "." + sub.ShortName+" ("+sub.Description+" )")
+			pt.WriteStringLines("    " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
+			pt.WriteStringLines("    " + vAtHome + "\n")
 			pt.FormfeedN(3)
 			pt.SetTextSize(1, 1)
 		}

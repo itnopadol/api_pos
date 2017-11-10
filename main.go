@@ -30,7 +30,7 @@ func main() {
 	r.GET("/sales", ctrl.SearchSales)
 	r.GET("/sale/:id", ctrl.SearchSaleById)
 	r.GET("/sales/saledaily", ctrl.PrintSaleDailyTotal)
-
+	r.PUT("/sale/void", ctrl.SaleVoid)
 
 	r.POST("/shift/open", ctrl.SaveShift)
 	r.PUT("/shift/update", ctrl.UpdateShift)
