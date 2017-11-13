@@ -27,9 +27,10 @@ func init(){
 }
 
 func ConnectMySql()(mydb *sqlx.DB){
-	dsn := "sa:[ibdkifu@tcp(192.168.1.250:3306)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"
+	//dsn := "sa:[ibdkifu@tcp(192.168.1.250:3306)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"//ใช้เวลาอัพขึ้น server
 	//dsn := "root:[ibdkifu88@tcp(nopadol.net:3306)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"
 	//dsn := "sa:[ibdkifu@tcp(app.nopadol.com:9010)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"
+	dsn := "sa:[ibdkifu@tcp(hapos.dyndns.org:9010)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"
 	mydb = sqlx.MustConnect("mysql",dsn)
 	if (mydb.Ping()!=nil){
 		fmt.Println("Error")

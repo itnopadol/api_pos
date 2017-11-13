@@ -650,9 +650,13 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 			pt.SetTextSize(0, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")
-			pt.WriteStringLines("   " + strconv.Itoa(vLineNumber) + "." + sub.ShortName+" ("+sub.Description+" )")
-			pt.WriteStringLines("    " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
-			pt.WriteStringLines("    " + vAtHome + "\n")
+			if (sub.Description != ""){
+				pt.WriteStringLines(strconv.Itoa(vLineNumber) + "." + sub.ShortName+"("+sub.Description+")")
+			}else{
+				pt.WriteStringLines(strconv.Itoa(vLineNumber) + "." + sub.ShortName)
+			}
+			pt.WriteStringLines(" " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
+			pt.WriteStringLines(" " + vAtHome + "\n")
 			pt.FormfeedN(3)
 			pt.SetTextSize(1, 1)
 		}

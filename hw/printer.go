@@ -386,3 +386,20 @@ func (e *PosPrinter) Image(params map[string]string, data string) {
 	e.gSend(byte('0'), byte('2'), []byte{})
 
 }
+
+//=============== ACTION ====================
+type action struct {
+	Name string      `json:"action"`
+	Data interface{} `json:"action_data"`
+}
+
+//=============== DO_GROUP ====================
+type doGroup struct {
+	actions []*action
+}
+
+func (g *doGroup) setTextSize(size int) {
+	a := &action{"set_text_size", size}
+	g.actions = append(g.actions, a)
+}
+
