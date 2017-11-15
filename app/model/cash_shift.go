@@ -201,10 +201,11 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 
 	//var today = time.Now()
 	//date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
-	config := new(Config)
-	config = GetConfig(db)
+	//config := new(Config)
+	//config = GetConfig(db)
 
-	f, err := net.Dial("tcp", config.Printer2Port)
+	//f, err := net.Dial("tcp", config.Printer2Port)
+	f, err := net.Dial("tcp",H.PrinterPort )
 
 	if err != nil {
 		panic(err)
