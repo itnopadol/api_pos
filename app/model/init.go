@@ -8,6 +8,8 @@ import (
 	"time"
 	"strings"
 	"bytes"
+	"net/http"
+	"io/ioutil"
 )
 
 
@@ -130,7 +132,6 @@ func GetLastDocNo(db *sqlx.DB, host_code string) (last_no int, err error){
 	return last_no, nil
 }
 
-
 func LastQueId(db *sqlx.DB) (que_id int){
 	sql := `select ifnull(max(que_id),0)+1 maxno from sale where year(doc_date) = year(CURDATE()) and month(doc_date) = month(CURDATE()) and day(doc_date) = day(CURDATE())`
 	fmt.Println("Query = ",sql)
@@ -153,7 +154,7 @@ func CommaFloat(v float64) string {
 
 	comma := []byte{','}
 
-	parts := strings.Split(strconv.FormatFloat(v, 'f', 2, 64), ".")
+	parts := strings.Split(strconv.FormatFloat(v, 'f', -1, 64), ".")
 	pos := 0
 	if len(parts[0])%3 != 0 {
 		pos += len(parts[0]) % 3
@@ -172,3 +173,72 @@ func CommaFloat(v float64) string {
 	}
 	return buf.String()
 }
+
+func genMikrotikPassword(c *Config) (password string) {
+	res, err := http.Get(c.LinkMikrotik)
+	if err != nil {
+		return ""
+	}
+	robots, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+
+	password = string(robots)
+
+	fmt.Println("robots = ",password)
+
+	return password
+}
+
+func GetConfig(db *sqlx.DB)(config *Config){
+	cf := new(Config)
+	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port, ifnull(link_mikrotik,'') as link_mikrotik from config`
+	fmt.Println("Config = ",sql)
+	err := db.Get(cf,sql)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	config = cf
+	return config
+}
+
+func GetHostPrinter(db *sqlx.DB, host_code string)(host *Host){
+	h := new(Host)
+	sql := `select ifnull(host_code,'') as host_code,ifnull(host_name,'') as host_name,ifnull(printer_port,'') as printer_port,ifnull(status,0) as status,active from host where host_code = ? and active = 1`
+	fmt.Println("Host = ",sql)
+	err := db.Get(h, sql, host_code)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	host = h
+	return host
+}
+func Commaf(v float64) string {
+		buf := &bytes.Buffer{}
+		if v < 0 {
+			buf.Write([]byte{'-'})
+			v = 0 - v
+		}
+
+		comma := []byte{','}
+
+		parts := strings.Split(strconv.FormatFloat(v, 'f', 2, 64), ".")
+		pos := 0
+		if len(parts[0])%3 != 0 {
+			pos += len(parts[0]) % 3
+			buf.WriteString(parts[0][:pos])
+			buf.Write(comma)
+		}
+		for ; pos < len(parts[0]); pos += 3 {
+			buf.WriteString(parts[0][pos : pos+3])
+			buf.Write(comma)
+		}
+		buf.Truncate(buf.Len() - 1)
+
+		if len(parts) > 1 {
+			buf.Write([]byte{'.'})
+			buf.WriteString(parts[1])
+		}
+		return buf.String()
+	}

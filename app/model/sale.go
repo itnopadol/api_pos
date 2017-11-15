@@ -9,11 +9,8 @@ import (
 	"net"
 	"github.com/itnopadol/api_pos/hw"
 	"strconv"
-
 	"strings"
-	"bytes"
 )
-
 
 // Sale เป็นหัวเอกสารขายแต่ละครั้ง
 type Sale struct {
@@ -69,6 +66,9 @@ type SaleSub struct {
 
 }
 
+var vQueID int
+var printerIP string
+
 func (s *Sale) ShowChangeAmount()(Amount float64,msg string, err error){
 	var Remain float64
 	var Change float64
@@ -101,6 +101,31 @@ func (s *Sale) ShowChangeAmount()(Amount float64,msg string, err error){
 	return Amount, msg, nil
 }
 
+func (s *Sale) CheckAmount()(status int, err error){
+	var TotalAmount float64
+	var ItemAmount float64
+	var Amount float64
+
+	TotalAmount = s.TotalAmount
+
+	for _, sub := range s.SaleSubs {
+		Amount = sub.Amount
+		ItemAmount = ItemAmount+Amount
+	}
+
+	if (TotalAmount != ItemAmount){
+		status = 1
+	}else {
+		status = 0
+	}
+
+	fmt.Println("TotalAmount =",TotalAmount)
+	fmt.Println("ItemAmount", ItemAmount)
+	fmt.Println("status", status)
+
+	return status, nil
+}
+
 func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 	var CheckRemain float64
 	var CheckChange float64
@@ -129,87 +154,120 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 
 	if CheckRemain == 0 {
 
-		s.TotalAmount = toFixed(s.TotalAmount,2)
-		vTaxAmount = toFixed(s.TotalAmount-((s.TotalAmount*100)/(100+float64(s.TaxRate))),2)
-		vBeforeTaxAmount = toFixed(s.TotalAmount-vTaxAmount,2)
+		fmt.Println("Host_Code = ",s.HostCode)
+		if(s.HostCode != ""){
+			checkAmount, _ := s.CheckAmount()
+			if err != nil {
+				return "Error Check ItemAmount", err
+			}
 
-		s.BeforeTaxAmount = vBeforeTaxAmount
-		s.TaxAmount = vTaxAmount
+			if(checkAmount==0){
+				s.TotalAmount = toFixed(s.TotalAmount,2)
+				vTaxAmount = toFixed(s.TotalAmount-((s.TotalAmount*100)/(100+float64(s.TaxRate))),2)
+				vBeforeTaxAmount = toFixed(s.TotalAmount-vTaxAmount,2)
 
-		s.DocNo = GenDocno(db,s.HostCode)
-		s.QueId = LastQueId(db)
+				s.BeforeTaxAmount = vBeforeTaxAmount
+				s.TaxAmount = vTaxAmount
 
-	fmt.Println("*Sale.Save() start")
-	sql1 := `INSERT INTO sale(host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted,create_by,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
-		fmt.Println("*Sale.Save()",sql1)
-		rs, err := db.Exec(sql1,
-			s.HostCode,
-			s.QueId,
-			s.DocNo,
-			s.DocDate,
-			s.TotalAmount,
-			s.PayAmount,
-			s.ChangeAmount,
-			s.Type,
-			s.TaxRate,
-			s.ItemAmount,
-			s.BeforeTaxAmount,
-			s.TaxAmount,
-			s.IsCancel,
-			s.IsPosted,
-			s.CreateBy)
-	if err != nil {
-		fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
-		return "", err
-	}
-	id, _ := rs.LastInsertId()
-	s.Id = uint64(id)
-	fmt.Println("s.MachineId =", s.Id)
+				s.DocNo = GenDocno(db,s.HostCode)
+				s.QueId = LastQueId(db)
 
-	var checkPrintSlipKitchen int
-	checkPrintSlipKitchen = 0
+				fmt.Println("*Sale.Save() start")
+				sql1 := `INSERT INTO sale(host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted,create_by,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
+				fmt.Println("*Sale.Save()",sql1)
+				rs, err := db.Exec(sql1,
+					s.HostCode,
+					s.QueId,
+					s.DocNo,
+					s.DocDate,
+					s.TotalAmount,
+					s.PayAmount,
+					s.ChangeAmount,
+					s.Type,
+					s.TaxRate,
+					s.ItemAmount,
+					s.BeforeTaxAmount,
+					s.TaxAmount,
+					s.IsCancel,
+					s.IsPosted,
+					s.CreateBy)
+				if err != nil {
+					fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
+					return "", err
+				}
+				id, _ := rs.LastInsertId()
+				s.Id = uint64(id)
+				fmt.Println("s.MachineId =", s.Id)
 
-	sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,short_name,description,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
-	for _, ss := range s.SaleSubs {
-		fmt.Println("start for range s.SaleSubs")
-		rs, err = db.Exec(sql2,
-			s.Id,
-			ss.Line,
-			ss.ItemId,
-			ss.ItemName,
-			ss.ShortName,
-			ss.Description,
-			ss.Price,
-			ss.Qty,
-			ss.Unit,
-			ss.Amount,
-			ss.IsKitchen,
-			ss.IsAtHome)
-		if err != nil {
-			fmt.Printf("Error when db.Exec(sql2) %v\n", err.Error())
-			return "", err
+				var checkPrintSlipKitchen int
+				var checkPrintSlipBar int
+				checkPrintSlipKitchen = 0
+				checkPrintSlipBar = 0
+
+				sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,short_name,description,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
+				for _, ss := range s.SaleSubs {
+					fmt.Println("start for range s.SaleSubs")
+					rs, err = db.Exec(sql2,
+						s.Id,
+						ss.Line,
+						ss.ItemId,
+						ss.ItemName,
+						ss.ShortName,
+						ss.Description,
+						ss.Price,
+						ss.Qty,
+						ss.Unit,
+						ss.Amount,
+						ss.IsKitchen,
+						ss.IsAtHome)
+					if err != nil {
+						fmt.Printf("Error when db.Exec(sql2) %v\n", err.Error())
+						return "", err
+					}
+					fmt.Println("Insert sale_sub line ", ss)
+
+
+					if (ss.IsKitchen == 1){
+						checkPrintSlipKitchen = checkPrintSlipKitchen+1
+					}
+
+					if (ss.IsKitchen == 0){
+						checkPrintSlipBar = checkPrintSlipBar+1
+					}
+				}
+
+				fmt.Println("checkPrintSlipKitchen = ",checkPrintSlipKitchen)
+				//พิมพ์ บิล และ ใบจัดสินค้า
+				config := new(Config)
+				config = GetConfig(db)
+
+				host := new(Host)
+				host = GetHostPrinter(db, s.HostCode)
+
+				fmt.Println("Port1 ",host.HostCode,host.PrinterPort)
+				fmt.Println("Port2 " ,config.Printer2Port)
+
+				if (host.PrinterPort != "") {
+					err = PrintBill(s, host, config, db)
+				}
+				if (config.Printer1Port != "") {
+					if (checkPrintSlipKitchen > 0) {
+						err = printPickup1(s, config, db)
+					}
+				}
+				if (config.Printer2Port != "") {
+					if (checkPrintSlipBar > 0) {
+						err = printPickup2(s, config, db)
+					}
+				}
+
+			}else{
+				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", err
+			}
+
+		}else{
+			return "Host Code ไม่แสดง กรุณาตรวจสอบ", err
 		}
-		fmt.Println("Insert sale_sub line ", ss)
-
-
-		if (ss.IsKitchen == 1){
-			checkPrintSlipKitchen = checkPrintSlipKitchen+1
-		}
-	}
-
-	fmt.Println("checkPrintSlipKitchen = ",checkPrintSlipKitchen)
-	//พิมพ์ บิล และ ใบจัดสินค้า
-	config := new(Config)
-	config = GetConfig(db)
-
-	fmt.Println("Port1 ",config.Printer1Port)
-	fmt.Println("Port2 " ,config.Printer2Port)
-	//err = PrintInvoice(s, config, db)
-	err = PrintBill(s, config, db)
-	if (checkPrintSlipKitchen>0){
-		err = printPickup(s, config, db)
-	}
-
 
 	}else{
 		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", nil
@@ -287,65 +345,11 @@ func (s *Sale)SearchSaleById(db *sqlx.DB, id int64) error{
 	return nil
 }
 
-func GetConfig(db *sqlx.DB)(config *Config){
-	cf := new(Config)
-	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port from config`
-	fmt.Println("Config = ",sql)
-	err := db.Get(cf,sql)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	//printerIP = config.Printer2Port
+func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB)error{
+	myPassword := genMikrotikPassword(c)
+	fmt.Println("password =",myPassword)
 
-	config = cf
-	return config
-}
-
-func Commaf(v float64) string {
-	buf := &bytes.Buffer{}
-	if v < 0 {
-		buf.Write([]byte{'-'})
-		v = 0 - v
-	}
-
-	comma := []byte{','}
-
-	parts := strings.Split(strconv.FormatFloat(v, 'f', 2, 64), ".")
-	pos := 0
-	if len(parts[0])%3 != 0 {
-		pos += len(parts[0]) % 3
-		buf.WriteString(parts[0][:pos])
-		buf.Write(comma)
-	}
-	for ; pos < len(parts[0]); pos += 3 {
-		buf.WriteString(parts[0][pos : pos+3])
-		buf.Write(comma)
-	}
-	buf.Truncate(buf.Len() - 1)
-
-	if len(parts) > 1 {
-		buf.Write([]byte{'.'})
-		buf.WriteString(parts[1])
-	}
-	return buf.String()
-}
-
-var vQueID int
-var printerIP string
-
-func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
-	var vTaxAmount float64
-	var vBeforeTaxAmount float64
-
-	s.TotalAmount = toFixed(s.TotalAmount,2)
-	vTaxAmount = toFixed(s.TotalAmount-((s.TotalAmount*100)/(100+float64(s.TaxRate))),2)
-	vBeforeTaxAmount = toFixed(s.TotalAmount-vTaxAmount,2)
-
-	s.BeforeTaxAmount = vBeforeTaxAmount
-	s.TaxAmount = vTaxAmount
-
-
-	f, err := net.Dial("tcp", c.Printer1Port)
+	f, err := net.Dial("tcp", h.PrinterPort)
 
 	if err != nil {
 		panic(err)
@@ -357,7 +361,7 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 
 	pt := hw.PosPrinter{p,w}
 	pt.Init()
-	pt.SetLeftMargin(20)
+	pt.SetLeftMargin(10)
 	//pt.PrintRegistrationBitImage(0, 0)
 	//pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
 	//pt.WriteRaw([]byte{28, 112, 1, 0})
@@ -379,10 +383,10 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.SetAlign("center")
 	pt.WriteStringLines("ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ\n")
 	pt.WriteStringLines("เลขประตัวผู้เสียภาษี "+c.TaxId+"\n")
-	pt.WriteStringLines("ใบกำกับภาษีอย่างย่อ\n")
-	pt.SetAlign("left")
-	pt.WriteStringLines(" เลขเครื่อง : "+s.HostCode+"\n")
-	pt.WriteStringLines(" พนักงาน : "+s.CreateBy+"\n")
+	//pt.WriteStringLines("ใบกำกับภาษีอย่างย่อ\n")
+	pt.SetAlign("center")
+	pt.WriteStringLines(" เลขเครื่อง : "+s.HostCode+"      "+" พนักงาน : "+s.CreateBy +"\n")
+	//pt.WriteStringLines(" พนักงาน : "+s.CreateBy+"\n")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	var CountItem int
@@ -394,6 +398,7 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 
 	fmt.Println("CountItem =",CountItem, CountQty )
 	///////////////////////////////////////////////////////////////////////////////////
+	pt.SetAlign("left")
 	for _, sub := range s.SaleSubs {
 		var vAtHome string
 		var vDiffEmpty int
@@ -406,7 +411,7 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 		}else{
 			vAtHome = ""
 		}
-		pt.SetFont("B")
+		pt.SetFont("A")
 		if (sub.Description==""){
 			pt.WriteStringLines(" "+sub.ItemName+"\n")
 		}else{
@@ -414,10 +419,10 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 		}
 
 		vPrice = sub.Amount / float64(sub.Qty)
-		vItemPriceAmount = " "+strconv.FormatFloat(vPrice, 'f', 2, 64)+" X "+strconv.Itoa(sub.Qty)+" "+sub.Unit
+		vItemPriceAmount = " "+strconv.FormatFloat(vPrice, 'f', -1, 64)+" X "+strconv.Itoa(sub.Qty)+" "+sub.Unit
 
 		vLen := len(vItemPriceAmount)
-		vDiff := 28- (vLen/3)
+		vDiff := 25- (vLen/3)
 
 		if (vDiff < 0){
 			vDiffEmpty = 0
@@ -430,42 +435,41 @@ func PrintBill(s *Sale, c *Config, db *sqlx.DB)error{
 		fmt.Println("ItemName=",sub.ItemName)
 		fmt.Println("Len",vLen/3)
 		fmt.Println("Diff ",vDiff)
-
 		if (sub.Line == 0 ) {
 			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffEmpty))
 		}else{
 			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffOld))
 		}
 		pt.WriteStringLines("      ")
-		pt.WriteStringLines(Commaf(sub.Amount)+"V"+"  "+vAtHome+"\n")
-		pt.FormfeedN(3)
+		pt.WriteStringLines(CommaFloat(sub.Amount)+"  "+vAtHome+"\n")
+		//pt.FormfeedN(3)
 	}
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
 	pt.SetFont("A")
-	pt.WriteStringLines(" "+strconv.Itoa(CountItem)+" รายการ "+strconv.FormatFloat(float64(CountQty), 'f', 2, 64)+"ชิ้น\n")
+	pt.WriteStringLines(" "+strconv.Itoa(CountItem)+" รายการ "+strconv.Itoa(CountQty)+" ชิ้น\n")
 	pt.WriteStringLines(" รวม ")
-	pt.WriteStringLines("                          ")
+	pt.WriteStringLines("                              ")
 	//pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', 2, 64)+"\n")
-	pt.WriteStringLines(Commaf(s.TotalAmount)+"\n")
+	pt.WriteStringLines(CommaFloat(s.TotalAmount)+"\n")
 	////////////////////////////////////////////////////////////////////////////////////
-	pt.SetFont("B")
-	pt.WriteStringLines(" มูลค่าสินค้ามีภาษีมูลค่าเพิ่ม"+"                       "+Commaf(vBeforeTaxAmount)+"\n")
-	pt.WriteStringLines(" ภาษีมูลค่าเพิ่ม"+strconv.Itoa(c.TaxRate)+"%"+"                                "+Commaf(vTaxAmount)+"\n")
-	pt.WriteStringLines(" ชำระด้วยเงินสด" +"                              "+Commaf(s.PayAmount)+"\n")
-	pt.WriteStringLines(" เงินทอน" +"                                      "+Commaf(s.ChangeAmount)+"\n")
-	pt.WriteStringLines(" เลขที่ :"+ s.DocNo+"\n")
-	pt.WriteStringLines(" วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
-	pt.WriteStringLines(" V = สินค้ามีภาษีมูลค่าเพิ่ม"+"\n")
+	pt.SetFont("A")
+	//pt.WriteStringLines(" มูลค่าสินค้ามีภาษีมูลค่าเพิ่ม"+"                       "+Commaf(vBeforeTaxAmount)+"\n")
+	//pt.WriteStringLines(" ภาษีมูลค่าเพิ่ม"+strconv.Itoa(c.TaxRate)+"%"+"                                "+Commaf(vTaxAmount)+"\n")
+	pt.WriteStringLines(" ชำระด้วยเงินสด" +"                      "+CommaFloat(s.PayAmount)+"\n")
+	pt.WriteStringLines(" เงินทอน" +"                            "+CommaFloat(s.ChangeAmount)+"\n")
+	pt.WriteStringLines(" เลขที่ :"+ s.DocNo+"  วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
+	//pt.WriteStringLines(" วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
+	pt.SetAlign("center")
+	pt.WriteStringLines(" H = สั่งกลับบ้าน"+"\n")
 	pt.WriteStringLines(" ราคานี้รวมภาษีมูลค่าเพิ่มแล้ว"+"\n")
 	makeline(pt)
-	// Footer Area
-	//pt.SetFont("A")
-	//pt.SetAlign("center")
-	//pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
-	//pt.Formfeed()
-	//pt.Write("*** Completed ***")
-	//pt.Formfeed()
+	 //Footer Area
+	pt.SetFont("A")
+	pt.SetAlign("center")
+	fmt.Println("myPassword After = ",myPassword)
+	pt.WriteStringLines(myPassword)
+	pt.Formfeed()
 	pt.Cut()
 	pt.OpenCashBox()
 	pt.End()
@@ -591,10 +595,11 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 	return nil
 }
 
-func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
+//ใบหยิบห้องครัว
+func printPickup1(s *Sale, c *Config, db *sqlx.DB)error{
 	fmt.Println("c.Printer2Port",c.Printer2Port)
 
-	f, err := net.Dial("tcp", c.Printer2Port)
+	f, err := net.Dial("tcp", c.Printer1Port)
 
 	if err != nil {
 		panic(err)
@@ -608,7 +613,7 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.Init()
 	pt.SetLeftMargin(20)
 	//pt.PrintRegistrationBitImage(0, 0)
-	pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+	//pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	pt.SetCharaterCode(26)
@@ -617,50 +622,132 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
 	pt.WriteStringLines("คิวเลขที่ : "+strconv.Itoa(s.QueId))
 	pt.LineFeed()
 	pt.SetTextSize(0, 1)
-	pt.WriteStringLines("Kitchen Slip")
-
-	pt.LineFeed()
-	pt.SetTextSize(0, 0)
+	pt.WriteStringLines("Kitchen Slip"+"\n")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
-	pt.SetFont("B")
+	//pt.LineFeed()
+	pt.SetTextSize(0, 0)
+	pt.SetFont("A")
 	pt.SetAlign("left")
 	pt.WriteStringLines("   ")
 	pt.WriteStringLines("รายการ" )
 	pt.WriteStringLines("               ")
-	pt.WriteStringLines("     จำนวน/หน่วย")
+	pt.WriteStringLines("จำนวน")
 	pt.WriteStringLines("     ")
 	pt.WriteStringLines("สถานะ\n" )
-	pt.FormfeedN(3)
+	//pt.FormfeedN(3)
+	pt.SetAlign("center")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 
-	var vLineNumber int
-	vLineNumber = 0
+	pt.SetAlign("left")
 	for _, sub := range s.SaleSubs {
 		var vAtHome string
 
 		if (sub.IsAtHome==1){
 			vAtHome = "H"
 		}else{
-			vAtHome = "-"
+			vAtHome = ""
 		}
 		if (sub.IsKitchen==1) {
-			vLineNumber = vLineNumber+1
-			pt.SetTextSize(0, 1)
+			pt.SetTextSize(1, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")
 			if (sub.Description != ""){
-				pt.WriteStringLines(strconv.Itoa(vLineNumber) + "." + sub.ShortName+"("+sub.Description+")")
+				pt.WriteStringLines(sub.ShortName+"("+sub.Description+")")
 			}else{
-				pt.WriteStringLines(strconv.Itoa(vLineNumber) + "." + sub.ShortName)
+				pt.WriteStringLines(sub.ShortName)
 			}
-			pt.WriteStringLines(" " + strconv.Itoa(sub.Qty) + " " + sub.Unit)
+			pt.WriteStringLines(" " + strconv.Itoa(sub.Qty))
 			pt.WriteStringLines(" " + vAtHome + "\n")
-			pt.FormfeedN(3)
+			//pt.FormfeedN(3)
 			pt.SetTextSize(1, 1)
 		}
 	}
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+	//pt.SetFont("B")
+	//pt.SetAlign("center")
+	//pt.Formfeed()
+	//pt.Write("*** Completed ***")
+	//pt.Formfeed()
+	pt.Cut()
+	//pt.OpenCashBox()
+	pt.End()
+
+	return nil
+}
+
+//ใบหยิบ บาร์น้ำ
+func printPickup2(s *Sale, c *Config, db *sqlx.DB)error{
+	fmt.Println("c.Printer2Port",c.Printer3Port)
+
+	f, err := net.Dial("tcp", c.Printer2Port)
+
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	p := escpos.New(w)
+
+	pt := hw.PosPrinter{p,w}
+	pt.Init()
+	pt.SetLeftMargin(10)
+	//pt.PrintRegistrationBitImage(0, 0)
+	//pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	pt.SetCharaterCode(26)
+	pt.SetAlign("center")
+	pt.SetTextSize(1, 1)
+	pt.WriteStringLines("คิวเลขที่ : "+strconv.Itoa(s.QueId))
+	pt.LineFeed()
+	pt.SetTextSize(0, 1)
+	pt.WriteStringLines("Bar Slip"+"\n")
+	pt.SetAlign("center")
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+	//pt.LineFeed()
+	pt.SetTextSize(0, 0)
+	pt.SetFont("A")
+	pt.SetAlign("left")
+	pt.WriteStringLines("   ")
+	pt.WriteStringLines("รายการ" )
+	pt.WriteStringLines("               ")
+	pt.WriteStringLines("จำนวน")
+	pt.WriteStringLines("     ")
+	pt.WriteStringLines("สถานะ\n" )
+	//pt.FormfeedN(3)
+	pt.SetAlign("center")
+	makeline(pt)
+	///////////////////////////////////////////////////////////////////////////////////
+
+	for _, sub := range s.SaleSubs {
+		var vAtHome string
+
+		if (sub.IsAtHome==1){
+			vAtHome = "H"
+		}else{
+			vAtHome = ""
+		}
+		if (sub.IsKitchen==0) {
+			pt.SetTextSize(1, 0)
+			pt.SetFont("A")
+			pt.SetAlign("left")
+			if (sub.Description != ""){
+				pt.WriteStringLines(sub.ItemName+"("+sub.Description+")")
+			}else{
+				pt.WriteStringLines(sub.ItemName)
+			}
+			pt.WriteStringLines(" " + strconv.Itoa(sub.Qty))
+			pt.WriteStringLines(" " + vAtHome + "\n")
+			//pt.FormfeedN(3)
+			pt.SetTextSize(1, 1)
+		}
+	}
+	pt.SetAlign("center")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	//pt.SetFont("B")
@@ -789,67 +876,3 @@ func (s *Sale)PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string
 
 	return nil, nil
 }
-
-//func printBill(s *Sale, pt hw.PosPrinter, db *sqlx.DB){
-//	fmt.Println("Print Bill")
-//
-//	config := new(Config)
-//
-//	sql := `select ifnull(company_name,'') as company_name,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port from config`
-//	fmt.Println("Config = ",sql)
-//	err := db.Get(config,sql)
-//	if err != nil {
-//		fmt.Println(err.Error())
-//	}
-//
-//	fmt.Println(config.CompanyName)
-//
-//
-//	pt.SetCharaterCode(26)
-//	pt.SetAlign("center")
-//	pt.SetTextSize(1, 1)
-//	pt.WriteStringLines("คิวเลขที่ : "+strconv.Itoa(s.QueId))
-//	pt.LineFeed()
-//	pt.SetTextSize(0, 0)
-//	/////////////////////////////////////////////////////////////////////////////////////
-//	pt.SetFont("B")
-//	pt.WriteStringLines(config.CompanyName+"\n")
-//	pt.SetAlign("left")
-//	pt.WriteStringLines("เลขประจำตัวผู้เสียภาษี : "+config.TaxId)
-//	pt.SetAlign("right")
-//
-//	pt.WriteStringLines("	Cashier : "+s.CreateBy)
-//
-//	pt.WriteStringLines("     วันที่ :"+s.Created.Format("02-01-2006 15:04:05"))
-//	pt.WriteStringLines("   เลขที่ : "+s.DocNo)
-//	pt.WriteStringLines("   Pos Id : "+s.HostId)
-//	pt.LineFeed()
-//	makeline(pt)
-//	///////////////////////////////////////////////////////////////////////////////////
-//	for _, sub := range s.SaleSubs {
-//		var vLineNumber int
-//
-//		vLineNumber = sub.Line+1
-//		pt.SetFont("B")
-//		pt.WriteStringLines("   "+strconv.Itoa(vLineNumber)+"."+sub.ItemName )
-//		pt.WriteStringLines("		")
-//		pt.WriteStringLines("   "+strconv.Itoa(sub.Qty)+" "+sub.Unit+"\n")
-//		pt.FormfeedN(3)
-//	}
-//	makeline(pt)
-//	////////////////////////////////////////////////////////////////////////////////////
-//	pt.SetFont("B")
-//	pt.WriteStringLines("รวมเป็นเงิน ")
-//	pt.WriteStringLines("				")
-//	pt.WriteStringLines(strconv.FormatFloat(s.TotalAmount, 'f', -1, 64)+" บาท\n")
-//	makeline(pt)
-//	// Footer Area
-//	pt.SetFont("A")
-//	pt.SetAlign("center")
-//	pt.WriteStringLines("รหัสผ่าน Wifi : 999999999")
-//	pt.Formfeed()
-//	pt.Write("*** Completed ***")
-//	pt.Formfeed()
-//	pt.Cut()
-//	pt.End()
-//}

@@ -32,6 +32,7 @@ type Shift struct {
 	ClosedBy string `json:"closed_by" db:"closed_by"`
 	Closed time.Time `json:"closed" db:"closed"`
 
+	SumChangeBegin float64 `json:"sum_change_begin" db:"sum_change_begin"`
 	SumCashAmount float64 `json:"sum_cash_amount" db:"sum_cash_amount"`
 	SumExpensesAmount float64 `json:"sum_expenses_amount" db:"sum_expenses_amount"`
 }
@@ -223,17 +224,18 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(0, 0)
-	pt.WriteStringLines("สรุปยอดำส่งประจำวัน : "+s.DocDate)
+	pt.WriteStringLines("สรุปยอดนำส่งประจำวัน : "+s.DocDate)
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	if(s.HostCode==""){
-		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = ? order by host_code`
+		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(change_begin) from cash_shift where doc_date = a.doc_date) as sum_change_begin,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = ? order by host_code`
 		err = db.Select(&shifts, sql,s.DocDate)
 	} else{
-		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where host_code = ? and doc_date = ? order by host_code `
+		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(change_begin) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_change_begin,(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where host_code = ? and doc_date = ? order by host_code;
+ `
 		err = db.Select(&shifts, sql, s.HostCode, s.DocDate)
 	}
 	fmt.Println("sql = ", sql, s.HostCode, s.DocDate)
@@ -245,35 +247,47 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 	pt.SetAlign("left")
 	pt.WriteStringLines(" จุดขาย")
 	pt.WriteStringLines("  ")
-	pt.WriteStringLines("      มูลค่าเงินสด" )
-	pt.WriteStringLines("         ")
-	pt.WriteStringLines("   มูลค่าใช้จ่าย\n" )
+	pt.WriteStringLines("มูลค่าเงินทอน" )
+	pt.WriteStringLines("     ")
+	pt.WriteStringLines("มูลค่าเงินสด" )
+	pt.WriteStringLines("     ")
+	pt.WriteStringLines("มูลค่าสุทธิ" )
 	pt.FormfeedN(3)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	var vLineNumber int
+	var vNetAmount float64
+	var vSumNetAmount float64
+
 	for _, s := range shifts{
 		vLineNumber = vLineNumber+1
+		vNetAmount = s.ChangeBegin - s.CashAmount
+
 		fmt.Println("Cash =", vLineNumber,s.CashAmount)
 		fmt.Println("Expense =",vLineNumber,s.ExpensesAmount)
 		pt.SetAlign("left")
 
 		pt.SetFont("B")
 		pt.WriteStringLines(" "+strconv.Itoa(vLineNumber)+"."+s.HostCode)
-		pt.WriteStringLines("         "+CommaFloat(s.CashAmount) )
-		pt.WriteStringLines("               "+CommaFloat(s.ExpensesAmount)+"\n")
+		pt.WriteStringLines("       "+CommaFloat(s.ChangeBegin) )
+		pt.WriteStringLines("       "+CommaFloat(s.CashAmount) )
+		pt.WriteStringLines("       "+CommaFloat(vNetAmount)+"\n")
 		pt.FormfeedN(3)
 	}
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
 
+	vSumNetAmount  = shifts[0].SumChangeBegin-shifts[0].SumCashAmount
+
 	fmt.Println("SumCashAmount = ",CommaFloat(shifts[0].SumCashAmount))
 	pt.SetFont("B")
 	pt.WriteStringLines("รวมเป็นเงิน ")
 	pt.WriteStringLines("    ")
-	pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount)+" บาท")
-	pt.WriteStringLines("           ")
-	pt.WriteStringLines(CommaFloat(shifts[0].SumExpensesAmount)+" บาท\n")
+	pt.WriteStringLines(CommaFloat(shifts[0].SumChangeBegin))
+	pt.WriteStringLines("       ")
+	pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount))
+	pt.WriteStringLines("       ")
+	pt.WriteStringLines(CommaFloat(vSumNetAmount)+"n")
 	makeline(pt)
 	pt.Cut()
 	pt.End()

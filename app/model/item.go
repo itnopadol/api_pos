@@ -4,6 +4,12 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
+	//"os/exec"
+	//"net/http"
+	//"io/ioutil"
+	"bufio"
+	"github.com/knq/escpos"
+	"net"
 )
 
 type Item struct {
@@ -35,6 +41,7 @@ type PricesSub struct {
 	Active  int `json:"active" db:"active"`
 }
 
+
 func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 	sql := `SELECT * FROM item WHERE active = 1 and id = ?`
 	fmt.Println("Item = ",sql, id)
@@ -45,7 +52,16 @@ func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 		return err
 	}
 
-	fmt.Println("Item Name = ",i.Name )
+	//res, err := http.Get("http://192.168.0.80/api/genuser.php")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//robots, err := ioutil.ReadAll(res.Body)
+	//res.Body.Close()
+	//
+	//myString := string(robots)
+	//
+	//fmt.Println("robots = ",myString)
 
 	vLen := len(i.Name)
 
@@ -102,4 +118,63 @@ func (i *Item) ByMenuId(db *sqlx.DB, id int64) ([]*Lang, error) {
 		l.Items = items
 	}
 	return langs, nil
+}
+
+
+func (i *Item)PrintTest(db *sqlx.DB)error{
+
+	config := new(Config)
+	config = GetConfig(db)
+
+	//myPassword := genMikrotikPassword(config)
+	//fmt.Println("password =",myPassword)
+
+	fmt.Println(config.Printer3Port)
+
+	f, err := net.Dial("tcp", config.Printer3Port)
+
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	p := escpos.New(w)
+
+	p.Init()
+	p.SetSmooth(1)
+	p.SetFontSize(2, 3)
+	p.SetFont("A")
+	p.Write("test ")
+	p.SetFont("B")
+	p.Write("test2 ")
+	p.SetFont("C")
+	p.Write("test3 ")
+	p.Formfeed()
+
+	p.SetFont("B")
+	p.SetFontSize(1, 1)
+
+	p.SetEmphasize(1)
+	p.Write("halle")
+	p.Formfeed()
+
+	p.SetUnderline(1)
+	p.SetFontSize(4, 4)
+	p.Write("halle")
+
+	p.SetReverse(1)
+	p.SetFontSize(2, 4)
+	p.Write("halle")
+	p.Formfeed()
+
+	p.SetFont("C")
+	p.SetFontSize(8, 8)
+	p.Write("halle")
+	p.FormfeedN(5)
+
+	p.Cut()
+	p.End()
+
+	return nil
 }

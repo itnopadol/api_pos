@@ -80,6 +80,24 @@ func (pos *PosPrinter) SetTextAlignment(align string) {
 	}
 }
 
+func (e *PosPrinter) SetFont(font string) {
+	f := 0
+
+	switch font {
+	case "A":
+		f = 0
+	case "B":
+		f = 1
+	case "C":
+		f = 2
+	default:
+		log.Fatal(fmt.Sprintf("Invalid font: '%s', defaulting to 'A'", font))
+		f = 0
+	}
+
+	e.Write(fmt.Sprintf("\x1BM%c", f))
+}
+
 func (pos *PosPrinter) SetTextSize(width byte, height byte) {
 	size := height
 	size = size | (width << 4)
@@ -393,13 +411,13 @@ type action struct {
 	Data interface{} `json:"action_data"`
 }
 
-//=============== DO_GROUP ====================
-type doGroup struct {
-	actions []*action
-}
-
-func (g *doGroup) setTextSize(size int) {
-	a := &action{"set_text_size", size}
-	g.actions = append(g.actions, a)
-}
+////=============== DO_GROUP ====================
+//type doGroup struct {
+//	actions []*action
+//}
+//
+//func (g *doGroup) setTextSize(size int) {
+//	a := &action{"set_text_size", size}
+//	g.actions = append(g.actions, a)
+//}
 
