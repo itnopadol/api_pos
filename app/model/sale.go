@@ -247,18 +247,27 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 
 				if (host.PrinterPort != "") {
 					err = PrintBill(s, host, config, db)
+					if err != nil {
+						fmt.Println("error print billing ",err.Error())
+					}
 				}
 
 				if (config.Printer1Port != "") {
 					if (checkPrintSlipKitchen > 0) {
 						fmt.Println("begin print pickup")
 						err = printPickup(s, config, db)
+						if err != nil {
+							fmt.Println("error print kitchen ",err.Error())
+						}
 					}
 				}
 
 				if (config.Printer2Port != "") {
 					if (checkPrintSlipBar > 0) {
 						err = printPickup2(s, config, db)
+						if err != nil {
+							fmt.Println("error print bar slip  ",err.Error())
+						}
 					}
 				}
 
@@ -353,7 +362,8 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	f, err := net.Dial("tcp", h.PrinterPort)
 
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return err
 	}
 	defer f.Close()
 
@@ -602,8 +612,9 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 	f, err := net.Dial("tcp", c.Printer1Port)
 
 	if err != nil {
-		panic(err)
-	}
+		//panic(err)
+		return err
+		}
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
@@ -692,7 +703,8 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	f, err := net.Dial("tcp", c.Printer3Port)
 
 	if err != nil {
-		panic(err)
+		return err
+		//panic(err)
 	}
 	defer f.Close()
 
