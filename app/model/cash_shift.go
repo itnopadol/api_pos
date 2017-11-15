@@ -204,7 +204,7 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 	config := new(Config)
 	config = GetConfig(db)
 
-	f, err := net.Dial("tcp", config.Printer1Port)
+	f, err := net.Dial("tcp", config.Printer2Port)
 
 	if err != nil {
 		panic(err)
