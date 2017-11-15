@@ -8,6 +8,7 @@ type Host struct {
 	Id int `json:"id" db:"id"`
 	HostCode string `json:"host_code" db:"host_code"`
 	HostName string `json:"host_name" db:"host_name"`
+	PrinterPort string `json:"printer_port" db:"printer_port"`
 	Status int `json:"status" db:"status"`
 	Active int `json:"active" db:"active"`
 	LogoImageId           int
@@ -15,7 +16,7 @@ type Host struct {
 }
 
 func (h *Host)SearchHost(db *sqlx.DB)(hosts []*Host, err error) {
-	sql := `select host_code,host_name,status,active from host where active = 1 order by id`
+	sql := `select host_code,ifnull(host_name,'') as host_name,ifnull(printer_port,'') as printer_port,status,active from host where active = 1 order by id`
 	err = db.Select(&hosts, sql)
 	if err != nil {
 		return nil, err

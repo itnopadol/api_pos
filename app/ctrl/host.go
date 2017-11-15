@@ -7,16 +7,16 @@ import (
 	"github.com/itnopadol/api_pos/app/resp"
 )
 
-func SearchHost(c *gin.Context){
+func SearchHost(c *gin.Context) {
 	h := new(model.Host)
 
 	res, err := h.SearchHost(dbc)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content and Error :"+ err.Error()
+		rs.Message = "No Content and Error :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = res
 		c.JSON(http.StatusOK, rs)

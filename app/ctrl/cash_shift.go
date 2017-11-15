@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-func SaveShift(c *gin.Context){
+func SaveShift(c *gin.Context) {
 	fmt.Println("Call POST SaveShift")
 	c.Keys = headerKeys
 
@@ -23,16 +23,16 @@ func SaveShift(c *gin.Context){
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content :"+ err.Error()
+		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-func UpdateShift(c *gin.Context){
+func UpdateShift(c *gin.Context) {
 	fmt.Println("Call PUT UpdateShift")
 	c.Keys = headerKeys
 
@@ -47,19 +47,18 @@ func UpdateShift(c *gin.Context){
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content :"+ err.Error()
+		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-func ClosedShift(c *gin.Context){
+func ClosedShift(c *gin.Context) {
 	fmt.Println("Call PUT ClosedShift")
 	c.Keys = headerKeys
-
 
 	newShift := &model.Shift{}
 	err := c.BindJSON(newShift)
@@ -72,16 +71,16 @@ func ClosedShift(c *gin.Context){
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content :"+ err.Error()
+		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-func ShiftDetails(c *gin.Context){
+func ShiftDetails(c *gin.Context) {
 	fmt.Println("Call GET ShiftDetails")
 	c.Keys = headerKeys
 
@@ -92,46 +91,45 @@ func ShiftDetails(c *gin.Context){
 
 	ch := new(model.Shift)
 
-	 err := ch.ShiftDetails(dbc,host_code,doc_date)
+	err := ch.ShiftDetails(dbc, host_code, doc_date)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content :"+ err.Error()
+		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-func SearchShiftByKeyword(c *gin.Context){
+func SearchShiftByKeyword(c *gin.Context) {
 	fmt.Println("Call GET ShiftDetails")
 	c.Keys = headerKeys
 
 	hostid := c.Param("host_id")
-	host_id := hostid//strconv.ParseInt(strId, 10, 64)
+	host_id := hostid //strconv.ParseInt(strId, 10, 64)
 
 	docdate := c.Param("doc_date")
-	doc_date := docdate//strconv.ParseInt(strId, 10, 64)
+	doc_date := docdate //strconv.ParseInt(strId, 10, 64)
 
 	ch := new(model.Shift)
 
-	shifts, err := ch.SearchShiftByKeyword(dbc,host_id,doc_date)
+	shifts, err := ch.SearchShiftByKeyword(dbc, host_id, doc_date)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content :"+ err.Error()
+		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = shifts
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-
-func PrintSendDailyTotal(c *gin.Context){
+func PrintSendDailyTotal(c *gin.Context) {
 	log.Println("call Get SendDaily")
 	c.Keys = headerKeys
 
@@ -143,9 +141,9 @@ func PrintSendDailyTotal(c *gin.Context){
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content and Error :"+ err.Error()
+		rs.Message = "No Content and Error :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = shifts
 		c.JSON(http.StatusOK, rs)
