@@ -250,11 +250,14 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 				if (host.PrinterPort != "") {
 					err = PrintBill(s, host, config, db)
 				}
+
 				if (config.Printer1Port != "") {
 					if (checkPrintSlipKitchen > 0) {
-						err = printPickup1(s, config, db)
+						fmt.Println("begin print pickup")
+						err = printPickup(s, config, db)
 					}
 				}
+
 				if (config.Printer2Port != "") {
 					if (checkPrintSlipBar > 0) {
 						err = printPickup2(s, config, db)
@@ -474,6 +477,7 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB)error{
 	pt.OpenCashBox()
 	pt.End()
 
+
 	return nil
 }
 
@@ -595,9 +599,8 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB)error{
 	return nil
 }
 
-//ใบหยิบห้องครัว
-func printPickup1(s *Sale, c *Config, db *sqlx.DB)error{
-	fmt.Println("c.Printer2Port",c.Printer2Port)
+func printPickup(s *Sale, c *Config, db *sqlx.DB)error{
+	fmt.Println("Print pickup on c.Printer1Port",c.Printer1Port)
 
 	f, err := net.Dial("tcp", c.Printer1Port)
 
@@ -653,8 +656,15 @@ func printPickup1(s *Sale, c *Config, db *sqlx.DB)error{
 			pt.SetTextSize(1, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")
+			// แก้ไข ()
 			if (sub.Description != ""){
-				pt.WriteStringLines(sub.ShortName+"("+sub.Description+")")
+				ph :="("
+				pr :=")"
+				if sub.Description =="" {
+					ph =""
+					pr =""
+				}
+				pt.WriteStringLines(sub.ShortName+ph+sub.Description+pr)
 			}else{
 				pt.WriteStringLines(sub.ShortName)
 			}
@@ -680,9 +690,9 @@ func printPickup1(s *Sale, c *Config, db *sqlx.DB)error{
 
 //ใบหยิบ บาร์น้ำ
 func printPickup2(s *Sale, c *Config, db *sqlx.DB)error{
-	fmt.Println("c.Printer2Port",c.Printer3Port)
+	fmt.Println("c.Printer3Port",c.Printer3Port)
 
-	f, err := net.Dial("tcp", c.Printer2Port)
+	f, err := net.Dial("tcp", c.Printer3Port)
 
 	if err != nil {
 		panic(err)
@@ -742,7 +752,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB)error{
 				pt.WriteStringLines(sub.ItemName)
 			}
 			pt.WriteStringLines(" " + strconv.Itoa(sub.Qty))
-			pt.WriteStringLines(" " + vAtHome + "\n")
+			pt.WriteStringLines(" " + vAtHome + "\n\n")
 			//pt.FormfeedN(3)
 			pt.SetTextSize(1, 1)
 		}
