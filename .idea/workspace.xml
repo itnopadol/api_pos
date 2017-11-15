@@ -73,12 +73,6 @@
                 <element signature="n#!!block;n#printPickup2#0" expanded="false" />
                 <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
                 <marker date="1510756554944" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-                <marker date="1510756554944" expanded="true" signature="8349:8402" ph="select count... sale" />
-                <marker date="1510756554944" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
-                <marker date="1510756554944" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
-                <marker date="1510756554944" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
-                <marker date="1510756554944" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
-                <marker date="1510756554944" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
               </folding>
             </state>
           </provider>
@@ -87,25 +81,25 @@
       <file leaf-file-name="cash_shift.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/cash_shift.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="211" column="5" lean-forward="true" selection-start-line="211" selection-start-column="5" selection-end-line="211" selection-end-column="5" />
+            <state relative-caret-position="274">
+              <caret line="273" column="0" lean-forward="true" selection-start-line="273" selection-start-column="0" selection-end-line="273" selection-end-column="0" />
               <folding>
                 <element signature="e#15#214#0" expanded="true" />
                 <element signature="n#!!block;n#ShiftDetails#0" expanded="false" />
                 <element signature="n#!!block;n#SearchShiftByKeyword#0" expanded="false" />
-                <marker date="1510756989357" expanded="true" signature="1582:1668" ph="select count... cash_shift" />
-                <marker date="1510756989357" expanded="true" signature="1832:2007" ph="INSERT INTO cash_shift... " />
-                <marker date="1510756989357" expanded="true" signature="2282:2328" ph="UPDATE host... " />
-                <marker date="1510756989357" expanded="true" signature="2453:2572" ph="UPDATE cash_shift... " />
-                <marker date="1510756989357" expanded="true" signature="2714:2760" ph="UPDATE host... " />
-                <marker date="1510756989357" expanded="true" signature="3095:3181" ph="select count... cash_shift" />
-                <marker date="1510756989357" expanded="true" signature="3418:3611" ph="UPDATE cash_shift... " />
-                <marker date="1510756989357" expanded="true" signature="4259:4345" ph="select count... cash_shift" />
-                <marker date="1510756989357" expanded="true" signature="4590:4763" ph="UPDATE cash_shift... " />
-                <marker date="1510756989357" expanded="true" signature="4959:5005" ph="UPDATE host... " />
-                <marker date="1510756989357" expanded="true" signature="7361:7777" ph="select id,ho... cash_shift" />
-                <marker date="1510756989357" expanded="true" signature="7537:7604" ph="select sum(c... cash_shift" />
-                <marker date="1510756989357" expanded="true" signature="7626:7697" ph="select sum(e... cash_shift" />
+                <marker date="1510757290570" expanded="true" signature="1582:1668" ph="select count... cash_shift" />
+                <marker date="1510757290570" expanded="true" signature="1832:2007" ph="INSERT INTO cash_shift... " />
+                <marker date="1510757290570" expanded="true" signature="2282:2328" ph="UPDATE host... " />
+                <marker date="1510757290570" expanded="true" signature="2453:2572" ph="UPDATE cash_shift... " />
+                <marker date="1510757290570" expanded="true" signature="2714:2760" ph="UPDATE host... " />
+                <marker date="1510757290570" expanded="true" signature="3095:3181" ph="select count... cash_shift" />
+                <marker date="1510757290570" expanded="true" signature="3418:3611" ph="UPDATE cash_shift... " />
+                <marker date="1510757290570" expanded="true" signature="4259:4345" ph="select count... cash_shift" />
+                <marker date="1510757290570" expanded="true" signature="4590:4767" ph="UPDATE cash_shift... " />
+                <marker date="1510757290570" expanded="true" signature="4963:5009" ph="UPDATE host... " />
+                <marker date="1510757290570" expanded="true" signature="7365:7781" ph="select id,ho... cash_shift" />
+                <marker date="1510757290570" expanded="true" signature="7541:7608" ph="select sum(c... cash_shift" />
+                <marker date="1510757290570" expanded="true" signature="7630:7701" ph="select sum(e... cash_shift" />
               </folding>
             </state>
           </provider>
@@ -401,12 +395,6 @@
             <element signature="n#!!block;n#printPickup2#0" expanded="false" />
             <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
             <marker date="1510756554944" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-            <marker date="1510756554944" expanded="true" signature="8349:8402" ph="select count... sale" />
-            <marker date="1510756554944" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
-            <marker date="1510756554944" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
-            <marker date="1510756554944" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
-            <marker date="1510756554944" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
-            <marker date="1510756554944" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
           </folding>
         </state>
       </provider>
@@ -457,12 +445,6 @@
             <element signature="n#!!block;n#printPickup2#0" expanded="false" />
             <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
             <marker date="1510756554944" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-            <marker date="1510756554944" expanded="true" signature="8349:8402" ph="select count... sale" />
-            <marker date="1510756554944" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
-            <marker date="1510756554944" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
-            <marker date="1510756554944" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
-            <marker date="1510756554944" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
-            <marker date="1510756554944" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
           </folding>
         </state>
       </provider>
@@ -734,12 +716,6 @@
             <element signature="n#!!block;n#printPickup2#0" expanded="false" />
             <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
             <marker date="1510756554944" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-            <marker date="1510756554944" expanded="true" signature="8349:8402" ph="select count... sale" />
-            <marker date="1510756554944" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
-            <marker date="1510756554944" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
-            <marker date="1510756554944" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
-            <marker date="1510756554944" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
-            <marker date="1510756554944" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
           </folding>
         </state>
       </provider>
@@ -775,25 +751,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/cash_shift.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="211" column="5" lean-forward="true" selection-start-line="211" selection-start-column="5" selection-end-line="211" selection-end-column="5" />
+        <state relative-caret-position="274">
+          <caret line="273" column="0" lean-forward="true" selection-start-line="273" selection-start-column="0" selection-end-line="273" selection-end-column="0" />
           <folding>
             <element signature="e#15#214#0" expanded="true" />
             <element signature="n#!!block;n#ShiftDetails#0" expanded="false" />
             <element signature="n#!!block;n#SearchShiftByKeyword#0" expanded="false" />
-            <marker date="1510756989357" expanded="true" signature="1582:1668" ph="select count... cash_shift" />
-            <marker date="1510756989357" expanded="true" signature="1832:2007" ph="INSERT INTO cash_shift... " />
-            <marker date="1510756989357" expanded="true" signature="2282:2328" ph="UPDATE host... " />
-            <marker date="1510756989357" expanded="true" signature="2453:2572" ph="UPDATE cash_shift... " />
-            <marker date="1510756989357" expanded="true" signature="2714:2760" ph="UPDATE host... " />
-            <marker date="1510756989357" expanded="true" signature="3095:3181" ph="select count... cash_shift" />
-            <marker date="1510756989357" expanded="true" signature="3418:3611" ph="UPDATE cash_shift... " />
-            <marker date="1510756989357" expanded="true" signature="4259:4345" ph="select count... cash_shift" />
-            <marker date="1510756989357" expanded="true" signature="4590:4763" ph="UPDATE cash_shift... " />
-            <marker date="1510756989357" expanded="true" signature="4959:5005" ph="UPDATE host... " />
-            <marker date="1510756989357" expanded="true" signature="7361:7777" ph="select id,ho... cash_shift" />
-            <marker date="1510756989357" expanded="true" signature="7537:7604" ph="select sum(c... cash_shift" />
-            <marker date="1510756989357" expanded="true" signature="7626:7697" ph="select sum(e... cash_shift" />
+            <marker date="1510757290570" expanded="true" signature="1582:1668" ph="select count... cash_shift" />
+            <marker date="1510757290570" expanded="true" signature="1832:2007" ph="INSERT INTO cash_shift... " />
+            <marker date="1510757290570" expanded="true" signature="2282:2328" ph="UPDATE host... " />
+            <marker date="1510757290570" expanded="true" signature="2453:2572" ph="UPDATE cash_shift... " />
+            <marker date="1510757290570" expanded="true" signature="2714:2760" ph="UPDATE host... " />
+            <marker date="1510757290570" expanded="true" signature="3095:3181" ph="select count... cash_shift" />
+            <marker date="1510757290570" expanded="true" signature="3418:3611" ph="UPDATE cash_shift... " />
+            <marker date="1510757290570" expanded="true" signature="4259:4345" ph="select count... cash_shift" />
+            <marker date="1510757290570" expanded="true" signature="4590:4767" ph="UPDATE cash_shift... " />
+            <marker date="1510757290570" expanded="true" signature="4963:5009" ph="UPDATE host... " />
+            <marker date="1510757290570" expanded="true" signature="7365:7781" ph="select id,ho... cash_shift" />
+            <marker date="1510757290570" expanded="true" signature="7541:7608" ph="select sum(c... cash_shift" />
+            <marker date="1510757290570" expanded="true" signature="7630:7701" ph="select sum(e... cash_shift" />
           </folding>
         </state>
       </provider>
