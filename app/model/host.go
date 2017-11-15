@@ -25,3 +25,12 @@ func (h *Host)SearchHost(db *sqlx.DB)(hosts []*Host, err error) {
 }
 
 
+func (h *Host)GetHostPrinter(db *sqlx.DB,hostcode string)(host *Host, err error) {
+	sql := `select host_code,ifnull(host_name,'') as host_name,ifnull(printer_port,'') as printer_port,status,active from host where host_code= ? active = 1 order by id`
+	err = db.Select(&host, sql,hostcode)
+	if err != nil {
+		return nil, err
+	}
+	return host, nil
+}
+

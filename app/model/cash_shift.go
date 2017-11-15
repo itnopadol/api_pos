@@ -13,6 +13,8 @@ import (
 	"bufio"
 	"github.com/knq/escpos"
 	"strconv"
+	//"github.com/itnopadol/bc_api/bc_api/config"
+	//"github.com/itnopadol/bc_api/bc_api/config"
 )
 
 type Shift struct {
@@ -196,19 +198,25 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	var sql string
 	s.DocDate = doc_date
 	s.HostCode = host_code
-
+	fmt.Println("host_code = ", host_code)
 	fmt.Println("DOCDATE = ", doc_date, s.DocDate)
 
 	//var today = time.Now()
 	//date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
-	//config := new(Config)
-	//config = GetConfig(db)
+	config := new(Config)
+	config = GetConfig(db)
 
-	//f, err := net.Dial("tcp", config.Printer2Port)
-	f, err := net.Dial("tcp", H.PrinterPort)
+	//h,err := H.GetHostPrinter(db,host_code)
+	f, err := net.Dial("tcp", config.Printer2Port)
+
+	//fmt.Println("printer close shift ",H.PrinterPort)
+	//f, err := net.Dial("tcp", h.PrinterPort)
+
 
 	if err != nil {
-		panic(err)
+		fmt.Println("err ",err.Error())
+		return  nil,err
+		//panic(err)
 	}
 	defer f.Close()
 
@@ -241,6 +249,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	}
 	fmt.Println("sql = ", sql, s.HostCode, s.DocDate)
 	if err != nil {
+		fmt.Println("error sql ",err.Error())
 		return nil, err
 	}
 
@@ -278,7 +287,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
 
-	vSumNetAmount = shifts[0].SumChangeBegin - shifts[0].SumCashAmount
+	vSumNetAmount =  shifts[0].SumCashAmount-shifts[0].SumChangeBegin
 
 	fmt.Println("SumCashAmount = ", CommaFloat(shifts[0].SumCashAmount))
 	pt.SetFont("B")
@@ -288,7 +297,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	pt.WriteStringLines("       ")
 	pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount))
 	pt.WriteStringLines("       ")
-	pt.WriteStringLines(CommaFloat(vSumNetAmount) + "n")
+	pt.WriteStringLines(CommaFloat(vSumNetAmount) + "\n")
 	makeline(pt)
 	pt.Cut()
 	pt.End()
