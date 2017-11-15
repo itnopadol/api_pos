@@ -3,10 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c1a1ae10-9936-4c0c-9cc6-f48802070bbd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/ctrl/cash_shift.go" afterPath="$PROJECT_DIR$/app/ctrl/cash_shift.go" />
-      <change beforePath="$PROJECT_DIR$/app/ctrl/host.go" afterPath="$PROJECT_DIR$/app/ctrl/host.go" />
-      <change beforePath="$PROJECT_DIR$/app/ctrl/init.go" afterPath="$PROJECT_DIR$/app/ctrl/init.go" />
-      <change beforePath="$PROJECT_DIR$/app/model/init.go" afterPath="$PROJECT_DIR$/app/model/init.go" />
       <change beforePath="$PROJECT_DIR$/app/model/sale.go" afterPath="$PROJECT_DIR$/app/model/sale.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -61,8 +57,8 @@
       <file leaf-file-name="sale.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/sale.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-929">
-              <caret line="689" column="49" lean-forward="true" selection-start-line="689" selection-start-column="49" selection-end-line="689" selection-end-column="49" />
+            <state relative-caret-position="123">
+              <caret line="606" column="1" lean-forward="true" selection-start-line="606" selection-start-column="1" selection-end-line="606" selection-end-column="1" />
               <folding>
                 <element signature="e#15#165#0" expanded="true" />
                 <element signature="e#212#2143#0" expanded="false" />
@@ -72,16 +68,18 @@
                 <element signature="n#!!block;n#SaleVoid#0" expanded="false" />
                 <element signature="n#!!block;n#SearchSales#0" expanded="false" />
                 <element signature="n#!!block;n#SearchSaleById#0" expanded="false" />
+                <element signature="n#!!block;n#PrintBill#0" expanded="false" />
                 <element signature="n#!!block;n#PrintInvoice#0" expanded="false" />
                 <element signature="n#!!block;n#printPickup#0" expanded="false" />
+                <element signature="n#!!block;n#printPickup2#0" expanded="false" />
                 <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
-                <marker date="1510754608521" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-                <marker date="1510754608521" expanded="true" signature="8095:8148" ph="select count... sale" />
-                <marker date="1510754608521" expanded="true" signature="8565:8617" ph="Update sale_sub... " />
-                <marker date="1510754608521" expanded="true" signature="8900:9160" ph="select id,ho... sale" />
-                <marker date="1510754608521" expanded="true" signature="9338:9524" ph="select sale_... sale_sub" />
-                <marker date="1510754608521" expanded="true" signature="9737:9941" ph="select id,ho... sale" />
-                <marker date="1510754608521" expanded="true" signature="10048:10234" ph="select sale_... sale_sub" />
+                <marker date="1510755901790" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
+                <marker date="1510755901790" expanded="true" signature="8349:8402" ph="select count... sale" />
+                <marker date="1510755901790" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
+                <marker date="1510755901790" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
+                <marker date="1510755901790" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
+                <marker date="1510755901790" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
+                <marker date="1510755901790" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
               </folding>
             </state>
           </provider>
@@ -341,7 +339,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="adjust - ก่อนไปติดตั้ง" />
-    <option name="LAST_COMMIT_MESSAGE" value="adjust - ก่อนไปติดตั้ง" />
+    <MESSAGE value="ขึ้น production" />
+    <option name="LAST_COMMIT_MESSAGE" value="ขึ้น production" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -377,16 +376,18 @@
             <element signature="n#!!block;n#SaleVoid#0" expanded="false" />
             <element signature="n#!!block;n#SearchSales#0" expanded="false" />
             <element signature="n#!!block;n#SearchSaleById#0" expanded="false" />
+            <element signature="n#!!block;n#PrintBill#0" expanded="false" />
             <element signature="n#!!block;n#PrintInvoice#0" expanded="false" />
             <element signature="n#!!block;n#printPickup#0" expanded="false" />
+            <element signature="n#!!block;n#printPickup2#0" expanded="false" />
             <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
-            <marker date="1510754608521" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-            <marker date="1510754608521" expanded="true" signature="8095:8148" ph="select count... sale" />
-            <marker date="1510754608521" expanded="true" signature="8565:8617" ph="Update sale_sub... " />
-            <marker date="1510754608521" expanded="true" signature="8900:9160" ph="select id,ho... sale" />
-            <marker date="1510754608521" expanded="true" signature="9338:9524" ph="select sale_... sale_sub" />
-            <marker date="1510754608521" expanded="true" signature="9737:9941" ph="select id,ho... sale" />
-            <marker date="1510754608521" expanded="true" signature="10048:10234" ph="select sale_... sale_sub" />
+            <marker date="1510755901790" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
+            <marker date="1510755901790" expanded="true" signature="8349:8402" ph="select count... sale" />
+            <marker date="1510755901790" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
+            <marker date="1510755901790" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
+            <marker date="1510755901790" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
+            <marker date="1510755901790" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
+            <marker date="1510755901790" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
           </folding>
         </state>
       </provider>
@@ -432,16 +433,18 @@
             <element signature="n#!!block;n#SaleVoid#0" expanded="false" />
             <element signature="n#!!block;n#SearchSales#0" expanded="false" />
             <element signature="n#!!block;n#SearchSaleById#0" expanded="false" />
+            <element signature="n#!!block;n#PrintBill#0" expanded="false" />
             <element signature="n#!!block;n#PrintInvoice#0" expanded="false" />
             <element signature="n#!!block;n#printPickup#0" expanded="false" />
+            <element signature="n#!!block;n#printPickup2#0" expanded="false" />
             <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
-            <marker date="1510754608521" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-            <marker date="1510754608521" expanded="true" signature="8095:8148" ph="select count... sale" />
-            <marker date="1510754608521" expanded="true" signature="8565:8617" ph="Update sale_sub... " />
-            <marker date="1510754608521" expanded="true" signature="8900:9160" ph="select id,ho... sale" />
-            <marker date="1510754608521" expanded="true" signature="9338:9524" ph="select sale_... sale_sub" />
-            <marker date="1510754608521" expanded="true" signature="9737:9941" ph="select id,ho... sale" />
-            <marker date="1510754608521" expanded="true" signature="10048:10234" ph="select sale_... sale_sub" />
+            <marker date="1510755901790" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
+            <marker date="1510755901790" expanded="true" signature="8349:8402" ph="select count... sale" />
+            <marker date="1510755901790" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
+            <marker date="1510755901790" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
+            <marker date="1510755901790" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
+            <marker date="1510755901790" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
+            <marker date="1510755901790" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
           </folding>
         </state>
       </provider>
@@ -683,7 +686,7 @@
         <state relative-caret-position="152">
           <caret line="12" column="1" lean-forward="true" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
           <folding>
-            <element signature="e#14#169#0" expanded="true" />
+            <element signature="e#14#169#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -751,8 +754,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/sale.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-929">
-          <caret line="689" column="49" lean-forward="true" selection-start-line="689" selection-start-column="49" selection-end-line="689" selection-end-column="49" />
+        <state relative-caret-position="123">
+          <caret line="606" column="1" lean-forward="true" selection-start-line="606" selection-start-column="1" selection-end-line="606" selection-end-column="1" />
           <folding>
             <element signature="e#15#165#0" expanded="true" />
             <element signature="e#212#2143#0" expanded="false" />
@@ -762,16 +765,18 @@
             <element signature="n#!!block;n#SaleVoid#0" expanded="false" />
             <element signature="n#!!block;n#SearchSales#0" expanded="false" />
             <element signature="n#!!block;n#SearchSaleById#0" expanded="false" />
+            <element signature="n#!!block;n#PrintBill#0" expanded="false" />
             <element signature="n#!!block;n#PrintInvoice#0" expanded="false" />
             <element signature="n#!!block;n#printPickup#0" expanded="false" />
+            <element signature="n#!!block;n#printPickup2#0" expanded="false" />
             <element signature="n#!!block;n#PrintSaleDailyTotal#0" expanded="false" />
-            <marker date="1510754608521" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
-            <marker date="1510754608521" expanded="true" signature="8095:8148" ph="select count... sale" />
-            <marker date="1510754608521" expanded="true" signature="8565:8617" ph="Update sale_sub... " />
-            <marker date="1510754608521" expanded="true" signature="8900:9160" ph="select id,ho... sale" />
-            <marker date="1510754608521" expanded="true" signature="9338:9524" ph="select sale_... sale_sub" />
-            <marker date="1510754608521" expanded="true" signature="9737:9941" ph="select id,ho... sale" />
-            <marker date="1510754608521" expanded="true" signature="10048:10234" ph="select sale_... sale_sub" />
+            <marker date="1510755901790" expanded="true" signature="6213:6363" ph="INSERT INTO sale_sub... " />
+            <marker date="1510755901790" expanded="true" signature="8349:8402" ph="select count... sale" />
+            <marker date="1510755901790" expanded="true" signature="8819:8871" ph="Update sale_sub... " />
+            <marker date="1510755901790" expanded="true" signature="9154:9414" ph="select id,ho... sale" />
+            <marker date="1510755901790" expanded="true" signature="9592:9778" ph="select sale_... sale_sub" />
+            <marker date="1510755901790" expanded="true" signature="9991:10195" ph="select id,ho... sale" />
+            <marker date="1510755901790" expanded="true" signature="10302:10488" ph="select sale_... sale_sub" />
           </folding>
         </state>
       </provider>
