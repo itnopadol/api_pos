@@ -16,25 +16,6 @@ func GetItemById(c *gin.Context) {
 	log.Println("call GET Item")
 	c.Keys = headerKeys
 
-	//s := strconv.FormatFloat(3.00, 'E', -1, 64)
-	//fmt.Println("SSS=",s)
-	//
-	//f := 64.0000
-	//s1 := strconv.FormatFloat(f, 'g', 2, 64)
-	//fmt.Println(s1)
-	//s4 := strconv.FormatFloat(f, 'f', 2, 64)
-	//fmt.Println(s4)
-	//
-	//s2 := strconv.FormatFloat(f, 'g', 2, 64)
-	//fmt.Println(s2)
-	//s3 := strconv.FormatFloat(f, 'f', 2, 64)
-	//fmt.Println(s3)
-	//
-	//i := 5
-	//fl:= float64(i)
-	//fmt.Printf("f is %f\n", fl)
-
-
 	strId := c.Param("id")
 	id, _ := strconv.ParseInt(strId, 10, 64)
 	err := item.Get(dbc, id)
@@ -68,4 +49,19 @@ func GetItemsByMenuId(c *gin.Context) {
 		c.JSON(http.StatusNotFound, err.Error())
 	}
 	c.JSON(http.StatusOK, langs)
+}
+
+
+func PrintTest(c *gin.Context) {
+	fmt.Println("call Print Test")
+	c.Keys = headerKeys
+
+	//var item model.Item
+	item := new(model.Item)
+	err := item.PrintTest(dbc)
+	if err != nil {
+		//ctx.HTML(http.StatusNotFound, "error.tpl", err.Error())
+		c.JSON(http.StatusNotFound, err.Error())
+	}
+	c.JSON(http.StatusOK, nil)
 }
