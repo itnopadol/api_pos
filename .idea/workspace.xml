@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c1a1ae10-9936-4c0c-9cc6-f48802070bbd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/ctrl/init.go" afterPath="$PROJECT_DIR$/app/ctrl/init.go" />
-      <change beforePath="$PROJECT_DIR$/app/model/sale.go" afterPath="$PROJECT_DIR$/app/model/sale.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -103,8 +101,8 @@
       <file leaf-file-name="sale.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/sale.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="743" column="9" lean-forward="true" selection-start-line="743" selection-start-column="9" selection-end-line="743" selection-end-column="9" />
+            <state relative-caret-position="363">
+              <caret line="747" column="31" lean-forward="true" selection-start-line="747" selection-start-column="31" selection-end-line="747" selection-end-column="31" />
               <folding>
                 <element signature="e#15#165#0" expanded="true" />
                 <element signature="e#212#1946#0" expanded="false" />
@@ -320,6 +318,7 @@
     <property name="configurable.Global.GOPATH.is.expanded" value="true" />
     <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="GO_FMT" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -392,6 +391,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="adjust - ก่อนไปติดตั้ง" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjust - ก่อนไปติดตั้ง" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -795,8 +798,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/sale.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="743" column="9" lean-forward="true" selection-start-line="743" selection-start-column="9" selection-end-line="743" selection-end-column="9" />
+        <state relative-caret-position="363">
+          <caret line="747" column="31" lean-forward="true" selection-start-line="747" selection-start-column="31" selection-end-line="747" selection-end-column="31" />
           <folding>
             <element signature="e#15#165#0" expanded="true" />
             <element signature="e#212#1946#0" expanded="false" />
