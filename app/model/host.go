@@ -16,7 +16,7 @@ type Host struct {
 }
 
 func (h *Host)SearchHost(db *sqlx.DB)(hosts []*Host, err error) {
-	sql := `select host_code,ifnull(host_name,'') as host_name,ifnull(printer_port,'') as printer_port,status,active from host where active = 1 order by id`
+	sql := `select host_code,ifnull(host_name,'') as host_name,ifnull(printer_port,'') as printer_port,status,active from host  order by id`
 	err = db.Select(&hosts, sql)
 	if err != nil {
 		return nil, err
