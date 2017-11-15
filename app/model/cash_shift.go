@@ -145,7 +145,8 @@ func (ch *Shift)ClosedShift(db *sqlx.DB) error{
 	fmt.Println("host_code = ",ch.HostCode)
 
 	if (checkCount != 0) {
-		sql := `UPDATE cash_shift set change_amount = ?,cash_amount = ?,expenses_amount = ?, is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
+		sql := `UPDATE cash_shift set change_amount = ?,cash_amount = ?,expenses_amount = ?,
+				is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
 		_, err = db.Exec(sql, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, 1, ch.ClosedBy, ch.HostCode, ch.DocDate)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -201,10 +202,11 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 
 	//var today = time.Now()
 	//date := fmt.Sprintf("Date %s Time %s", today.Format("02/01/2006"), today.Format("15:04:05"))
-	config := new(Config)
-	config = GetConfig(db)
+	//config := new(Config)
+	//config = GetConfig(db)
 
-	f, err := net.Dial("tcp", config.Printer2Port)
+	//f, err := net.Dial("tcp", config.Printer2Port)
+	f, err := net.Dial("tcp",H.PrinterPort )
 
 	if err != nil {
 		panic(err)
@@ -234,7 +236,14 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(change_begin) from cash_shift where doc_date = a.doc_date) as sum_change_begin,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = ? order by host_code`
 		err = db.Select(&shifts, sql,s.DocDate)
 	} else{
-		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(change_begin) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_change_begin,(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where host_code = ? and doc_date = ? order by host_code;
+		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,
+				expenses_amount,(select sum(change_begin)
+			from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_change_begin,
+			(select sum(cash_amount) from cash_shift
+				where host_code = a.host_code and doc_date = a.doc_date) as sum_cash_amount,
+			(select sum(expenses_amount) from cash_shift
+				where host_code = a.host_code and doc_date = a.doc_date) as sum_expenses_amount
+				from cash_shift a where host_code = ? and doc_date = ? order by host_code;
  `
 		err = db.Select(&shifts, sql, s.HostCode, s.DocDate)
 	}
@@ -261,7 +270,7 @@ func (s *Shift)PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 
 	for _, s := range shifts{
 		vLineNumber = vLineNumber+1
-		vNetAmount = s.ChangeBegin - s.CashAmount
+		vNetAmount = s.CashAmount-s.ChangeBegin
 
 		fmt.Println("Cash =", vLineNumber,s.CashAmount)
 		fmt.Println("Expense =",vLineNumber,s.ExpensesAmount)
