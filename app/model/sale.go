@@ -752,7 +752,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 		} else {
 			vAtHome = ""
 		}
-		if (sub.IsKitchen == 0) {
+		if (sub.IsKitchen == 2) {
 			pt.SetTextSize(1, 0)
 			pt.SetFont("A")
 			pt.SetAlign("left")
