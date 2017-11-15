@@ -732,6 +732,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	pt.SetTextSize(0, 0)
 	pt.SetFont("A")
 	pt.SetAlign("left")
+
 	pt.WriteStringLines("   ")
 	pt.WriteStringLines("รายการ")
 	pt.WriteStringLines("               ")
@@ -755,6 +756,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 			pt.SetTextSize(1, 0)
 			pt.SetFont("A")
 			pt.SetAlign("left")
+			pt.SetLeftMargin(10)
 			if (sub.Description != "") {
 				pt.WriteStringLines(sub.ItemName + "(" + sub.Description + ")")
 			} else {
