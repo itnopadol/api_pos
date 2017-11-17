@@ -125,9 +125,13 @@ func (s *Sale) CheckAmount() (status int, err error) {
 	return status, nil
 }
 
-func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
+func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitchen string, printbar string , err error) {
 	var CheckRemain float64
 	var CheckChange float64
+
+	var err_bill string
+	var err_kitchen string
+	var err_bar string
 
 	now := time.Now()
 	s.Created = &now
@@ -157,7 +161,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 		if (s.HostCode != "") {
 			checkAmount, _ := s.CheckAmount()
 			if err != nil {
-				return "Error Check ItemAmount", err
+				return "Error Check ItemAmount", "","","",err
 			}
 
 			if (checkAmount == 0) {
@@ -192,7 +196,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 					s.CreateBy)
 				if err != nil {
 					fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
-					return "", err
+					return "","","","", err
 				}
 				id, _ := rs.LastInsertId()
 				s.Id = uint64(id)
@@ -221,7 +225,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 						ss.IsAtHome)
 					if err != nil {
 						fmt.Printf("Error when db.Exec(sql2) %v\n", err.Error())
-						return "", err
+						return "","","","" ,err
 					}
 					fmt.Println("Insert sale_sub line ", ss)
 
@@ -229,7 +233,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 						checkPrintSlipKitchen = checkPrintSlipKitchen + 1
 					}
 
-					if (ss.IsKitchen == 0) {
+					if (ss.IsKitchen == 2) {
 						checkPrintSlipBar = checkPrintSlipBar + 1
 					}
 				}
@@ -248,7 +252,8 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 				if (host.PrinterPort != "") {
 					err = PrintBill(s, host, config, db)
 					if err != nil {
-						fmt.Println("error print billing ",err.Error())
+						fmt.Println("error print billing ", err.Error())
+						err_bill = err.Error()
 					}
 				}
 
@@ -257,7 +262,8 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 						fmt.Println("begin print pickup")
 						err = printPickup(s, config, db)
 						if err != nil {
-							fmt.Println("error print kitchen ",err.Error())
+							fmt.Println("error print kitchen ", err.Error())
+							err_kitchen = err.Error()
 						}
 					}
 				}
@@ -266,27 +272,29 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, err error) {
 					if (checkPrintSlipBar > 0) {
 						err = printPickup2(s, config, db)
 						if err != nil {
-							fmt.Println("error print bar slip  ",err.Error())
+							fmt.Println("error print bar slip  ", err.Error())
+							err_bar = err.Error()
 						}
 					}
 				}
 
 			} else {
-				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", err
+				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", "","","",err
 			}
 
 		} else {
-			return "Host Code ไม่แสดง กรุณาตรวจสอบ", err
+			return "Host Code ไม่แสดง กรุณาตรวจสอบ", "","","",err
 		}
 
 	} else {
-		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", nil
+		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", "","","",nil
 	}
 	fmt.Println("Save data sucess: sale =", s)
 
-	return s.DocNo, nil
+	return s.DocNo, err_bill,err_kitchen,err_bar,nil
 }
 
+//ยกเลิกบิล
 func (s *Sale) SaleVoid(db *sqlx.DB) error {
 	var checkCount int
 	sqlCheckExist := `select count(doc_no) as vCount from sale where id = ?`
@@ -355,14 +363,18 @@ func (s *Sale) SearchSaleById(db *sqlx.DB, id int64) error {
 	return nil
 }
 
+// พิมพ์ใบเสร็จ
 func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	myPassword := genMikrotikPassword(c)
 	fmt.Println("password =", myPassword)
 
 	f, err := net.Dial("tcp", h.PrinterPort)
-
 	if err != nil {
-		//panic(err)
+		sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
+		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Bill Error :"+err.Error(), s.CreateBy)
+		if err != nil {
+			return err
+		}
 		return err
 	}
 	defer f.Close()
@@ -372,7 +384,7 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 
 	pt := hw.PosPrinter{p, w}
 	pt.Init()
-	pt.SetLeftMargin(10)
+	pt.SetLeftMargin(20)
 	//pt.PrintRegistrationBitImage(0, 0)
 	//pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
 	//pt.WriteRaw([]byte{28, 112, 1, 0})
@@ -469,7 +481,10 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	//pt.WriteStringLines(" ภาษีมูลค่าเพิ่ม"+strconv.Itoa(c.TaxRate)+"%"+"                                "+Commaf(vTaxAmount)+"\n")
 	pt.WriteStringLines(" ชำระด้วยเงินสด" + "                      " + CommaFloat(s.PayAmount) + "\n")
 	pt.WriteStringLines(" เงินทอน" + "                            " + CommaFloat(s.ChangeAmount) + "\n")
-	pt.WriteStringLines(" เลขที่ :" + s.DocNo + "  วันที่ :" + s.Created.Format("02-01-2006 15:04:05") + "\n")
+	pt.WriteStringLines(" เลขที่:" + s.DocNo)
+	pt.SetFont("B")
+	pt.WriteStringLines(" วันที่ :" + s.Created.Format("02-01-2006 15:04:05") + "\n")
+	pt.SetFont("A")
 	//pt.WriteStringLines(" วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
 	pt.SetAlign("center")
 	pt.WriteStringLines(" H = สั่งกลับบ้าน" + "\n")
@@ -479,7 +494,12 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	pt.SetFont("A")
 	pt.SetAlign("center")
 	fmt.Println("myPassword After = ", myPassword)
-	pt.WriteStringLines(myPassword)
+
+	var len1 int
+
+	len1 = len(myPassword)
+	pt.WriteStringLines("WIFI : "+ strconv.Itoa(len1))
+	pt.WriteStringLines("WIFI : "+ myPassword)
 	pt.Formfeed()
 	pt.Cut()
 	pt.OpenCashBox()
@@ -491,9 +511,8 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 func PrintInvoice(s *Sale, c *Config, db *sqlx.DB) error {
 
 	f, err := net.Dial("tcp", c.Printer1Port)
-
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer f.Close()
 
@@ -606,15 +625,19 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB) error {
 	return nil
 }
 
+//ใบหยิบ ห้องครัว
 func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 	fmt.Println("Print pickup on c.Printer1Port", c.Printer1Port)
 
 	f, err := net.Dial("tcp", c.Printer1Port)
-
 	if err != nil {
-		//panic(err)
-		return err
+		sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
+		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Kitchen Error :"+err.Error(), s.CreateBy)
+		if err != nil {
+			return err
 		}
+		return err
+	}
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
@@ -664,15 +687,16 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 			pt.SetTextSize(1, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")
+			pt.SetLeftMargin(20)
 			// แก้ไข ()
 			if (sub.Description != "") {
-				ph := "("
-				pr := ")"
+				//ph := "("
+				//pr := ")"
 				if sub.Description == "" {
-					ph = ""
-					pr = ""
+					//ph = ""
+					//pr = ""
 				}
-				pt.WriteStringLines(sub.ShortName + ph + sub.Description + pr)
+				pt.WriteStringLines(sub.ShortName + "+" + sub.Description)
 			} else {
 				pt.WriteStringLines(sub.ShortName)
 			}
@@ -698,13 +722,17 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 
 //ใบหยิบ บาร์น้ำ
 func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
-	fmt.Println("c.Printer3Port", c.Printer3Port)
+	fmt.Println("c.Printer2Port", c.Printer2Port)
 
-	f, err := net.Dial("tcp", c.Printer3Port)
+	f, err := net.Dial("tcp", c.Printer2Port)
 
 	if err != nil {
+		sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
+		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Bar Water Error :"+err.Error(), s.CreateBy)
+		if err != nil {
+			return err
+		}
 		return err
-		//panic(err)
 	}
 	defer f.Close()
 
@@ -713,7 +741,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 
 	pt := hw.PosPrinter{p, w}
 	pt.Init()
-	pt.SetLeftMargin(10)
+	pt.SetLeftMargin(20)
 	//pt.PrintRegistrationBitImage(0, 0)
 	//pt.WriteRaw([]byte{29,	40,	76,	6,	0,	48,	85,	32,	32,10,10 })
 
@@ -731,7 +759,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	//pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	pt.SetFont("A")
-	pt.SetAlign("left")
+	//pt.SetAlign("left")
 
 	pt.WriteStringLines("   ")
 	pt.WriteStringLines("รายการ")
@@ -755,10 +783,10 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 		if (sub.IsKitchen == 2) {
 			pt.SetTextSize(1, 0)
 			pt.SetFont("A")
-			pt.SetAlign("left")
-			pt.SetLeftMargin(10)
+			//pt.SetAlign("left")
+			//pt.SetLeftMargin(20)
 			if (sub.Description != "") {
-				pt.WriteStringLines(sub.ItemName + "(" + sub.Description + ")")
+				pt.WriteStringLines(sub.ItemName + "+" + sub.Description)
 			} else {
 				pt.WriteStringLines(sub.ItemName)
 			}
@@ -783,6 +811,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	return nil
 }
 
+//รายงานยอดขายประจำวัน
 func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string) (sales []*Sale, err error) {
 	var sql string
 
@@ -794,32 +823,38 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 	config := new(Config)
 	config = GetConfig(db)
 
-	f, err := net.Dial("tcp", config.Printer1Port)
+	fmt.Println("config.Printer4Port", config.Printer4Port)
+	if (config.Printer4Port != "") {
+		f, err := net.Dial("tcp", config.Printer4Port)
+		if err != nil {
+			sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
+			db.Exec(sql_err, "", "", "Print Sale Daily :"+err.Error(), s.CreateBy)
+			if err != nil {
+				return nil, err
+			}
+			return nil, err
+		}
+		defer f.Close()
 
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
+		w := bufio.NewWriter(f)
+		p := escpos.New(w)
 
-	w := bufio.NewWriter(f)
-	p := escpos.New(w)
+		pt := hw.PosPrinter{p, w}
+		pt.Init()
+		pt.SetLeftMargin(20)
 
-	pt := hw.PosPrinter{p, w}
-	pt.Init()
-	pt.SetLeftMargin(20)
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	pt.WriteRaw([]byte{28, 112, 1, 0})
-	pt.SetCharaterCode(26)
-	pt.SetAlign("center")
-	pt.SetTextSize(0, 0)
-	pt.WriteStringLines("สรุปยอดขายประจำวัน : " + s.DocDate)
-	pt.LineFeed()
-	pt.SetTextSize(0, 0)
-	makeline(pt)
-	///////////////////////////////////////////////////////////////////////////////////
-	if (s.HostCode == "") {
-		sql = `select distinct host_code,doc_date,
+		//////////////////////////////////////////////////////////////////////////////////////
+		pt.WriteRaw([]byte{28, 112, 1, 0})
+		pt.SetCharaterCode(26)
+		pt.SetAlign("center")
+		pt.SetTextSize(0, 0)
+		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + s.DocDate)
+		pt.LineFeed()
+		pt.SetTextSize(0, 0)
+		makeline(pt)
+		///////////////////////////////////////////////////////////////////////////////////
+		if (s.HostCode == "") {
+			sql = `select distinct host_code,doc_date,
 			(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
 			(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
 			(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount_all,
@@ -829,9 +864,9 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 			(select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_change_amount,
 			(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
 			from sale a where doc_date = ? and is_cancel = 0 order by host_code`
-		err = db.Select(&sales, sql, doc_date)
-	} else {
-		sql = `	select distinct host_code,doc_date,
+			err = db.Select(&sales, sql, doc_date)
+		} else {
+			sql = `	select distinct host_code,doc_date,
 		    (select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
 			(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
 			(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount_all,
@@ -841,59 +876,61 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 			(select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_change_amount,
 			(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
 			from sale a where host_code = ? and doc_date = ? and is_cancel = 0 order by host_code`
-		err = db.Select(&sales, sql, host_code, doc_date)
-	}
+			err = db.Select(&sales, sql, host_code, doc_date)
+		}
 
-	fmt.Println("sql = ", sql, host_code, doc_date)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println("Sale Data ", sales[0].SumCashAmount)
-	pt.SetFont("B")
-	pt.WriteStringLines("   จุดขาย")
-	pt.WriteStringLines("  ")
-	pt.WriteStringLines("   มูลค่าเงินสด")
-	pt.WriteStringLines("  ")
-	pt.WriteStringLines("   มูลค่าเงินทอน")
-	pt.WriteStringLines("   ")
-	pt.WriteStringLines("   มูลค่าขายสุทธิ\n")
-	pt.FormfeedN(3)
-	makeline(pt)
-	/////////////////////////////////////////////////////////////////////////////////
-	var vLineNumber int
-	for _, s := range sales {
-		pt.SetAlign("left")
-		vLineNumber = vLineNumber + 1
+		fmt.Println("sql = ", sql, host_code, doc_date)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println("Sale Data ", sales[0].SumCashAmount)
 		pt.SetFont("B")
-		pt.WriteStringLines("    " + strconv.Itoa(vLineNumber) + "." + s.HostCode)
-		pt.WriteStringLines("      " + CommaFloat(s.SumCashAmount))
-		pt.WriteStringLines("        " + CommaFloat(s.SumChangeAmount))
-		pt.WriteStringLines("        " + CommaFloat(s.NetAmount) + "\n")
-		pt.FormfeedN(3)
-	}
-	makeline(pt)
-	pt.SetAlign("left")
-	pt.SetFont("B")
-	if (s.HostCode == "") {
-		pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCountAll) + " บิล\n")
-	} else {
-		pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCount) + " บิล\n")
-	}
+		pt.WriteStringLines("   จุดขาย")
+		pt.WriteStringLines("  ")
+		pt.WriteStringLines("   มูลค่าเงินสด")
+		pt.WriteStringLines("  ")
+		pt.WriteStringLines("   มูลค่าเงินทอน")
+		pt.WriteStringLines("   ")
+		pt.WriteStringLines("   มูลค่าขายสุทธิ\n")
+		//pt.FormfeedN(3)
+		makeline(pt)
+		/////////////////////////////////////////////////////////////////////////////////
+		var vLineNumber int
+		for _, s := range sales {
+			//pt.SetAlign("left")
+			vLineNumber = vLineNumber + 1
+			pt.SetFont("A")
+			pt.WriteStringLines("" + strconv.Itoa(vLineNumber) + "." + s.HostCode)
+			pt.WriteStringLines("    " + CommaFloat(s.SumCashAmount))
+			pt.WriteStringLines("     " + CommaFloat(s.SumChangeAmount))
+			pt.WriteStringLines("      " + CommaFloat(s.NetAmount) + "\n")
+			pt.FormfeedN(3)
+		}
+		makeline(pt)
+		//pt.SetAlign("left")
+		pt.SetFont("A")
+		if (s.HostCode == "") {
+			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCountAll) + " บิล\n")
+		} else {
+			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCount) + " บิล\n")
+		}
 
-	//////////////////////////////////////////////////////////////////////////////////
-	makeline(pt)
-	fmt.Println("SumCashAmount = ", sales[0].SumCashAmount)
-	pt.SetFont("B")
-	pt.WriteStringLines("รวมเป็นเงิน ")
-	pt.WriteStringLines("    ")
-	pt.WriteStringLines(CommaFloat(sales[0].SumCashAmountAll))
-	pt.WriteStringLines("        ")
-	pt.WriteStringLines(CommaFloat(sales[0].SumChangeAmountAll))
-	pt.WriteStringLines("        ")
-	pt.WriteStringLines(CommaFloat(sales[0].NetAmountAll) + "\n")
-	makeline(pt)
-	pt.Cut()
-	pt.End()
+		//////////////////////////////////////////////////////////////////////////////////
+		makeline(pt)
+		fmt.Println("SumCashAmount = ", sales[0].SumCashAmount)
+		pt.SetFont("B")
+		pt.WriteStringLines("รวมเป็นเงิน ")
+		pt.SetFont("A")
+		pt.WriteStringLines("")
+		pt.WriteStringLines(CommaFloat(sales[0].SumCashAmountAll))
+		pt.WriteStringLines("    ")
+		pt.WriteStringLines(CommaFloat(sales[0].SumChangeAmountAll))
+		pt.WriteStringLines("     ")
+		pt.WriteStringLines(CommaFloat(sales[0].NetAmountAll) + "\n")
+		makeline(pt)
+		pt.Cut()
+		pt.End()
+	}
 
 	return nil, nil
 }

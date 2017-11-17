@@ -190,7 +190,7 @@ func genMikrotikPassword(c *Config) (password string) {
 
 func GetConfig(db *sqlx.DB) (config *Config) {
 	cf := new(Config)
-	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port, ifnull(link_mikrotik,'') as link_mikrotik from config`
+	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port, ifnull(link_mikrotik,'') as link_mikrotik from config`
 	fmt.Println("Config = ", sql)
 	err := db.Get(cf, sql)
 	if err != nil {

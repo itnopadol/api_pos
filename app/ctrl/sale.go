@@ -44,16 +44,22 @@ func SaleSave(c *gin.Context) {
 		fmt.Println(err.Error())
 	}
 	fmt.Println("Start Controller Create Quotation")
-	s, _ := NewSale.SaleSave(dbc)
+	s, i, k, b, _ := NewSale.SaleSave(dbc)
 
-	rs := resp.Response{}
+	rs := resp.ResponseDoc{}
 	if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content: " + err.Error()
+		rs.PrintBill = i
+		rs.PrintKitchecn = k
+		rs.PrintBar = b
 		c.JSON(http.StatusNotFound, rs)
 	} else {
 		rs.Status = "success"
 		rs.Data = s
+		rs.PrintBill = i
+		rs.PrintKitchecn = k
+		rs.PrintBar = b
 		c.JSON(http.StatusOK, rs)
 	}
 }

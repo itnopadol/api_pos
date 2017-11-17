@@ -206,17 +206,11 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	config := new(Config)
 	config = GetConfig(db)
 
-	//h,err := H.GetHostPrinter(db,host_code)
-	f, err := net.Dial("tcp", config.Printer2Port)
-
 	//fmt.Println("printer close shift ",H.PrinterPort)
-	//f, err := net.Dial("tcp", h.PrinterPort)
-
-
+	f, err := net.Dial("tcp", config.Printer4Port)
 	if err != nil {
 		fmt.Println("err ",err.Error())
 		return  nil,err
-		//panic(err)
 	}
 	defer f.Close()
 
@@ -225,7 +219,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 
 	pt := hw.PosPrinter{p,w}
 	pt.Init()
-	pt.SetLeftMargin(20)
+	pt.SetLeftMargin(40)
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	//vDocDate time.Time
@@ -254,15 +248,15 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	}
 
 	pt.SetFont("B")
-	pt.SetAlign("left")
+	//pt.SetAlign("left")
 	pt.WriteStringLines(" จุดขาย")
-	pt.WriteStringLines("  ")
-	pt.WriteStringLines("มูลค่าเงินทอน")
 	pt.WriteStringLines("     ")
 	pt.WriteStringLines("มูลค่าเงินสด")
+	pt.WriteStringLines("      ")
+	pt.WriteStringLines("มูลค่าเงินทอน")
 	pt.WriteStringLines("     ")
-	pt.WriteStringLines("มูลค่าสุทธิ")
-	pt.FormfeedN(3)
+	pt.WriteStringLines("มูลค่าสุทธิ"+"\n")
+	//pt.FormfeedN(3)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
 	var vLineNumber int
@@ -275,14 +269,13 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 
 		fmt.Println("Cash =", vLineNumber, s.CashAmount)
 		fmt.Println("Expense =", vLineNumber, s.ExpensesAmount)
-		pt.SetAlign("left")
 
-		pt.SetFont("B")
-		pt.WriteStringLines(" " + strconv.Itoa(vLineNumber) + "." + s.HostCode)
-		pt.WriteStringLines("       " + CommaFloat(s.ChangeBegin))
-		pt.WriteStringLines("       " + CommaFloat(s.CashAmount))
-		pt.WriteStringLines("       " + CommaFloat(vNetAmount) + "\n")
-		pt.FormfeedN(3)
+		pt.SetFont("A")
+		pt.WriteStringLines( strconv.Itoa(vLineNumber) + "." + s.HostCode)
+		pt.WriteStringLines("     " + CommaFloat(s.CashAmount))
+		pt.WriteStringLines("      " + CommaFloat(s.ChangeBegin))
+		pt.WriteStringLines("     " + CommaFloat(vNetAmount) + "\n")
+		//pt.FormfeedN(3)
 	}
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
@@ -292,11 +285,12 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	fmt.Println("SumCashAmount = ", CommaFloat(shifts[0].SumCashAmount))
 	pt.SetFont("B")
 	pt.WriteStringLines("รวมเป็นเงิน ")
-	pt.WriteStringLines("    ")
-	pt.WriteStringLines(CommaFloat(shifts[0].SumChangeBegin))
-	pt.WriteStringLines("       ")
+	pt.SetFont("A")
+	pt.WriteStringLines(" ")
 	pt.WriteStringLines(CommaFloat(shifts[0].SumCashAmount))
-	pt.WriteStringLines("       ")
+	pt.WriteStringLines("      ")
+	pt.WriteStringLines(CommaFloat(shifts[0].SumChangeBegin))
+	pt.WriteStringLines("     ")
 	pt.WriteStringLines(CommaFloat(vSumNetAmount) + "\n")
 	makeline(pt)
 	pt.Cut()
