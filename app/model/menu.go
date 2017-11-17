@@ -44,7 +44,7 @@ func (m *Menu) Index(db *sqlx.DB) ([]*Lang, error) {
 		menus := []*Menu{}
 		switch l.Id {
 		case 1:
-			sql = `SELECT id, name, image, link, active FROM menu where active = 1`
+			sql = `SELECT id, name, image, link, active FROM menu where active = 1 `
 		case 2:
 			sql = `SELECT id, name_en as name, image, link, active FROM menu where active = 1`
 		case 3:

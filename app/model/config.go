@@ -18,12 +18,13 @@ type Config struct {
 	Printer1Port string `json:"printer1_port" db:"printer1_port"`
 	Printer2Port string `json:"printer2_port" db:"printer2_port"`
 	Printer3Port string `json:"printer3_port" db:"printer3_port"`
+	Printer4Port string `json:"printer4_port" db:"printer4_port"`
 	LinkMikrotik string `json:"link_mikrotik" db:"link_mikrotik"`
 }
 
 func (c *Config)Save(db *sqlx.DB)error{
-	sql := `INSERT INTO config(company_name,address,telephone,fax,line_id,facebook,tax_id,tax_rate,printer1_port,printer2_port,printer3_port,link_mikrotik) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
-	rs, err := db.Exec(sql, c.CompanyName, c.Address, c.Telephone, c.Fax, c.LineId, c.Facebook, c.TaxId, c.TaxRate, c.Printer1Port, c.Printer2Port, c.Printer3Port,c.LinkMikrotik)
+	sql := `INSERT INTO config(company_name,address,telephone,fax,line_id,facebook,tax_id,tax_rate,printer1_port,printer2_port,printer3_port,printer4_port,link_mikrotik) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	rs, err := db.Exec(sql, c.CompanyName, c.Address, c.Telephone, c.Fax, c.LineId, c.Facebook, c.TaxId, c.TaxRate, c.Printer1Port, c.Printer2Port, c.Printer3Port, c.Printer4Port, c.LinkMikrotik)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -37,7 +38,7 @@ func (c *Config)Save(db *sqlx.DB)error{
 
 func (c *Config)Search(db *sqlx.DB)error{
 
-	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(link_mikrotik,'') as link_mikrotik from config`
+	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port,ifnull(link_mikrotik,'') as link_mikrotik from config`
 	err := db.Get(&c, sql)
 	if err != nil {
 		fmt.Println(err.Error())
