@@ -47,6 +47,8 @@ type Sale struct {
 	BillCountAll       int     `json:"bill_count_all" db:"bill_count_all"`
 
 	SaleSubs []*SaleSub `json:"sale_subs"`
+
+	Wifi string `json:"wifi"`
 }
 
 // SaleSub เป็นรายการสินค้าที่ขายใน Sale
@@ -365,7 +367,8 @@ func (s *Sale) SearchSaleById(db *sqlx.DB, id int64) error {
 
 // พิมพ์ใบเสร็จ
 func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
-	myPassword := genMikrotikPassword(c)
+	//myPassword := genMikrotikPassword(c)
+	myPassword := s.Wifi
 	fmt.Println("password =", myPassword)
 
 	f, err := net.Dial("tcp", h.PrinterPort)
