@@ -25,6 +25,8 @@ func main() {
 	r.GET("/menu/:id", ctrl.GetItemsByMenuId)
 	r.GET("/menu", ctrl.GetMenu)
 	r.GET("/items/print",ctrl.PrintTest)
+	r.POST("/item", ctrl.SaveItem)
+	r.PUT("/item", ctrl.UpdateItem)
 
 	r.POST("/sale/change", ctrl.ShowChangeAmount)
 	r.POST("/sale", ctrl.SaleSave)

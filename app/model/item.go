@@ -4,31 +4,33 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
-	//"os/exec"
-	//"net/http"
-	//"io/ioutil"
 	"bufio"
 	"github.com/knq/escpos"
 	"net"
+	"time"
 )
 
 type Item struct {
-	Id      int
-	Code 	string `json:"code" db:"code"`
-	Name    string   `json:"name" db:"name"`
-	ShortName	string `json:"short_name" db:"short_name"`
-	NameEn  string   `json:"name_en,omitempty" db:"name_en"`
-	NameCn  string   `json:"name_cn,omitempty" db:"name_cn"`
-	Price   float32  `json:"price" db:"price"`
-	Unit    string   `json:"unit"`
-	UnitEn  string   `json:"unit_en,omitempty" db:"unit_en"`
-	UnitCn  string   `json:"unit_cn,omitempty" db:"unit_cn"`
-	MenuId  uint64   `json:"menu_id,omitempty" db:"menu_id"`
-	MenuSeq int      `json:"menu_seq,omitempty" db:"menu_seq"`
-	Image   string   `json:"image" db:"image"`
-	IsKitchen int `json:"is_kitchen" db:"is_kitchen"`
-	Active  int 	 `json:"active" db:"active"`
-	Prices []*PricesSub `json:"prices_sub"`
+	Id        int64
+	Code      string       `json:"code" db:"code"`
+	Name      string       `json:"name" db:"name"`
+	ShortName string       `json:"short_name" db:"short_name"`
+	NameEn    string       `json:"name_en,omitempty" db:"name_en"`
+	NameCn    string       `json:"name_cn,omitempty" db:"name_cn"`
+	Price     float32      `json:"price" db:"price"`
+	Unit      string       `json:"unit"`
+	UnitEn    string       `json:"unit_en,omitempty" db:"unit_en"`
+	UnitCn    string       `json:"unit_cn,omitempty" db:"unit_cn"`
+	MenuId    uint64       `json:"menu_id,omitempty" db:"menu_id"`
+	MenuSeq   int          `json:"menu_seq,omitempty" db:"menu_seq"`
+	Image     string       `json:"image" db:"image"`
+	IsKitchen int          `json:"is_kitchen" db:"is_kitchen"`
+	Active    int          `json:"active" db:"active"`
+	CreatedBy string       `json:"created_by" db:"created_by"`
+	Created   *time.Time   `json:"created" db:"created"`
+	EditedBy  string       `json:"edited_by" db:"edited_by"`
+	Edited    *time.Time   `json:"edited" db:"edited"`
+	Prices    []*PricesSub `json:"prices_sub"`
 }
 
 type PricesSub struct {
@@ -37,14 +39,13 @@ type PricesSub struct {
 	Name   string  `json:"name" db:"name"`
 	NameEn string  `json:"name_en" db:"name_en"`
 	NameCn string  `json:"name_cn" db:"name_cn"`
-	Price1  float32 `json:"price" db:"price"`
-	Active  int `json:"active" db:"active"`
+	Price1 float32 `json:"price" db:"price"`
+	Active int     `json:"active" db:"active"`
 }
 
-
 func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
-	sql := `SELECT * FROM item WHERE active = 1 and id = ?`
-	fmt.Println("Item = ",sql, id)
+	sql := `SELECT id,code,ifnull(short_name,'') as short_name,ifnull(name,'') as name, ifnull(name_en,'') as name_en, ifnull(name_cn,'') as name_cn, ifnull(unit,'') as unit, ifnull(unit_en,'') as unit_en, ifnull(unit_cn,'') as unit_cn, ifnull(menu_seq,0) as menu_seq, ifnull(menu_id,0) as menu_id, ifnull(image,'') as image, ifnull(price,0) as price, ifnull(active,0) as active, ifnull(is_kitchen,0) as is_kitchen, ifnull(created_by,'') as created_by FROM item WHERE active = 1 and id = ?`
+	fmt.Println("Item = ", sql, id)
 	err = db.Get(i, sql, id)
 
 	//err = db.QueryRowx(sql, id).StructScan(i)
@@ -52,25 +53,10 @@ func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 		return err
 	}
 
-	//res, err := http.Get("http://192.168.0.80/api/genuser.php")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//robots, err := ioutil.ReadAll(res.Body)
-	//res.Body.Close()
-	//
-	//myString := string(robots)
-	//
-	//fmt.Println("robots = ",myString)
-
-	vLen := len(i.Name)
-
-	fmt.Println("Lenght = ", vLen/3)
 	// ดึงข้อมูลราคาทั้งหมดของสินค้ารายการนี้
 	sizes := []*PricesSub{}
 	sql = `SELECT * FROM price_sub WHERE active = 1 and item_id = ?`
 	fmt.Println("Price = ", sql)
-	fmt.Println("Lenght = ", vLen)
 	err = db.Select(&sizes, sql, id)
 	if err != nil {
 		return err
@@ -84,15 +70,15 @@ func (i *Item) ByMenuId(db *sqlx.DB, id int64) ([]*Lang, error) {
 	var sql string
 	langInit()
 	for _, l := range langs {
-		fmt.Println("Lang1 = ",l.Name)
+		fmt.Println("Lang1 = ", l.Name)
 		items := []*Item{}
 		switch l.Id {
 		case 1:
-			sql = `SELECT id,code,short_name,name, unit, menu_seq, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ? order by code`
+			sql = `SELECT id,code,short_name,name, unit, menu_seq, menu_id, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ? order by code`
 		case 2:
-			sql = `SELECT id,code,short_name,name_en as name, unit_en as unit, menu_seq, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ? order by code`
+			sql = `SELECT id,code,short_name,name_en as name, unit_en as unit, menu_seq, menu_id, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ? order by code`
 		case 3:
-			sql = `SELECT id,code,short_name,name_cn as name, unit_cn as unit, menu_seq, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ? order by code`
+			sql = `SELECT id,code,short_name,name_cn as name, unit_cn as unit, menu_seq, menu_id, image, price, active, is_kitchen FROM item WHERE active = 1 and  menu_id = ? order by code`
 		}
 		fmt.Println("case:", l.Id, l.Name, sql, id)
 		err := db.Select(&items, sql, id)
@@ -120,8 +106,52 @@ func (i *Item) ByMenuId(db *sqlx.DB, id int64) ([]*Lang, error) {
 	return langs, nil
 }
 
+func (i *Item) SaveItem(db *sqlx.DB) error {
+	var checkCount int
+	sqlCheckExist := `select count(id) as vCount from item where code = ?`
+	err := db.Get(&checkCount, sqlCheckExist, i.Code)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
 
-func (i *Item)PrintTest(db *sqlx.DB)error{
+	if (checkCount == 0) {
+		sql := `INSERT INTO item(code,short_name,name, name_en, unit, unit_en, menu_id, menu_seq, image, price, active, is_kitchen, created_by, created) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())`
+		rs, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, 1, i.IsKitchen, i.CreatedBy)
+		if err != nil {
+			return err
+		}
+		id, _ := rs.LastInsertId()
+		i.Id = id
+		fmt.Println("Item Id : ", id)
+	}
+
+	return nil
+}
+
+func (i *Item) UpdateItem(db *sqlx.DB) error {
+	var checkCount int
+	sqlCheckExist := `select count(id) as vCount from item where code = ?`
+	err := db.Get(&checkCount, sqlCheckExist, i.Code)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	fmt.Println("Count : ", checkCount)
+	fmt.Println("ID = ", i.Id)
+	if (checkCount != 0) {
+		sql := `UPDATE item set code=?, short_name=?, name=?, name_en=?, unit=?, unit_en=?, menu_id=?, menu_seq=?, image=?, price=?, active=?, is_kitchen=?, edited_by=?, edited = CURRENT_TIMESTAMP() where id = ?`
+		_, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, i.Active, i.IsKitchen, i.EditedBy, i.Id)
+		fmt.Println("sql = ", sql)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (i *Item) PrintTest(db *sqlx.DB) error {
 
 	config := new(Config)
 	config = GetConfig(db)

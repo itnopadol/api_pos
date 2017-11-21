@@ -51,6 +51,51 @@ func GetItemsByMenuId(c *gin.Context) {
 	c.JSON(http.StatusOK, langs)
 }
 
+func SaveItem(c *gin.Context){
+	fmt.Println("Call POST SaveItem")
+	c.Keys = headerKeys
+
+	newItem := &model.Item{}
+	err := c.BindJSON(newItem)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	i := newItem.SaveItem(dbc)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content : "+err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = i
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
+func UpdateItem(c *gin.Context){
+	fmt.Println("Call PUT UpdateItem")
+	c.Keys = headerKeys
+
+	newItem := &model.Item{}
+	err := c.BindJSON(newItem)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	i := newItem.UpdateItem(dbc)
+
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content : "+err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "Success"
+		rs.Data = i
+		c.JSON(http.StatusOK,rs)
+	}
+}
+
 
 func PrintTest(c *gin.Context) {
 	fmt.Println("call Print Test")
