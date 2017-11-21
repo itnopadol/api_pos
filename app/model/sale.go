@@ -10,32 +10,34 @@ import (
 	"github.com/itnopadol/api_pos/hw"
 	"strconv"
 	"strings"
+
+	"encoding/json"
 )
 
 // Sale เป็นหัวเอกสารขายแต่ละครั้ง
 type Sale struct {
-	Id              uint64     `json:"id" db:"id"`
-	HostCode        string     `json:"host_code" db:"host_code"`
-	QueId           int        `json:"que_id" db:"que_id"`
-	DocNo           string     `json:"doc_no" db:"doc_no"`
-	DocDate         string     `json:"doc_date" db:"doc_date"`
-	TotalAmount     float64    `json:"total_amount" db:"total_amount"`
-	PayAmount       float64    `json:"pay_amount" db:"pay_amount"`
-	ChangeAmount    float64    `json:"change_amount" db:"change_amount"`
-	Type            string     `json:"type" db:"type"`
-	TaxRate         int        `json:"tax_rate" db:"tax_rate"`
-	ItemAmount      float64    `json:"item_amount" db:"item_amount"`
-	BeforeTaxAmount float64    `json:"before_tax_amount" db:"before_tax_amount"`
-	TaxAmount       float64    `json:"tax_amount" db:"tax_amount"`
-	CreateBy        string     `json:"create_by" db:"create_by"`
-	Created         *time.Time `json:"-" db:"created"`
+	Id                 uint64     `json:"id" db:"id"`
+	HostCode           string     `json:"host_code" db:"host_code"`
+	QueId              int        `json:"que_id" db:"que_id"`
+	DocNo              string     `json:"doc_no" db:"doc_no"`
+	DocDate            string     `json:"doc_date" db:"doc_date"`
+	TotalAmount        float64    `json:"total_amount" db:"total_amount"`
+	PayAmount          float64    `json:"pay_amount" db:"pay_amount"`
+	ChangeAmount       float64    `json:"change_amount" db:"change_amount"`
+	Type               string     `json:"type" db:"type"`
+	TaxRate            int        `json:"tax_rate" db:"tax_rate"`
+	ItemAmount         float64    `json:"item_amount" db:"item_amount"`
+	BeforeTaxAmount    float64    `json:"before_tax_amount" db:"before_tax_amount"`
+	TaxAmount          float64    `json:"tax_amount" db:"tax_amount"`
+	CreateBy           string     `json:"create_by" db:"create_by"`
+	Created            *time.Time `json:"-" db:"created"`
 
-	IsPosted       bool       `json:"-" db:"is_posted"`
-	IsCancel       int        `json:"is_cancel" db:"is_cancel"`
-	PostedBy       string     `json:"posted_by" db:"posted_by"`
-	PostedDatetime *time.Time `json:"posted_datetime" db:"posted_datetime"`
-	CancelBy       string     `json:"cancel_by" db:"cancel_by"`
-	Canceled       *time.Time `json:"canceled" db:"canceled"`
+	IsPosted           bool       `json:"-" db:"is_posted"`
+	IsCancel           int        `json:"is_cancel" db:"is_cancel"`
+	PostedBy           string     `json:"posted_by" db:"posted_by"`
+	PostedDatetime     *time.Time `json:"posted_datetime" db:"posted_datetime"`
+	CancelBy           string     `json:"cancel_by" db:"cancel_by"`
+	Canceled           *time.Time `json:"canceled" db:"canceled"`
 
 	SumCashAmount      float64 `json:"sum_cash_amount" db:"sum_cash_amount"`
 	SumChangeAmount    float64 `json:"sum_change_amount" db:"sum_change_amount"`
@@ -46,9 +48,9 @@ type Sale struct {
 	BillCount          int     `json:"bill_count" db:"bill_count"`
 	BillCountAll       int     `json:"bill_count_all" db:"bill_count_all"`
 
-	SaleSubs []*SaleSub `json:"sale_subs"`
+	SaleSubs           []*SaleSub `json:"sale_subs"`
 
-	Wifi string `json:"wifi"`
+	Wifi               string `json:"wifi"`
 }
 
 // SaleSub เป็นรายการสินค้าที่ขายใน Sale
@@ -127,7 +129,7 @@ func (s *Sale) CheckAmount() (status int, err error) {
 	return status, nil
 }
 
-func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitchen string, printbar string , err error) {
+func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitchen string, printbar string, err error) {
 	var CheckRemain float64
 	var CheckChange float64
 
@@ -163,13 +165,13 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 		if (s.HostCode != "") {
 			checkAmount, _ := s.CheckAmount()
 			if err != nil {
-				return "Error Check ItemAmount", "","","",err
+				return "Error Check ItemAmount", "", "", "", err
 			}
 
 			if (checkAmount == 0) {
 				s.TotalAmount = toFixed(s.TotalAmount, 2)
-				vTaxAmount = toFixed(s.TotalAmount-((s.TotalAmount*100)/(100+float64(s.TaxRate))), 2)
-				vBeforeTaxAmount = toFixed(s.TotalAmount-vTaxAmount, 2)
+				vTaxAmount = toFixed(s.TotalAmount - ((s.TotalAmount * 100) / (100 + float64(s.TaxRate))), 2)
+				vBeforeTaxAmount = toFixed(s.TotalAmount - vTaxAmount, 2)
 
 				s.BeforeTaxAmount = vBeforeTaxAmount
 				s.TaxAmount = vTaxAmount
@@ -198,7 +200,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 					s.CreateBy)
 				if err != nil {
 					fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
-					return "","","","", err
+					return "", "", "", "", err
 				}
 				id, _ := rs.LastInsertId()
 				s.Id = uint64(id)
@@ -227,7 +229,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 						ss.IsAtHome)
 					if err != nil {
 						fmt.Printf("Error when db.Exec(sql2) %v\n", err.Error())
-						return "","","","" ,err
+						return "", "", "", "", err
 					}
 					fmt.Println("Insert sale_sub line ", ss)
 
@@ -281,19 +283,19 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 				}
 
 			} else {
-				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", "","","",err
+				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", "", "", "", err
 			}
 
 		} else {
-			return "Host Code ไม่แสดง กรุณาตรวจสอบ", "","","",err
+			return "Host Code ไม่แสดง กรุณาตรวจสอบ", "", "", "", err
 		}
 
 	} else {
-		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", "","","",nil
+		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", "", "", "", nil
 	}
 	fmt.Println("Save data sucess: sale =", s)
 
-	return s.DocNo, err_bill,err_kitchen,err_bar,nil
+	return s.DocNo, err_bill, err_kitchen, err_bar, nil
 }
 
 //ยกเลิกบิล
@@ -367,14 +369,23 @@ func (s *Sale) SearchSaleById(db *sqlx.DB, id int64) error {
 
 // พิมพ์ใบเสร็จ
 func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
-	//myPassword := genMikrotikPassword(c)
-	myPassword := s.Wifi
+	myPassword := GenMikrotikPassword(c)
+	//myPassword := s.Wifi
 	fmt.Println("password =", myPassword)
 
 	f, err := net.Dial("tcp", h.PrinterPort)
 	if err != nil {
-		sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
-		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Bill Error :"+err.Error(), s.CreateBy)
+		sql_err := `Insert Into bill_error_logs
+				(
+					module_name,
+					host_code,
+					doc_no,
+					error_log,
+					user_code,
+					err_datetime)
+					Values("Sale",?,?,?,?,CURRENT_TIMESTAMP()
+		 		)`
+		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Bill Error :" + err.Error(), s.CreateBy)
 		if err != nil {
 			return err
 		}
@@ -459,7 +470,7 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 		vDiffOld = vDiffEmpty
 
 		fmt.Println("ItemName=", sub.ItemName)
-		fmt.Println("Len", vLen/3)
+		fmt.Println("Len", vLen / 3)
 		fmt.Println("Diff ", vDiff)
 		if (sub.Line == 0 ) {
 			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffEmpty))
@@ -501,8 +512,8 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	var len1 int
 
 	len1 = len(myPassword)
-	pt.WriteStringLines("WIFI : "+ strconv.Itoa(len1))
-	pt.WriteStringLines("WIFI : "+ myPassword)
+	pt.WriteStringLines("WIFI : " + strconv.Itoa(len1))
+	pt.WriteStringLines("WIFI : " + myPassword)
 	pt.Formfeed()
 	pt.Cut()
 	pt.OpenCashBox()
@@ -580,7 +591,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB) error {
 		vDiffOld := vDiffEmpty
 
 		fmt.Println("ItemName=", sub.ItemName)
-		fmt.Println("Len", vLen/3)
+		fmt.Println("Len", vLen / 3)
 		fmt.Println("Diff ", vDiff)
 
 		if (sub.Line == 0 ) {
@@ -635,7 +646,7 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 	f, err := net.Dial("tcp", c.Printer1Port)
 	if err != nil {
 		sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
-		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Kitchen Error :"+err.Error(), s.CreateBy)
+		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Kitchen Error :" + err.Error(), s.CreateBy)
 		if err != nil {
 			return err
 		}
@@ -731,7 +742,7 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 
 	if err != nil {
 		sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
-		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Bar Water Error :"+err.Error(), s.CreateBy)
+		db.Exec(sql_err, s.HostCode, s.DocNo, "Print Bar Water Error :" + err.Error(), s.CreateBy)
 		if err != nil {
 			return err
 		}
@@ -831,7 +842,7 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 		f, err := net.Dial("tcp", config.Printer4Port)
 		if err != nil {
 			sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
-			db.Exec(sql_err, "", "", "Print Sale Daily :"+err.Error(), s.CreateBy)
+			db.Exec(sql_err, "", "", "Print Sale Daily :" + err.Error(), s.CreateBy)
 			if err != nil {
 				return nil, err
 			}

@@ -41,6 +41,9 @@ func main() {
 
 	r.GET("/host", ctrl.SearchHost)
 
+
+	r.GET("/wifi", ctrl.GenUser)
+
 	r.GET("/user/login", ctrl.LogIn)
 
 	r.Run(":8888")
