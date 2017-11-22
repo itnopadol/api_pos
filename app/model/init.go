@@ -183,7 +183,7 @@ func genMikrotikPassword(c *Config) (password string) {
 
 	password = string(robots)
 
-	fmt.Println("robots = ", password)
+	fmt.Println("robots wifi = ", password)
 
 	return password
 }
