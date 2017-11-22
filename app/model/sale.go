@@ -495,12 +495,12 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	pt.SetAlign("center")
 	fmt.Println("myPassword After = ", myPassword)
 
-	fmt.Println(IsNumeric(myPassword))
-	wifi_password:=string(myPassword[3:12])
-	fmt.Println(IsNumeric(wifi_password))
-	fmt.Println(">"+wifi_password+"<")
+	//fmt.Println(IsNumeric(myPassword))
+	//wifi_password:=string(myPassword[3:12])
+	//fmt.Println("Isnumberic Wifi ",IsNumeric(wifi_password))
+	//fmt.Println(">"+wifi_password+"<")
 
-	pt.WriteStringLines("WIFI : "+ wifi_password)
+	pt.WriteStringLines("WIFI : "+ myPassword)
 	pt.Formfeed()
 	pt.Cut()
 	pt.OpenCashBox()
