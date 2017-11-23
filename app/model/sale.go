@@ -27,6 +27,7 @@ type Sale struct {
 	ItemAmount      float64    `json:"item_amount" db:"item_amount"`
 	BeforeTaxAmount float64    `json:"before_tax_amount" db:"before_tax_amount"`
 	TaxAmount       float64    `json:"tax_amount" db:"tax_amount"`
+	WifiPassword	string 	   `json:"wifi_password" db:"wifi_password"`
 	CreateBy        string     `json:"create_by" db:"create_by"`
 	Created         *time.Time `json:"-" db:"created"`
 
@@ -365,8 +366,8 @@ func (s *Sale) SearchSaleById(db *sqlx.DB, id int64) error {
 
 // พิมพ์ใบเสร็จ
 func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
-	myPassword := genMikrotikPassword(c)
-	fmt.Println("password =", myPassword)
+	//myPassword := genMikrotikPassword(c)
+	//fmt.Println("password =", myPassword)
 
 	f, err := net.Dial("tcp", h.PrinterPort)
 	if err != nil {
@@ -493,14 +494,17 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	//Footer Area
 	pt.SetFont("A")
 	pt.SetAlign("center")
-	fmt.Println("myPassword After = ", myPassword)
+	//fmt.Println("myPassword After = ", myPassword)
 
 	//fmt.Println(IsNumeric(myPassword))
 	//wifi_password:=string(myPassword[3:12])
 	//fmt.Println("Isnumberic Wifi ",IsNumeric(wifi_password))
 	//fmt.Println(">"+wifi_password+"<")
 
-	pt.WriteStringLines("WIFI : "+ myPassword)
+	if(s.WifiPassword != ""){
+		pt.WriteStringLines("WIFI : "+ s.WifiPassword)
+	}
+
 	pt.Formfeed()
 	pt.Cut()
 	pt.OpenCashBox()

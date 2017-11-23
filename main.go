@@ -45,6 +45,8 @@ func main() {
 
 	r.GET("/user/login", ctrl.LogIn)
 
+	r.GET("/config", ctrl.GenWifiPassword)
+
 	r.Run(":8888")
 
 }
