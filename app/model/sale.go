@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"encoding/json"
+	//"encoding/json"
 )
 
 // Sale เป็นหัวเอกสารขายแต่ละครั้ง
