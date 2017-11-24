@@ -34,12 +34,16 @@ func main() {
 	r.GET("/sale/:id", ctrl.SearchSaleById)
 	r.GET("/sales/saledaily", ctrl.PrintSaleDailyTotal)
 	r.PUT("/sale/void", ctrl.SaleVoid)
+	r.GET("/sales/reportsale", ctrl.ReportSaleDaily)
 
 	r.POST("/shift/open", ctrl.SaveShift)
 	r.PUT("/shift/update", ctrl.UpdateShift)
 	r.PUT("/shift/closed", ctrl.ClosedShift)
 	r.GET("/shift/search", ctrl.ShiftDetails)
 	r.GET("/shift/senddaily", ctrl.PrintSendDailyTotal)
+
+	r.GET("/report/tax", ctrl.ReportTax)
+
 
 	r.GET("/host", ctrl.SearchHost)
 

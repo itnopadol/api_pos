@@ -23,6 +23,7 @@ type Config struct {
 	Printer3Port string     `json:"printer3_port" db:"printer3_port"`
 	Printer4Port string     `json:"printer4_port" db:"printer4_port"`
 	LinkMikrotik string     `json:"link_mikrotik" db:"link_mikrotik"`
+	Wifi_Password	string `json:"wifi_password" db:"wifi_password"`
 	CreatedBy    string     `json:"created_by" db:"created_by"`
 	Created      *time.Time `json:"created" db:"created"`
 	EditedBy     string     `json:"edited_by" db:"edited_by"`
@@ -99,7 +100,7 @@ func (c *Config) GenWifiPassword(db *sqlx.DB) error {
 
 	fmt.Println("Link Wifi : ",c.LinkMikrotik)
 
-	wifi_link := "http://hapos.dyndns.org:9003/wifi/genuser.php"
+	wifi_link := c.LinkMikrotik//"http://hapos.dyndns.org:9003/wifi/genuser.php"
 	res, err := http.Get(wifi_link)
 	if err != nil {
 		return err
@@ -110,6 +111,7 @@ func (c *Config) GenWifiPassword(db *sqlx.DB) error {
 	password := string(robots)
 
 	fmt.Println("robots wifi = ", password)
+	c.Wifi_Password = password
 
 	return nil
 }
