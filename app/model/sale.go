@@ -939,3 +939,23 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 
 	return nil, nil
 }
+
+
+func (s *Sale)ReportSaleDaily(db *sqlx.DB, date_start string, date_stop string)(sales []*Sale, err error){
+	sql := `select id, host_code,que_id,doc_no,doc_date,tax_rate,item_amount,before_tax_amount,tax_amount,total_amount,pay_amount,change_amount,is_cancel,create_by,created from sale where doc_date between ? and ? order by doc_date, que_id`
+	err = db.Select(&sales, sql,date_start, date_stop)
+	fmt.Println("sql = ",sql,date_start , date_stop)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, sale := range sales {
+		sqlsub := `select item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount from sale_sub where sale_id = ? `
+		fmt.Println("sqlsub = ",sqlsub)
+		err = db.Select(&sale.SaleSubs, sqlsub, sale.Id)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return sales, nil
+}
