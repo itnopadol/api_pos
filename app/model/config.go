@@ -4,6 +4,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"fmt"
 	"time"
+	"net/http"
+	"io/ioutil"
 )
 
 type Config struct {
@@ -26,6 +28,7 @@ type Config struct {
 	EditedBy     string     `json:"edited_by" db:"edited_by"`
 	Edited       *time.Time `json:"edited" db:"edited"`
 }
+
 
 func (c *Config) Save(db *sqlx.DB) error {
 
@@ -77,11 +80,36 @@ func (c *Config) Update(db *sqlx.DB) error {
 func (c *Config) Search(db *sqlx.DB) error {
 
 	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port,ifnull(link_mikrotik,'') as link_mikrotik from config`
-	err := db.Get(&c, sql)
+	err := db.Get(c, sql)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
+
+	return nil
+}
+
+func (c *Config) GenWifiPassword(db *sqlx.DB) error {
+	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port, ifnull(link_mikrotik,'') as link_mikrotik from config`
+	fmt.Println("Config = ", sql)
+	err := db.Get(c, sql)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	fmt.Println("Link Wifi : ",c.LinkMikrotik)
+
+	wifi_link := "http://hapos.dyndns.org:9003/wifi/genuser.php"
+	res, err := http.Get(wifi_link)
+	if err != nil {
+		return err
+	}
+	robots, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+
+	password := string(robots)
+
+	fmt.Println("robots wifi = ", password)
 
 	return nil
 }
