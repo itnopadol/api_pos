@@ -132,7 +132,8 @@ func GetLastDocNo(db *sqlx.DB, host_code string) (last_no int, err error) {
 }
 
 func LastQueId(db *sqlx.DB) (que_id int) {
-	sql := `select ifnull(max(que_id),0)+1 maxno from sale where year(doc_date) = year(CURDATE()) and month(doc_date) = month(CURDATE()) and day(doc_date) = day(CURDATE())`
+	//sql := `select ifnull(max(que_id),0)+1 maxno from sale where year(doc_date) = year(CURDATE()) and month(doc_date) = month(CURDATE()) and day(doc_date) = day(CURDATE())`
+	sql := `mod(ifnull(count(que_id),0),150)+1 maxno from sale where year(doc_date) = year(CURDATE()) and month(doc_date) = month(CURDATE()) and day(doc_date) = day(CURDATE())`
 	fmt.Println("Query = ", sql)
 	err := db.Get(&que_id, sql)
 	if err != nil {
