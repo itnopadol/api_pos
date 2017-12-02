@@ -17,7 +17,6 @@ type Report struct {
 }
 
 type Detail struct {
-	LineNumber int `json:"line_number" db:"line_number"`
 	DocDate string `json:"doc_date" db:"doc_date"`
 	DocNo string `json:"doc_no" db:"doc_no"`
 	CustomerName string `json:"customer_name" db:"customer_name"`
@@ -34,7 +33,7 @@ func (r *Report)ReportTax(db *sqlx.DB, report_month string, report_year string) 
 	fmt.Println("report_month = ",report_month)
 	db.Get(r, sql, report_month, report_year)
 
-	sqlsub :=`select @row + 1 as row ,0 as line_number,doc_date,doc_no,'เงินสด' as customer_name,"" as cust_tax_id,item_amount as sum_of_item_amount,before_tax_amount,tax_amount,total_amount as sum_total_amount from sale where month(doc_date) = ? and year(doc_date) = ? order by doc_date, que_id`
+	sqlsub :=`select doc_date,doc_no,'เงินสด' as customer_name,"" as cust_tax_id,item_amount as sum_of_item_amount,before_tax_amount,tax_amount,total_amount as sum_total_amount from sale where month(doc_date) = ? and year(doc_date) = ? order by doc_date, que_id`
 	err := db.Select(&r.Details, sqlsub, report_month, report_year)
 	if err != nil {
 		return err

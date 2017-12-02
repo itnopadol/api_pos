@@ -50,6 +50,8 @@ func main() {
 	r.GET("/user/login", ctrl.LogIn)
 
 	r.GET("/config", ctrl.GenWifiPassword)
+	r.POST("/config", ctrl.SaveConfig)
+	r.PUT("/config",ctrl.UpdateConfig)
 
 	r.Run(":8888")
 
