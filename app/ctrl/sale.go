@@ -155,6 +155,30 @@ func PrintSaleDailyTotal(c *gin.Context){
 
 }
 
+
+func PrintSaleNetDaily(c *gin.Context){
+	log.Println("call Get SearchSales")
+	c.Keys = headerKeys
+
+	host_code := c.Request.URL.Query().Get("host_code")
+	doc_date := c.Request.URL.Query().Get("doc_date")
+
+	NewSale := new(model.Sale)
+	sales, err := NewSale.PrintSaleNetAmountDaily(dbc, host_code, doc_date)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :"+ err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = sales
+		c.JSON(http.StatusOK, rs)
+	}
+
+}
+
+
 func ReportSaleDaily(c *gin.Context){
 	log.Println("call Get ReportSaleDaily")
 	c.Keys = headerKeys
