@@ -46,6 +46,12 @@ type Sale struct {
 	NetAmountAll       float64 `json:"net_amount_all" db:"net_amount_all"`
 	BillCount          int     `json:"bill_count" db:"bill_count"`
 	BillCountAll       int     `json:"bill_count_all" db:"bill_count_all"`
+	ChangeBegin        float64 `json:"change_begin" db:"change_begin"`
+	CashAmount         float64 `json:"cash_amount" db:"cash_amount"`
+	ExpensesAmount     float64 `json:"expenses_amount" db:"expenses_amount"`
+	ChangeBeginAll        float64 `json:"change_begin_all" db:"change_begin_all"`
+	CashAmountAll         float64 `json:"cash_amount_all" db:"cash_amount_all"`
+	ExpensesAmountAll     float64 `json:"expenses_amount_all" db:"expenses_amount_all"`
 
 	SaleSubs []*SaleSub `json:"sale_subs"`
 }
@@ -932,6 +938,146 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 		pt.WriteStringLines(CommaFloat(sales[0].SumChangeAmountAll))
 		pt.WriteStringLines("     ")
 		pt.WriteStringLines(CommaFloat(sales[0].NetAmountAll) + "\n")
+		makeline(pt)
+		pt.Cut()
+		pt.End()
+	}
+
+	return nil, nil
+}
+
+
+
+//รายงานยอดขายประจำวัน สุทธิ
+func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date string) (sales []*Sale, err error) {
+	var sql string
+
+	s.DocDate = doc_date
+	s.HostCode = host_code
+
+	fmt.Println("DOCDATE = ", doc_date, s.DocDate)
+
+	config := new(Config)
+	config = GetConfig(db)
+
+	fmt.Println("config.Printer4Port", config.Printer4Port)
+	if (config.Printer4Port != "") {
+
+		//f, err := os.Open("/dev/usb/lp0")
+		//f, err :=os.OpenFile("/dev/ttyUSB0", os.O_WRONLY, os.ModeDevice)
+
+		f, err := net.Dial("tcp", config.Printer4Port)
+		//f, err := net.dial()
+		if err != nil {
+			sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
+			db.Exec(sql_err, "", "", "Print Sale Daily :"+err.Error(), s.CreateBy)
+			if err != nil {
+				return nil, err
+			}
+			return nil, err
+		}
+		defer f.Close()
+
+		w := bufio.NewWriter(f)
+		p := escpos.New(w)
+
+		pt := hw.PosPrinter{p, w}
+		pt.Init()
+		pt.SetLeftMargin(20)
+
+		//////////////////////////////////////////////////////////////////////////////////////
+		pt.WriteRaw([]byte{28, 112, 1, 0})
+		pt.SetCharaterCode(26)
+		pt.SetAlign("center")
+		pt.SetTextSize(0, 0)
+		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + s.DocDate)
+		pt.LineFeed()
+		pt.SetTextSize(0, 0)
+		makeline(pt)
+		///////////////////////////////////////////////////////////////////////////////////
+		if (s.HostCode == "") {
+			sql = `select 	distinct a.host_code,a.doc_date,b.change_begin,b.cash_amount,b.expenses_amount,
+							(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
+							(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
+							(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount_all,
+							(select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_change_amount_all,
+							(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as net_amount_all,
+							(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_cash_amount,
+							(select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_change_amount,
+							(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
+					from 	sale a
+							left join cash_shift b on a.doc_date = b.doc_date and a.host_code = b.host_code
+					where a.doc_date = ? and a.is_cancel = 0 order by a.host_code`
+			err = db.Select(&sales, sql, doc_date)
+		} else {
+			sql = `	select 	distinct a.host_code,a.doc_date,b.change_begin,b.cash_amount,b.expenses_amount,
+							(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
+							(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
+							(select sum(change_begin) from cash_shift where host_code = a.host_code and doc_date = a.doc_date group by host_code,doc_date) as change_begin_all,
+							(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date group by host_code,doc_date) as expenses_amount_all,
+							(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date group by host_code,doc_date) as cash_amount_all,
+							(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as net_amount_all
+					from 	sale a
+							left join cash_shift b on a.doc_date = b.doc_date and a.host_code = b.host_code
+					where 	a.host_code = ? and a.doc_date = ? and a.is_cancel = 0 order by a.host_code`
+			err = db.Select(&sales, sql, host_code, doc_date)
+		}
+
+		fmt.Println("sql = ", sql, host_code, doc_date)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println("Sale Data ", sales[0].SumCashAmount)
+		pt.SetFont("B")
+		pt.WriteStringLines("จุดขาย")
+		pt.WriteStringLines("   เงินทอน")
+		pt.WriteStringLines("  ")
+		pt.WriteStringLines("   ยอดขาย")
+		pt.WriteStringLines("  ")
+		pt.WriteStringLines("   ค่าใช้จ่าย")
+		pt.WriteStringLines("   ")
+		pt.WriteStringLines("   ยอดนำส่ง\n")
+		//pt.FormfeedN(3)
+		makeline(pt)
+		/////////////////////////////////////////////////////////////////////////////////
+		var vLineNumber int
+		for _, s := range sales {
+			//pt.SetAlign("left")
+			vLineNumber = vLineNumber + 1
+			pt.SetFont("A")
+			pt.WriteStringLines("" + s.HostCode)
+			//pt.WriteStringLines("    " + CommaFloat(s.SumCashAmount))
+			pt.WriteStringLines("    " + CommaFloat(s.ChangeBegin))
+			//pt.WriteStringLines("     " + CommaFloat(s.SumChangeAmount))
+			pt.WriteStringLines("     " + CommaFloat(s.NetAmountAll))
+			pt.WriteStringLines("     " + CommaFloat(s.ExpensesAmount))
+			//pt.WriteStringLines("      " + CommaFloat(s.NetAmount) + "\n")
+			pt.WriteStringLines("    " + CommaFloat(s.CashAmount) + "\n")
+			pt.FormfeedN(3)
+		}
+		makeline(pt)
+		//pt.SetAlign("left")
+		pt.SetFont("A")
+		if (s.HostCode == "") {
+			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCountAll) + " บิล\n")
+		} else {
+			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCount) + " บิล\n")
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+		makeline(pt)
+		fmt.Println("SumCashAmount = ", sales[0].SumCashAmount)
+		//pt.SetFont("B")
+		pt.WriteStringLines("รวม   ")
+		pt.SetFont("A")
+		pt.WriteStringLines("")
+		pt.WriteStringLines(CommaFloat(sales[0].ChangeBeginAll))
+		pt.WriteStringLines("     ")
+		pt.WriteStringLines(CommaFloat(sales[0].NetAmountAll))
+		pt.WriteStringLines("     ")
+		pt.WriteStringLines(CommaFloat(sales[0].ExpensesAmountAll))
+		pt.WriteStringLines("    ")
+		pt.WriteStringLines(CommaFloat(sales[0].CashAmountAll) + "\n")
 		makeline(pt)
 		pt.Cut()
 		pt.End()

@@ -34,7 +34,7 @@ type Item struct {
 }
 
 type PricesSub struct {
-	Id     int     `json:"id"`
+	Id     int64     `json:"id"`
 	ItemId int64   `json:"-" db:"item_id"`
 	Name   string  `json:"name" db:"name"`
 	NameEn string  `json:"name_en" db:"name_en"`
@@ -106,8 +106,33 @@ func (i *Item) ByMenuId(db *sqlx.DB, id int64) ([]*Lang, error) {
 	return langs, nil
 }
 
+//func (i *Item) SaveItem(db *sqlx.DB) error {
+//	var checkCount int
+//	sqlCheckExist := `select count(id) as vCount from item where code = ?`
+//	err := db.Get(&checkCount, sqlCheckExist, i.Code)
+//	if err != nil {
+//		fmt.Println(err.Error())
+//		return err
+//	}
+//
+//	if (checkCount == 0) {
+//		sql := `INSERT INTO item(code,short_name,name, name_en, unit, unit_en, menu_id, menu_seq, image, price, active, is_kitchen, created_by, created) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())`
+//		rs, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, 1, i.IsKitchen, i.CreatedBy)
+//		if err != nil {
+//			return err
+//		}
+//		id, _ := rs.LastInsertId()
+//		i.Id = id
+//		fmt.Println("Item Id : ", id)
+//	}
+//
+//	return nil
+//}
+
 func (i *Item) SaveItem(db *sqlx.DB) error {
 	var checkCount int
+	var checkCountSub int
+
 	sqlCheckExist := `select count(id) as vCount from item where code = ?`
 	err := db.Get(&checkCount, sqlCheckExist, i.Code)
 	if err != nil {
@@ -124,13 +149,63 @@ func (i *Item) SaveItem(db *sqlx.DB) error {
 		id, _ := rs.LastInsertId()
 		i.Id = id
 		fmt.Println("Item Id : ", id)
+
+
+		for _, sub := range i.Prices {
+
+			sqlCheckSubExist := `select count(id) as vCount from price_sub where item_id = ? and name = ?`
+			err := db.Get(&checkCountSub, sqlCheckSubExist, i.Id, sub.Name)
+			if err != nil {
+				fmt.Println(err.Error())
+				return err
+			}
+
+			if (checkCountSub == 0) {
+				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?)`
+				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1, 1)
+				if err != nil {
+					return err
+				}
+
+				item_id, _ := rs_sub.LastInsertId()
+				sub.Id = item_id
+				fmt.Println("Item_sub Id : ", item_id)
+			}
+
+		}
 	}
+
 
 	return nil
 }
 
+//func (i *Item) UpdateItem(db *sqlx.DB) error {
+//	var checkCount int
+//	sqlCheckExist := `select count(id) as vCount from item where code = ?`
+//	err := db.Get(&checkCount, sqlCheckExist, i.Code)
+//	if err != nil {
+//		fmt.Println(err.Error())
+//		return err
+//	}
+//	fmt.Println("Count : ", checkCount)
+//	fmt.Println("ID = ", i.Id)
+//	if (checkCount != 0) {
+//		sql := `UPDATE item set code=?, short_name=?, name=?, name_en=?, unit=?, unit_en=?, menu_id=?, menu_seq=?, image=?, price=?, active=?, is_kitchen=?, edited_by=?, edited = CURRENT_TIMESTAMP() where id = ?`
+//		_, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, i.Active, i.IsKitchen, i.EditedBy, i.Id)
+//		fmt.Println("sql = ", sql)
+//		if err != nil {
+//			return err
+//		}
+//	}
+//
+//	return nil
+//}
+
+
 func (i *Item) UpdateItem(db *sqlx.DB) error {
 	var checkCount int
+	var checkCountSub int
+
 	sqlCheckExist := `select count(id) as vCount from item where code = ?`
 	err := db.Get(&checkCount, sqlCheckExist, i.Code)
 	if err != nil {
@@ -146,6 +221,35 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 		if err != nil {
 			return err
 		}
+
+		for _, sub := range i.Prices{
+
+			sqlCheckSubExist := `select count(id) as vCount from price_sub where item_id = ? and name = ?`
+			err := db.Get(&checkCountSub, sqlCheckSubExist, i.Id, sub.Name)
+			if err != nil {
+				fmt.Println(err.Error())
+				return err
+			}
+
+			if (checkCountSub == 0){
+				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?)`
+				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1, 1)
+				if err != nil {
+					return err
+				}
+
+				item_id, _ := rs_sub.LastInsertId()
+				sub.Id = item_id
+				fmt.Println("Item_sub Id : ", item_id)
+			}else{
+				sql_sub := `UPDATE price_sub set name = ?, price = ? where item_id = ?, id = ?`
+				_, err := db.Exec(sql_sub, sub.Name, sub.Price1, i.Id, sub.Id)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
 	}
 
 	return nil

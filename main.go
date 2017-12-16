@@ -33,6 +33,7 @@ func main() {
 	r.GET("/sales", ctrl.SearchSales)
 	r.GET("/sale/:id", ctrl.SearchSaleById)
 	r.GET("/sales/saledaily", ctrl.PrintSaleDailyTotal)
+	r.GET("/sales/salenetdaily", ctrl.PrintSaleNetDaily)
 	r.PUT("/sale/void", ctrl.SaleVoid)
 	r.GET("/sales/reportsale", ctrl.ReportSaleDaily)
 
@@ -50,6 +51,7 @@ func main() {
 	r.GET("/user/login", ctrl.LogIn)
 
 	r.GET("/config", ctrl.GenWifiPassword)
+	r.GET("/config/search", ctrl.Search)
 	r.POST("/config", ctrl.SaveConfig)
 	r.PUT("/config",ctrl.UpdateConfig)
 

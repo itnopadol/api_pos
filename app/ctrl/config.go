@@ -50,6 +50,24 @@ func SaveConfig(c *gin.Context){
 	}
 }
 
+func Search(c *gin.Context){
+	log.Println("call Get Config")
+	c.Keys = headerKeys
+
+	cf := new(model.Config)
+	err := cf.Search(dbc)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :" + err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	} else {
+		rs.Status = "success"
+		rs.Data = cf
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
 
 func UpdateConfig(c *gin.Context){
 	fmt.Println("Call PUT Update Config")
