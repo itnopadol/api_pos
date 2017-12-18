@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"github.com/itnopadol/api_pos/app/resp"
 	"log"
+	"fmt"
 )
 
 func LogIn(c *gin.Context){
@@ -26,6 +27,52 @@ func LogIn(c *gin.Context){
 	}else{
 		rs.Status = "success"
 		rs.Data = u
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
+
+func SaveUser(c *gin.Context){
+	log.Println("call POST Save User")
+	c.Keys = headerKeys
+
+	newUser := &model.User{}
+	err := c.BindJSON(newUser)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	cf := newUser.Save(dbc)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content : "+err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = cf
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
+
+func UpdateUser(c *gin.Context){
+	log.Println("call PUT Save User")
+	c.Keys = headerKeys
+
+	newUser := &model.User{}
+	err := c.BindJSON(newUser)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	cf := newUser.Update(dbc)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content : "+err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = cf
 		c.JSON(http.StatusOK, rs)
 	}
 }

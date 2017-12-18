@@ -174,6 +174,22 @@ func CommaFloat(v float64) string {
 	return buf.String()
 }
 
+
+func StrReverse(value string) string {
+	// Convert string to rune slice.
+	// ... This method works on the level of runes, not bytes.
+	data := []rune(value)
+	result := []rune{}
+
+	// Add runes in reverse order.
+	for i := len(data) - 1; i >= 0; i-- {
+		result = append(result, data[i])
+	}
+
+	// Return new string.
+	return string(result)
+}
+
 func genMikrotikPassword(c *Config) (password string) {
 	res, err := http.Get(c.LinkMikrotik)
 	if err != nil {

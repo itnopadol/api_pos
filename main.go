@@ -49,6 +49,8 @@ func main() {
 	r.GET("/host", ctrl.SearchHost)
 
 	r.GET("/user/login", ctrl.LogIn)
+	r.POST("/user", ctrl.SaveUser)
+	r.PUT("/user", ctrl.UpdateUser)
 
 	r.GET("/config", ctrl.GenWifiPassword)
 	r.GET("/config/search", ctrl.Search)

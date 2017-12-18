@@ -3,10 +3,11 @@ package model
 import (
 	"time"
 	"github.com/jmoiron/sqlx"
+	"fmt"
 )
 
 type User struct {
-	Id int `json:"id" db:"id"`
+	Id int64 `json:"id" db:"id"`
 	UserCode string `json:"user_code" db:"user_code"`
 	UserName string `json:"user_name" db:"user_name"`
 	Password string `json:"password" db:"password"`
@@ -26,5 +27,56 @@ func (u *User)LogIn(db *sqlx.DB, user_code string, password string)error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (u *User) Save(db *sqlx.DB) error {
+
+	var checkCount int
+	sqlCheckExist := `select count(id) as vCount from user where user_code = ?`
+	err := db.Get(&checkCount, sqlCheckExist, u.UserCode)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	if (checkCount == 0) {
+		sql := `INSERT INTO user(user_code,user_name,password,confirm_password,role_id,active,created_by,created) VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
+		rs, err := db.Exec(sql, u.UserCode, u.UserName, u.Password, u.ConfirmPassword, u.RoleId, 1, u.CreatedBy)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+
+		Id, _ := rs.LastInsertId()
+		u.Id = Id
+	}
+
+	return nil
+}
+
+
+func (u *User) Update(db *sqlx.DB) error {
+
+	var checkCount int
+	sqlCheckExist := `select count(id) as vCount from user where id = ? and user_code = ?`
+	err := db.Get(&checkCount, sqlCheckExist, u.Id, u.UserCode)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	if (checkCount != 0) {
+		sql := `Update user set user_name=?,password=?,confirm_password=?,role_id=?,active=?,edited_by=?, edited=CURRENT_TIMESTAMP()) where id = ? and user_code = ?`
+		rs, err := db.Exec(sql, u.UserName, u.Password, u.ConfirmPassword, u.RoleId, u.Active, u.EditedBy, u.Id, u.UserCode)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+
+		Id, _ := rs.LastInsertId()
+		u.Id = Id
+	}
+
 	return nil
 }

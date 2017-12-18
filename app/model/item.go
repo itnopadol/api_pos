@@ -61,6 +61,10 @@ func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 	if err != nil {
 		return err
 	}
+
+	//nameEng := StrReverse("2017/12/18")
+
+	//i.NameEn = nameEng
 	i.Prices = sizes
 	return nil
 }
