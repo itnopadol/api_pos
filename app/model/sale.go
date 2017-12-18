@@ -986,11 +986,19 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 		pt.SetLeftMargin(20)
 
 		//////////////////////////////////////////////////////////////////////////////////////
+
+		docDate := s.DocDate
+
+		year := docDate[:4]
+		month := docDate[5:7]
+		day := docDate[8:10]
+
+
 		pt.WriteRaw([]byte{28, 112, 1, 0})
 		pt.SetCharaterCode(26)
 		pt.SetAlign("center")
 		pt.SetTextSize(0, 0)
-		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + s.DocDate)
+		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + day+"/"+month+"/"+year)
 		pt.LineFeed()
 		pt.SetTextSize(0, 0)
 		makeline(pt)
@@ -999,11 +1007,10 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 			sql = `select 	distinct a.host_code,a.doc_date,b.change_begin,b.cash_amount,b.expenses_amount,
 							(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
 							(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
-							(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_cash_amount_all,
-							(select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as sum_change_amount_all,
+							(select sum(change_begin) from cash_shift where doc_date = a.doc_date group by doc_date) as change_begin_all,
+							(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date group by doc_date) as expenses_amount_all,
+							(select sum(cash_amount) from cash_shift where doc_date = a.doc_date group by doc_date) as cash_amount_all,
 							(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as net_amount_all,
-							(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_cash_amount,
-							(select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as sum_change_amount,
 							(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
 					from 	sale a
 							left join cash_shift b on a.doc_date = b.doc_date and a.host_code = b.host_code

@@ -61,6 +61,7 @@ func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 	if err != nil {
 		return err
 	}
+
 	i.Prices = sizes
 	return nil
 }
