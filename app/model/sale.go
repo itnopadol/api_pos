@@ -986,11 +986,19 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 		pt.SetLeftMargin(20)
 
 		//////////////////////////////////////////////////////////////////////////////////////
+
+		docDate := s.DocDate
+
+		year := docDate[:4]
+		month := docDate[5:7]
+		day := docDate[8:10]
+
+
 		pt.WriteRaw([]byte{28, 112, 1, 0})
 		pt.SetCharaterCode(26)
 		pt.SetAlign("center")
 		pt.SetTextSize(0, 0)
-		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + s.DocDate)
+		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + day+"/"+month+"/"+year)
 		pt.LineFeed()
 		pt.SetTextSize(0, 0)
 		makeline(pt)
