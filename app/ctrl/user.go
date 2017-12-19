@@ -32,6 +32,28 @@ func LogIn(c *gin.Context){
 }
 
 
+func SearchUser(c *gin.Context){
+	log.Println("call Get User")
+	c.Keys = headerKeys
+
+	keyword := c.Request.URL.Query().Get("keyword")
+
+
+	u := new(model.User)
+	users, err := u.SearchUser(dbc, keyword)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :"+ err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = users
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
+
 func SaveUser(c *gin.Context){
 	log.Println("call POST Save User")
 	c.Keys = headerKeys

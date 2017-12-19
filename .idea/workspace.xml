@@ -3,8 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="c1a1ae10-9936-4c0c-9cc6-f48802070bbd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/app/ctrl/init.go" afterPath="$PROJECT_DIR$/app/ctrl/init.go" />
+      <change beforePath="$PROJECT_DIR$/app/ctrl/item.go" afterPath="$PROJECT_DIR$/app/ctrl/item.go" />
+      <change beforePath="$PROJECT_DIR$/app/ctrl/user.go" afterPath="$PROJECT_DIR$/app/ctrl/user.go" />
       <change beforePath="$PROJECT_DIR$/app/model/item.go" afterPath="$PROJECT_DIR$/app/model/item.go" />
-      <change beforePath="$PROJECT_DIR$/app/model/sale.go" afterPath="$PROJECT_DIR$/app/model/sale.go" />
+      <change beforePath="$PROJECT_DIR$/app/model/user.go" afterPath="$PROJECT_DIR$/app/model/user.go" />
+      <change beforePath="$PROJECT_DIR$/main.go" afterPath="$PROJECT_DIR$/main.go" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,11 +23,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="74">
-              <caret line="42" column="45" lean-forward="true" selection-start-line="42" selection-start-column="45" selection-end-line="42" selection-end-column="45" />
+            <state relative-caret-position="159">
+              <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
               <folding>
                 <element signature="e#14#169#0" expanded="true" />
               </folding>
@@ -31,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="init.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="init.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/ctrl/init.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="23" column="13" lean-forward="true" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+            <state relative-caret-position="414">
+              <caret line="35" column="5" lean-forward="true" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -44,7 +48,7 @@
       <file leaf-file-name="config.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/model/config.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
+            <state relative-caret-position="1071">
               <caret line="69" column="211" lean-forward="false" selection-start-line="69" selection-start-column="211" selection-end-line="69" selection-end-column="250" />
               <folding>
                 <marker date="1513415271659" expanded="true" signature="1322:1360" ph="select count... config" />
@@ -60,24 +64,74 @@
       <file leaf-file-name="item.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/model/item.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+            <state relative-caret-position="289">
+              <caret line="215" column="0" lean-forward="false" selection-start-line="215" selection-start-column="0" selection-end-line="216" selection-end-column="30" />
               <folding>
                 <element signature="e#15#115#0" expanded="true" />
-                <marker date="1513585771341" expanded="true" signature="3983:4034" ph="select count... item" />
-                <marker date="1513585771341" expanded="true" signature="4198:4401" ph="INSERT INTO item... " />
-                <marker date="1513585771341" expanded="true" signature="4812:4863" ph="select count... item" />
-                <marker date="1513585771341" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-                <marker date="1513585771341" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-                <marker date="1513585771341" expanded="true" signature="5791:5882" ph="INSERT INTO price_sub... " />
-                <marker date="1513585771341" expanded="true" signature="6244:6295" ph="select count... item" />
-                <marker date="1513585771341" expanded="true" signature="6525:6720" ph="UPDATE item... " />
-                <marker date="1513585771341" expanded="true" signature="7097:7148" ph="select count... item" />
-                <marker date="1513585771341" expanded="true" signature="7360:7555" ph="UPDATE item... " />
-                <marker date="1513585771341" expanded="true" signature="7842:7914" ph="select count... price_sub" />
-                <marker date="1513585771341" expanded="true" signature="8096:8187" ph="INSERT INTO price_sub... " />
-                <marker date="1513585771341" expanded="true" signature="8453:8519" ph="UPDATE price_sub... " />
+                <marker date="1513651983451" expanded="true" signature="3983:4034" ph="select count... item" />
+                <marker date="1513651983451" expanded="true" signature="4198:4401" ph="INSERT INTO item... " />
+                <marker date="1513651983451" expanded="true" signature="4812:4863" ph="select count... item" />
+                <marker date="1513651983451" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+                <marker date="1513651983451" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+                <marker date="1513651983451" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+                <marker date="1513651983451" expanded="true" signature="6244:6295" ph="select count... item" />
+                <marker date="1513651983451" expanded="true" signature="6525:6720" ph="UPDATE item... " />
+                <marker date="1513651983451" expanded="true" signature="7097:7146" ph="select count... item" />
+                <marker date="1513651983451" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+                <marker date="1513651983451" expanded="true" signature="7838:7910" ph="select count... price_sub" />
+                <marker date="1513651983451" expanded="true" signature="8164:8258" ph="INSERT INTO price_sub... " />
+                <marker date="1513651983451" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/ctrl/user.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="42" column="44" lean-forward="true" selection-start-line="42" selection-start-column="44" selection-end-line="42" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/model/user.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="92" column="13" lean-forward="true" selection-start-line="92" selection-start-column="13" selection-end-line="92" selection-end-column="13" />
+              <folding>
+                <element signature="e#15#67#0" expanded="true" />
+                <marker date="1513655967047" expanded="true" signature="828:931" ph="select user_... user" />
+                <marker date="1513655967047" expanded="true" signature="1142:1225" ph="select user_... user" />
+                <marker date="1513655967047" expanded="true" signature="1272:1429" ph="select id,us... user" />
+                <marker date="1513655967047" expanded="true" signature="1619:1675" ph="select count... user" />
+                <marker date="1513655967047" expanded="true" signature="1827:1966" ph="INSERT INTO user... " />
+                <marker date="1513655967047" expanded="true" signature="2283:2350" ph="select count... user" />
+                <marker date="1513655967047" expanded="true" signature="2616:2763" ph="Update user... " />
+                <marker date="1513655967047" expanded="true" signature="2622:2733" ph="INSERT INTO user... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sale.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/ctrl/sale.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="233">
+              <caret line="133" column="1" lean-forward="true" selection-start-line="133" selection-start-column="1" selection-end-line="133" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="item.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/ctrl/item.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="244">
+              <caret line="97" column="0" lean-forward="true" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -85,7 +139,7 @@
       <file leaf-file-name="sale.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/model/sale.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
+            <state relative-caret-position="13634">
               <caret line="997" column="30" lean-forward="true" selection-start-line="997" selection-start-column="30" selection-end-line="997" selection-end-column="30" />
               <folding>
                 <element signature="e#15#165#0" expanded="true" />
@@ -176,7 +230,6 @@
         <option value="$PROJECT_DIR$/app/model/close_period.go" />
         <option value="$PROJECT_DIR$/app/model/php.go" />
         <option value="$PROJECT_DIR$/hw/printer.go" />
-        <option value="$PROJECT_DIR$/app/ctrl/item.go" />
         <option value="$PROJECT_DIR$/app/ctrl/host.go" />
         <option value="$PROJECT_DIR$/app/ctrl/cash_shift.go" />
         <option value="$PROJECT_DIR$/app/model/cash_shift.go" />
@@ -187,12 +240,13 @@
         <option value="$PROJECT_DIR$/app/ctrl/config.go" />
         <option value="$PROJECT_DIR$/app/model/config.go" />
         <option value="$PROJECT_DIR$/app/model/init.go" />
-        <option value="$PROJECT_DIR$/app/model/user.go" />
-        <option value="$PROJECT_DIR$/app/ctrl/user.go" />
-        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/app/model/sale.go" />
+        <option value="$PROJECT_DIR$/app/ctrl/item.go" />
         <option value="$PROJECT_DIR$/app/ctrl/init.go" />
         <option value="$PROJECT_DIR$/app/model/item.go" />
-        <option value="$PROJECT_DIR$/app/model/sale.go" />
+        <option value="$PROJECT_DIR$/app/ctrl/user.go" />
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/app/model/user.go" />
       </list>
     </option>
   </component>
@@ -265,7 +319,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../smart_api" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="settings.editor.selected.configurable" value="go.sdk" />
     <property name="configurable.Global.GOPATH.is.expanded" value="true" />
@@ -799,13 +853,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/ctrl/item.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="19" column="44" lean-forward="false" selection-start-line="19" selection-start-column="44" selection-end-line="19" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hw/printer.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
@@ -870,27 +917,16 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/ctrl/wifi.go" />
-    <entry file="file://$PROJECT_DIR$/app/ctrl/sale.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2516">
-          <caret line="156" column="0" lean-forward="true" selection-start-line="156" selection-start-column="0" selection-end-line="156" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/model/init.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="57">
           <caret line="164" column="45" lean-forward="true" selection-start-line="164" selection-start-column="45" selection-end-line="164" selection-end-column="45" />
-          <folding>
-            <element signature="e#15#131#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/config.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
+        <state relative-caret-position="1071">
           <caret line="69" column="211" lean-forward="false" selection-start-line="69" selection-start-column="211" selection-end-line="69" selection-end-column="250" />
           <folding>
             <marker date="1513415271659" expanded="true" signature="1322:1360" ph="select count... config" />
@@ -902,74 +938,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/ctrl/user.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="64" column="32" lean-forward="true" selection-start-line="64" selection-start-column="32" selection-end-line="64" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/model/user.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="19" selection-end-column="48" />
-          <folding>
-            <element signature="e#15#67#0" expanded="true" />
-            <marker date="1513569031064" expanded="true" signature="711:814" ph="select user_... user" />
-            <marker date="1513569031064" expanded="true" signature="989:1045" ph="select count... user" />
-            <marker date="1513569031064" expanded="true" signature="1197:1336" ph="INSERT INTO user... " />
-            <marker date="1513569031064" expanded="true" signature="1654:1721" ph="select count... user" />
-            <marker date="1513569031064" expanded="true" signature="1879:2027" ph="Update user... " />
-            <marker date="1513569031064" expanded="true" signature="1885:1997" ph="INSERT INTO user... " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/ctrl/config.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="42" column="27" lean-forward="true" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/ctrl/sale.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="133" column="1" lean-forward="true" selection-start-line="133" selection-start-column="1" selection-end-line="133" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
+    <entry file="file://$PROJECT_DIR$/app/ctrl/item.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="42" column="45" lean-forward="true" selection-start-line="42" selection-start-column="45" selection-end-line="42" selection-end-column="45" />
-          <folding>
-            <element signature="e#14#169#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="244">
+          <caret line="97" column="0" lean-forward="true" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/model/item.go">
+    <entry file="file://$PROJECT_DIR$/app/ctrl/init.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-          <folding>
-            <element signature="e#15#115#0" expanded="true" />
-            <marker date="1513585771341" expanded="true" signature="3983:4034" ph="select count... item" />
-            <marker date="1513585771341" expanded="true" signature="4198:4401" ph="INSERT INTO item... " />
-            <marker date="1513585771341" expanded="true" signature="4812:4863" ph="select count... item" />
-            <marker date="1513585771341" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-            <marker date="1513585771341" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-            <marker date="1513585771341" expanded="true" signature="5791:5882" ph="INSERT INTO price_sub... " />
-            <marker date="1513585771341" expanded="true" signature="6244:6295" ph="select count... item" />
-            <marker date="1513585771341" expanded="true" signature="6525:6720" ph="UPDATE item... " />
-            <marker date="1513585771341" expanded="true" signature="7097:7148" ph="select count... item" />
-            <marker date="1513585771341" expanded="true" signature="7360:7555" ph="UPDATE item... " />
-            <marker date="1513585771341" expanded="true" signature="7842:7914" ph="select count... price_sub" />
-            <marker date="1513585771341" expanded="true" signature="8096:8187" ph="INSERT INTO price_sub... " />
-            <marker date="1513585771341" expanded="true" signature="8453:8519" ph="UPDATE price_sub... " />
-          </folding>
+        <state relative-caret-position="414">
+          <caret line="35" column="5" lean-forward="true" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/sale.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
+        <state relative-caret-position="13634">
           <caret line="997" column="30" lean-forward="true" selection-start-line="997" selection-start-column="30" selection-end-line="997" selection-end-column="30" />
           <folding>
             <element signature="e#15#165#0" expanded="true" />
@@ -990,11 +992,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/ctrl/init.go">
+    <entry file="file://$PROJECT_DIR$/app/ctrl/user.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="23" column="13" lean-forward="true" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+        <state relative-caret-position="189">
+          <caret line="42" column="44" lean-forward="true" selection-start-line="42" selection-start-column="44" selection-end-line="42" selection-end-column="44" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/model/item.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="215" column="0" lean-forward="false" selection-start-line="215" selection-start-column="0" selection-end-line="216" selection-end-column="30" />
+          <folding>
+            <element signature="e#15#115#0" expanded="true" />
+            <marker date="1513651983451" expanded="true" signature="3983:4034" ph="select count... item" />
+            <marker date="1513651983451" expanded="true" signature="4198:4401" ph="INSERT INTO item... " />
+            <marker date="1513651983451" expanded="true" signature="4812:4863" ph="select count... item" />
+            <marker date="1513651983451" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+            <marker date="1513651983451" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+            <marker date="1513651983451" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+            <marker date="1513651983451" expanded="true" signature="6244:6295" ph="select count... item" />
+            <marker date="1513651983451" expanded="true" signature="6525:6720" ph="UPDATE item... " />
+            <marker date="1513651983451" expanded="true" signature="7097:7146" ph="select count... item" />
+            <marker date="1513651983451" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+            <marker date="1513651983451" expanded="true" signature="7838:7910" ph="select count... price_sub" />
+            <marker date="1513651983451" expanded="true" signature="8164:8258" ph="INSERT INTO price_sub... " />
+            <marker date="1513651983451" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/model/user.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="92" column="13" lean-forward="true" selection-start-line="92" selection-start-column="13" selection-end-line="92" selection-end-column="13" />
+          <folding>
+            <element signature="e#15#67#0" expanded="true" />
+            <marker date="1513655967047" expanded="true" signature="828:931" ph="select user_... user" />
+            <marker date="1513655967047" expanded="true" signature="1142:1225" ph="select user_... user" />
+            <marker date="1513655967047" expanded="true" signature="1272:1429" ph="select id,us... user" />
+            <marker date="1513655967047" expanded="true" signature="1619:1675" ph="select count... user" />
+            <marker date="1513655967047" expanded="true" signature="1827:1966" ph="INSERT INTO user... " />
+            <marker date="1513655967047" expanded="true" signature="2283:2350" ph="select count... user" />
+            <marker date="1513655967047" expanded="true" signature="2616:2763" ph="Update user... " />
+            <marker date="1513655967047" expanded="true" signature="2622:2733" ph="INSERT INTO user... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding>
+            <element signature="e#14#169#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

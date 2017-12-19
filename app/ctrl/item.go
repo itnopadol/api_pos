@@ -90,7 +90,7 @@ func UpdateItem(c *gin.Context){
 		rs.Message = "No Content : "+err.Error()
 		c.JSON(http.StatusNotFound, rs)
 	}else{
-		rs.Status = "Success"
+		rs.Status = "success"
 		rs.Data = i
 		c.JSON(http.StatusOK,rs)
 	}
