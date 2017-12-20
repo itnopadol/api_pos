@@ -29,24 +29,7 @@ func (u *User) LogIn(db *sqlx.DB, user_code string, password string) error {
 	return nil
 }
 
-func (u *User) SearchUser(db *sqlx.DB, keyword string) (users []*User, err error) {
-
-	if (keyword == "") {
-		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
-		err = db.Select(&users, sql)
-	} else {
-		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 and user_code like CONCAT("%",?,"%") or user_name like CONCAT("%",?,"%")  order by id`
-		err = db.Select(&users, sql, keyword, keyword)
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	return users, nil
-}
-
 func (u *User) ListUser(db *sqlx.DB, keyword string) (users []*User, err error) {
-	//var sql string
 
 	fmt.Println("keyword = ", keyword)
 	if (keyword == "") {
@@ -56,8 +39,6 @@ func (u *User) ListUser(db *sqlx.DB, keyword string) (users []*User, err error) 
 		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 and (user_code like CONCAT("%",?,"%") or user_name like CONCAT("%",?,"%")) order by id`
 		err = db.Select(&users, sql, keyword, keyword)
 	}
-
-	//fmt.Println("keyword", sql)
 
 	if err != nil {
 		return nil, err

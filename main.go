@@ -28,6 +28,8 @@ func main() {
 	r.POST("/item", ctrl.SaveItem)
 	r.PUT("/item", ctrl.UpdateItem)
 
+	//r.POST("/menu", ctrl.SaveMenu)
+
 	r.POST("/sale/change", ctrl.ShowChangeAmount)
 	r.POST("/sale", ctrl.SaleSave)
 	r.GET("/sales", ctrl.SearchSales)
@@ -49,7 +51,7 @@ func main() {
 
 	r.GET("/user/login", ctrl.LogIn)
 	//r.GET("/user", ctrl.SearchUser)
-	r.GET("/users", ctrl.ListUserSearch)
+	r.GET("/users", ctrl.ListUser)
 	r.POST("/user", ctrl.SaveUser)
 	r.PUT("/user", ctrl.UpdateUser)
 
