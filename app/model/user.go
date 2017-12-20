@@ -45,6 +45,16 @@ func (u *User) SearchUser(db *sqlx.DB, keyword string) (users []*User, err error
 	return users, nil
 }
 
+func (u *User) ListUser(db *sqlx.DB) (users []*User, err error){
+	sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
+	err = db.Select(&users, sql)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (u *User) Save(db *sqlx.DB) error {
 
 	var checkCount int

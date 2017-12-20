@@ -5,9 +5,13 @@ import (
 	"github.com/itnopadol/api_pos/app/model"
 	"net/http"
 	"github.com/itnopadol/api_pos/app/resp"
+	"log"
 )
 
 func SearchHost(c *gin.Context) {
+	log.Println("call GET Host")
+	c.Keys = headerKeys
+
 	h := new(model.Host)
 
 	res, err := h.SearchHost(dbc)

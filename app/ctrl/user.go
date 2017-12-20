@@ -32,14 +32,14 @@ func LogIn(c *gin.Context){
 }
 
 
-func SearchUser(c *gin.Context){
+func ListUser(c *gin.Context){
 	log.Println("call Get User")
 	c.Keys = headerKeys
 
-	keyword := c.Request.URL.Query().Get("keyword")
+	//keyword := c.Request.URL.Query().Get("keyword")
 
 	u := new(model.User)
-	users, err := u.SearchUser(dbc, keyword)
+	users, err := u.ListUser(dbc)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
