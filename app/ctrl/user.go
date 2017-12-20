@@ -55,6 +55,28 @@ func SaveUser(c *gin.Context){
 }
 
 
+func ListUser(c *gin.Context){
+	log.Println("call Get User")
+	c.Keys = headerKeys
+
+	//keyword := c.Request.URL.Query().Get("keyword")
+
+	//u := new(model.User)
+	u := &model.User{}
+	users, err := u.ListUser(dbc)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :"+ err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = users
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
+
 func UpdateUser(c *gin.Context){
 	log.Println("call PUT Save User")
 	c.Keys = headerKeys
