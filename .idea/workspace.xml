@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1a1ae10-9936-4c0c-9cc6-f48802070bbd" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/ctrl/user.go" afterPath="$PROJECT_DIR$/app/ctrl/user.go" />
-      <change beforePath="$PROJECT_DIR$/app/model/user.go" afterPath="$PROJECT_DIR$/app/model/user.go" />
-      <change beforePath="$PROJECT_DIR$/main.go" afterPath="$PROJECT_DIR$/main.go" />
+      <change beforePath="$PROJECT_DIR$/app/model/item.go" afterPath="$PROJECT_DIR$/app/model/item.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,11 +23,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="user.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="user.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/ctrl/user.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="42" column="19" lean-forward="true" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
+            <state relative-caret-position="255">
+              <caret line="41" column="25" lean-forward="true" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
               <folding>
                 <element signature="n#!!block;n#LogIn#0" expanded="false" />
               </folding>
@@ -50,19 +47,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="item.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="item.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/item.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="41" column="44" lean-forward="true" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
+            <state relative-caret-position="179">
+              <caret line="252" column="13" lean-forward="true" selection-start-line="252" selection-start-column="13" selection-end-line="252" selection-end-column="13" />
               <folding>
-                <marker date="1513651983451" expanded="true" signature="4812:4863" ph="select count... item" />
-                <marker date="1513651983451" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-                <marker date="1513651983451" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-                <marker date="1513651983451" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
-                <marker date="1513651983451" expanded="true" signature="7097:7146" ph="select count... item" />
-                <marker date="1513651983451" expanded="true" signature="7356:7551" ph="UPDATE item... " />
-                <marker date="1513651983451" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
+                <marker date="1513764336720" expanded="true" signature="4812:4863" ph="select count... item" />
+                <marker date="1513764336720" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+                <marker date="1513764336720" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+                <marker date="1513764336720" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+                <marker date="1513764336720" expanded="true" signature="7097:7146" ph="select count... item" />
+                <marker date="1513764336720" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+                <marker date="1513764336720" expanded="true" signature="8608:8689" ph="UPDATE price_sub... " />
               </folding>
             </state>
           </provider>
@@ -629,22 +626,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/model/item.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="41" column="44" lean-forward="true" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
-          <folding>
-            <marker date="1513651983451" expanded="true" signature="4812:4863" ph="select count... item" />
-            <marker date="1513651983451" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-            <marker date="1513651983451" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-            <marker date="1513651983451" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
-            <marker date="1513651983451" expanded="true" signature="7097:7146" ph="select count... item" />
-            <marker date="1513651983451" expanded="true" signature="7356:7551" ph="UPDATE item... " />
-            <marker date="1513651983451" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/ctrl/init.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="178">
@@ -657,10 +638,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/ctrl/user.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="42" column="19" lean-forward="true" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
+        <state relative-caret-position="255">
+          <caret line="41" column="25" lean-forward="true" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
           <folding>
             <element signature="n#!!block;n#LogIn#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/model/item.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="252" column="13" lean-forward="true" selection-start-line="252" selection-start-column="13" selection-end-line="252" selection-end-column="13" />
+          <folding>
+            <marker date="1513764336720" expanded="true" signature="4812:4863" ph="select count... item" />
+            <marker date="1513764336720" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+            <marker date="1513764336720" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+            <marker date="1513764336720" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+            <marker date="1513764336720" expanded="true" signature="7097:7146" ph="select count... item" />
+            <marker date="1513764336720" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+            <marker date="1513764336720" expanded="true" signature="8608:8689" ph="UPDATE price_sub... " />
           </folding>
         </state>
       </provider>
