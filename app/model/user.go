@@ -45,9 +45,20 @@ func (u *User) SearchUser(db *sqlx.DB, keyword string) (users []*User, err error
 	return users, nil
 }
 
-func (u *User) ListUser(db *sqlx.DB) (users []*User, err error){
-	sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
-	err = db.Select(&users, sql)
+func (u *User) ListUser(db *sqlx.DB, keyword string) (users []*User, err error) {
+	//var sql string
+
+	fmt.Println("keyword = ", keyword)
+	if (keyword == "") {
+		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
+		err = db.Select(&users, sql)
+	} else {
+		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 and (user_code like CONCAT("%",?,"%") or user_name like CONCAT("%",?,"%")) order by id`
+		err = db.Select(&users, sql, keyword, keyword)
+	}
+
+	//fmt.Println("keyword", sql)
+
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +116,7 @@ func (u *User) Update(db *sqlx.DB) error {
 			Id, _ := rs.LastInsertId()
 			u.Id = Id
 		}
-	}else{
+	} else {
 		return err
 	}
 

@@ -49,7 +49,7 @@ func main() {
 
 	r.GET("/user/login", ctrl.LogIn)
 	//r.GET("/user", ctrl.SearchUser)
-	r.GET("/users", ctrl.ListUser)
+	r.GET("/users", ctrl.ListUserSearch)
 	r.POST("/user", ctrl.SaveUser)
 	r.PUT("/user", ctrl.UpdateUser)
 

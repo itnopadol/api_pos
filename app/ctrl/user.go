@@ -9,51 +9,49 @@ import (
 	"fmt"
 )
 
-func LogIn(c *gin.Context){
+func LogIn(c *gin.Context) {
 	log.Println("call Get User")
 	c.Keys = headerKeys
 
 	user_code := c.Request.URL.Query().Get("user_code")
 	password := c.Request.URL.Query().Get("password")
 
-
 	u := new(model.User)
 	err := u.LogIn(dbc, user_code, password)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content and Error :"+ err.Error()
+		rs.Message = "No Content and Error :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = u
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-
-func ListUser(c *gin.Context){
+func ListUserSearch(c *gin.Context) {
 	log.Println("call Get User")
 	c.Keys = headerKeys
 
-	//keyword := c.Request.URL.Query().Get("keyword")
+	keyword := c.Request.URL.Query().Get("keyword")
 
-	u := new(model.User)
-	users, err := u.ListUser(dbc)
+	newUser := new(model.User)
+fmt.Println("keyword =", keyword)
+	users, err := newUser.ListUser(dbc, keyword)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content and Error :"+ err.Error()
+		rs.Message = "No Content and Error :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = users
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-
-func SaveUser(c *gin.Context){
+func SaveUser(c *gin.Context) {
 	log.Println("call POST Save User")
 	c.Keys = headerKeys
 
@@ -66,17 +64,16 @@ func SaveUser(c *gin.Context){
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content : "+err.Error()
+		rs.Message = "No Content : " + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = cf
 		c.JSON(http.StatusOK, rs)
 	}
 }
 
-
-func UpdateUser(c *gin.Context){
+func UpdateUser(c *gin.Context) {
 	log.Println("call PUT Save User")
 	c.Keys = headerKeys
 
@@ -89,9 +86,9 @@ func UpdateUser(c *gin.Context){
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
-		rs.Message = "No Content : "+err.Error()
+		rs.Message = "No Content : " + err.Error()
 		c.JSON(http.StatusNotFound, rs)
-	}else{
+	} else {
 		rs.Status = "success"
 		rs.Data = cf
 		c.JSON(http.StatusOK, rs)
