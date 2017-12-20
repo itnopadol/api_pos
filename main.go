@@ -3,18 +3,20 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gin-contrib/cors.v1"
+	//"github.com/itnopadol/api_pos/app/ctrl"
+
+	//_ "github.com/itnopadol/api_pos/app/model"
 	"github.com/itnopadol/api_pos/app/ctrl"
-	_ "github.com/itnopadol/api_pos/app/model"
 )
 
-type item struct {
-	name string
-	qty  int
-}
-
-type items struct {
-	items []item
-}
+//type item struct {
+//	name string
+//	qty  int
+//}
+//
+//type items struct {
+//	items []item
+//}
 
 func main() {
 
@@ -49,9 +51,11 @@ func main() {
 
 	r.GET("/user/login", ctrl.LogIn)
 	//r.GET("/user", ctrl.SearchUser)
-	r.GET("/users", ctrl.ListUser)
+	//r.GET("/users", ctrl.ListUser)
+
 	r.POST("/user", ctrl.SaveUser)
 	r.PUT("/user", ctrl.UpdateUser)
+	r.GET("/users", ctrl.ListUser)
 
 	r.GET("/config", ctrl.GenWifiPassword)
 	r.GET("/config/search", ctrl.Search)

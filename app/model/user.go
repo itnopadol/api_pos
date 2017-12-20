@@ -4,6 +4,7 @@ import (
 	"time"
 	"github.com/jmoiron/sqlx"
 	"fmt"
+	//"runtime"
 )
 
 type User struct {
@@ -29,15 +30,17 @@ func (u *User) LogIn(db *sqlx.DB, user_code string, password string) error {
 	return nil
 }
 
-func (u *User) SearchUser(db *sqlx.DB, keyword string) (users []*User, err error) {
+func (u *User) Users(db *sqlx.DB, keyword string) (users []*User, err error) {
 
-	if (keyword == "") {
+	switch keyword {
+	case "":
 		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
 		err = db.Select(&users, sql)
-	} else {
+	default:
 		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 and user_code like CONCAT("%",?,"%") or user_name like CONCAT("%",?,"%")  order by id`
 		err = db.Select(&users, sql, keyword, keyword)
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +48,7 @@ func (u *User) SearchUser(db *sqlx.DB, keyword string) (users []*User, err error
 	return users, nil
 }
 
-func (u *User) ListUser(db *sqlx.DB) (users []*User, err error){
+func (u *User) ListUser(db *sqlx.DB) (users []*User, err error) {
 	sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
 	err = db.Select(&users, sql)
 	if err != nil {
@@ -56,7 +59,6 @@ func (u *User) ListUser(db *sqlx.DB) (users []*User, err error){
 }
 
 func (u *User) Save(db *sqlx.DB) error {
-
 	var checkCount int
 	sqlCheckExist := `select count(id) as vCount from user where user_code = ?`
 	err := db.Get(&checkCount, sqlCheckExist, u.UserCode)
@@ -105,7 +107,7 @@ func (u *User) Update(db *sqlx.DB) error {
 			Id, _ := rs.LastInsertId()
 			u.Id = Id
 		}
-	}else{
+	} else {
 		return err
 	}
 

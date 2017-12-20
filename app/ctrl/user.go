@@ -38,7 +38,8 @@ func ListUser(c *gin.Context){
 
 	//keyword := c.Request.URL.Query().Get("keyword")
 
-	u := new(model.User)
+	//u := new(model.User)
+	u := &model.User{}
 	users, err := u.ListUser(dbc)
 	rs := resp.Response{}
 	if err != nil {
