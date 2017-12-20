@@ -38,7 +38,6 @@ func SearchUser(c *gin.Context){
 
 	keyword := c.Request.URL.Query().Get("keyword")
 
-
 	u := new(model.User)
 	users, err := u.SearchUser(dbc, keyword)
 	rs := resp.Response{}

@@ -33,10 +33,10 @@ func (u *User) SearchUser(db *sqlx.DB, keyword string) (users []*User, err error
 
 	if (keyword == "") {
 		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
-		db.Select(&users, sql)
+		err = db.Select(&users, sql)
 	} else {
 		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 and user_code like CONCAT("%",?,"%") or user_name like CONCAT("%",?,"%")  order by id`
-		db.Select(&users, sql, keyword, keyword)
+		err = db.Select(&users, sql, keyword, keyword)
 	}
 	if err != nil {
 		return nil, err
