@@ -29,6 +29,7 @@ func (u *User) LogIn(db *sqlx.DB, user_code string, password string) error {
 	return nil
 }
 
+
 func (u *User) ListUser(db *sqlx.DB, keyword string) (users []*User, err error) {
 
 	fmt.Println("keyword = ", keyword)
@@ -43,6 +44,10 @@ func (u *User) ListUser(db *sqlx.DB, keyword string) (users []*User, err error) 
 	if err != nil {
 		return nil, err
 	}
+
+	return users, nil
+}
+
 
 	return users, nil
 }
