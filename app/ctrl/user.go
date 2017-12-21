@@ -37,8 +37,8 @@ func ListUser(c *gin.Context) {
 	keyword := c.Request.URL.Query().Get("keyword")
 
 	newUser := new(model.User)
-	fmt.Println("keyword =", keyword)
-	users, err := newUser.ListUser(dbc)
+	//fmt.Println("keyword =", keyword)
+	users, err := newUser.ListUser(dbc, keyword)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"

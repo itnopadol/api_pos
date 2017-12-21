@@ -29,9 +29,16 @@ func (u *User)LogIn(db *sqlx.DB, user_code string, password string)error {
 	}
 	return nil
 }
-func (u *User) ListUser(db *sqlx.DB) (users []*User, err error) {
-	sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
-	err = db.Select(&users, sql)
+func (u *User) ListUser(db *sqlx.DB, keyword string) (users []*User, err error) {
+	fmt.Println("keyword = ",keyword)
+	if (keyword == ""){
+		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 order by id`
+		err = db.Select(&users, sql)
+	}else{
+		sql := `select id,user_code,user_name,password,confirm_password,role_id,active from user where active = 1 and (user_code like CONCAT("%",?,"%") or user_name like CONCAT("%",?,"%")) order by id`
+		err = db.Select(&users, sql, keyword, keyword)
+	}
+
 	if err != nil {
 		return nil, err
 	}
