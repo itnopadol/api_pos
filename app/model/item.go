@@ -162,8 +162,8 @@ func (i *Item) SaveItem(db *sqlx.DB) error {
 			}
 
 			if (checkCountSub == 0) {
-				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?)`
-				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1, 1)
+				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?, 1)`
+				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1)
 				if err != nil {
 					return err
 				}
@@ -207,8 +207,8 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 	var checkCount int
 	var checkCountSub int
 
-	sqlCheckExist := `select count(id) as vCount from item where code = ?`
-	err := db.Get(&checkCount, sqlCheckExist, i.Code)
+	sqlCheckExist := `select count(id) as vCount from item where id = ?`
+	err := db.Get(&checkCount, sqlCheckExist, i.Id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -226,6 +226,7 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 		for _, sub := range i.Prices{
 
 			sqlCheckSubExist := `select count(id) as vCount from price_sub where item_id = ? and name = ?`
+			fmt.Println("sqlCheckSubExist : ", sqlCheckSubExist, i.Id, sub.Name)
 			err := db.Get(&checkCountSub, sqlCheckSubExist, i.Id, sub.Name)
 			if err != nil {
 				fmt.Println(err.Error())
@@ -233,8 +234,9 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 			}
 
 			if (checkCountSub == 0){
-				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?)`
-				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1, 1)
+				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?, 1)`
+				fmt.Println("sql_sub",sql_sub)
+				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1)
 				if err != nil {
 					return err
 				}
@@ -243,8 +245,8 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 				sub.Id = item_id
 				fmt.Println("Item_sub Id : ", item_id)
 			}else{
-				sql_sub := `UPDATE price_sub set name = ?, price = ? where item_id = ?, id = ?`
-				_, err := db.Exec(sql_sub, sub.Name, sub.Price1, i.Id, sub.Id)
+				sql_sub := `UPDATE price_sub set name = ?, price = ?, active = ? where item_id = ? and id = ?`
+				_, err := db.Exec(sql_sub, sub.Name, sub.Price1, i.Active, i.Id, sub.Id)
 				if err != nil {
 					return err
 				}
