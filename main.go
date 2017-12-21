@@ -9,7 +9,7 @@ import (
 
 type item struct {
 	name string
-	qty int
+	qty  int
 }
 
 type items struct {
@@ -24,9 +24,11 @@ func main() {
 	r.GET("/item/:id", ctrl.GetItemById)
 	r.GET("/menu/:id", ctrl.GetItemsByMenuId)
 	r.GET("/menu", ctrl.GetMenu)
-	r.GET("/items/print",ctrl.PrintTest)
+	r.GET("/items/print", ctrl.PrintTest)
 	r.POST("/item", ctrl.SaveItem)
 	r.PUT("/item", ctrl.UpdateItem)
+
+	//r.POST("/menu", ctrl.SaveMenu)
 
 	r.POST("/sale/change", ctrl.ShowChangeAmount)
 	r.POST("/sale", ctrl.SaleSave)
@@ -45,21 +47,19 @@ func main() {
 
 	r.GET("/report/tax", ctrl.ReportTax)
 
-
 	r.GET("/host", ctrl.SearchHost)
 
 	r.GET("/user/login", ctrl.LogIn)
+	//r.GET("/user", ctrl.SearchUser)
+	r.GET("/users", ctrl.ListUser)
 	r.POST("/user", ctrl.SaveUser)
 	r.PUT("/user", ctrl.UpdateUser)
 
 	r.GET("/config", ctrl.GenWifiPassword)
 	r.GET("/config/search", ctrl.Search)
 	r.POST("/config", ctrl.SaveConfig)
-	r.PUT("/config",ctrl.UpdateConfig)
+	r.PUT("/config", ctrl.UpdateConfig)
 
 	r.Run(":8888")
 
 }
-
-
-
