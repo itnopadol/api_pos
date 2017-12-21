@@ -38,6 +38,7 @@ func (u *User) ListUser(db *sqlx.DB) (users []*User, err error) {
 
 	return users, nil
 }
+
 func (u *User) Save(db *sqlx.DB) error {
 
 	var checkCount int
