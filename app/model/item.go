@@ -205,10 +205,10 @@ func (i *Item) SaveItem(db *sqlx.DB) error {
 
 func (i *Item) UpdateItem(db *sqlx.DB) error {
 	var checkCount int
-	var checkCountSub int
+	//var checkCountSub int
 
-	sqlCheckExist := `select count(id) as vCount from item where id = ?`
-	err := db.Get(&checkCount, sqlCheckExist, i.Id)
+	sqlCheckExist := `select count(id) as vCount from item where id = 200`
+	err := db.Get(&checkCount, sqlCheckExist)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -216,8 +216,8 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 	fmt.Println("Count : ", checkCount)
 	fmt.Println("ID = ", i.Id)
 	if (checkCount != 0) {
-		sql := `UPDATE item set code=?, short_name=?, name=?, name_en=?, unit=?, unit_en=?, menu_id=?, menu_seq=?, image=?, price=?, active=?, is_kitchen=?, edited_by=?, edited = CURRENT_TIMESTAMP() where id = ?`
-		_, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, i.Active, i.IsKitchen, i.EditedBy, i.Id)
+		sql := `UPDATE item set code=?, short_name=?, name=?, name_en=?, unit=?, unit_en=?, menu_id=?, menu_seq=?, image=?, price=?, active=?, is_kitchen=?, edited_by=?, edited = CURRENT_TIMESTAMP() where id = 200`
+		_, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, i.Active, i.IsKitchen, i.EditedBy)
 		fmt.Println("sql = ", sql)
 		if err != nil {
 			return err
