@@ -50,18 +50,17 @@
       <file leaf-file-name="item.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/model/item.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="218" column="213" lean-forward="false" selection-start-line="218" selection-start-column="213" selection-end-line="218" selection-end-column="213" />
+            <state relative-caret-position="-1511">
+              <caret line="170" column="51" lean-forward="true" selection-start-line="170" selection-start-column="51" selection-end-line="170" selection-end-column="51" />
               <folding>
-                <marker date="1513824779058" expanded="true" signature="4812:4863" ph="select count... item" />
-                <marker date="1513824779058" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-                <marker date="1513824779058" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-                <marker date="1513824779058" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
-                <marker date="1513824779058" expanded="true" signature="7099:7147" ph="select count... item" />
-                <marker date="1513824779058" expanded="true" signature="7099:7150" ph="select count... item" />
-                <marker date="1513824779058" expanded="true" signature="7354:7548" ph="UPDATE item... " />
-                <marker date="1513824779058" expanded="true" signature="7354:7551" ph="UPDATE item... " />
-                <marker date="1513824779058" expanded="true" signature="8602:8683" ph="UPDATE price_sub... " />
+                <marker date="1513825950312" expanded="true" signature="4812:4863" ph="select count... item" />
+                <marker date="1513825950312" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+                <marker date="1513825950312" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+                <marker date="1513825950312" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+                <marker date="1513825950312" expanded="true" signature="7097:7145" ph="select count... item" />
+                <marker date="1513825950312" expanded="true" signature="7097:7146" ph="select count... item" />
+                <marker date="1513825950312" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+                <marker date="1513825950312" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
               </folding>
             </state>
           </provider>
@@ -633,18 +632,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/model/item.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="218" column="213" lean-forward="false" selection-start-line="218" selection-start-column="213" selection-end-line="218" selection-end-column="213" />
+        <state relative-caret-position="-1511">
+          <caret line="170" column="51" lean-forward="true" selection-start-line="170" selection-start-column="51" selection-end-line="170" selection-end-column="51" />
           <folding>
-            <marker date="1513824779058" expanded="true" signature="4812:4863" ph="select count... item" />
-            <marker date="1513824779058" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-            <marker date="1513824779058" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-            <marker date="1513824779058" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
-            <marker date="1513824779058" expanded="true" signature="7099:7147" ph="select count... item" />
-            <marker date="1513824779058" expanded="true" signature="7099:7150" ph="select count... item" />
-            <marker date="1513824779058" expanded="true" signature="7354:7548" ph="UPDATE item... " />
-            <marker date="1513824779058" expanded="true" signature="7354:7551" ph="UPDATE item... " />
-            <marker date="1513824779058" expanded="true" signature="8602:8683" ph="UPDATE price_sub... " />
+            <marker date="1513825950312" expanded="true" signature="4812:4863" ph="select count... item" />
+            <marker date="1513825950312" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+            <marker date="1513825950312" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+            <marker date="1513825950312" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+            <marker date="1513825950312" expanded="true" signature="7097:7145" ph="select count... item" />
+            <marker date="1513825950312" expanded="true" signature="7097:7146" ph="select count... item" />
+            <marker date="1513825950312" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+            <marker date="1513825950312" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
           </folding>
         </state>
       </provider>

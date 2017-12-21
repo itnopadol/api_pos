@@ -205,10 +205,10 @@ func (i *Item) SaveItem(db *sqlx.DB) error {
 
 func (i *Item) UpdateItem(db *sqlx.DB) error {
 	var checkCount int
-	//var checkCountSub int
+	var checkCountSub int
 
-	sqlCheckExist := `select count(id) as vCount from item where id = 203`
-	err := db.Get(&checkCount, sqlCheckExist)
+	sqlCheckExist := `select count(id) as vCount from item where id = ?`
+	err := db.Get(&checkCount, sqlCheckExist, i.Id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -216,42 +216,42 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 	fmt.Println("Count : ", checkCount)
 	fmt.Println("ID = ", i.Id)
 	if (checkCount != 0) {
-		sql := `UPDATE item set code=?, short_name=?, name=?, name_en=?, unit=?, unit_en=?, menu_id=?, menu_seq=?, image=?, price=?, active=?, is_kitchen=?, edited_by=?, edited = CURRENT_TIMESTAMP() where id = 203`
-		_, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, i.Active, i.IsKitchen, i.EditedBy)
+		sql := `UPDATE item set code=?, short_name=?, name=?, name_en=?, unit=?, unit_en=?, menu_id=?, menu_seq=?, image=?, price=?, active=?, is_kitchen=?, edited_by=?, edited = CURRENT_TIMESTAMP() where id = ?`
+		_, err := db.Exec(sql, i.Code, i.ShortName, i.Name, i.NameEn, i.Unit, i.UnitEn, i.MenuId, i.MenuSeq, i.Image, i.Price, i.Active, i.IsKitchen, i.EditedBy, i.Id)
 		fmt.Println("sql = ", sql)
 		if err != nil {
 			return err
 		}
 
-		//for _, sub := range i.Prices{
-		//
-		//	sqlCheckSubExist := `select count(id) as vCount from price_sub where item_id = ? and name = ?`
-		//	fmt.Println("sqlCheckSubExist : ", sqlCheckSubExist, i.Id, sub.Name)
-		//	err := db.Get(&checkCountSub, sqlCheckSubExist, i.Id, sub.Name)
-		//	if err != nil {
-		//		fmt.Println(err.Error())
-		//		return err
-		//	}
-		//
-		//	if (checkCountSub == 0){
-		//		sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?, 1)`
-		//		fmt.Println("sql_sub",sql_sub)
-		//		rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1)
-		//		if err != nil {
-		//			return err
-		//		}
-		//
-		//		item_id, _ := rs_sub.LastInsertId()
-		//		sub.Id = item_id
-		//		fmt.Println("Item_sub Id : ", item_id)
-		//	}else{
-		//		sql_sub := `UPDATE price_sub set name = ?, price = ?, active = ? where item_id = ? and id = ?`
-		//		_, err := db.Exec(sql_sub, sub.Name, sub.Price1, i.Active, i.Id, sub.Id)
-		//		if err != nil {
-		//			return err
-		//		}
-		//	}
-		//}
+		for _, sub := range i.Prices{
+
+			sqlCheckSubExist := `select count(id) as vCount from price_sub where item_id = ? and name = ?`
+			fmt.Println("sqlCheckSubExist : ", sqlCheckSubExist, i.Id, sub.Name)
+			err := db.Get(&checkCountSub, sqlCheckSubExist, i.Id, sub.Name)
+			if err != nil {
+				fmt.Println(err.Error())
+				return err
+			}
+
+			if (checkCountSub == 0){
+				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?, 1)`
+				fmt.Println("sql_sub",sql_sub)
+				rs_sub, err := db.Exec(sql_sub, i.Id, sub.Name, sub.NameEn, sub.NameCn, sub.Price1)
+				if err != nil {
+					return err
+				}
+
+				item_id, _ := rs_sub.LastInsertId()
+				sub.Id = item_id
+				fmt.Println("Item_sub Id : ", item_id)
+			}else{
+				sql_sub := `UPDATE price_sub set name = ?, price = ?, active = ? where item_id = ? and id = ?`
+				_, err := db.Exec(sql_sub, sub.Name, sub.Price1, i.Active, i.Id, sub.Id)
+				if err != nil {
+					return err
+				}
+			}
+		}
 
 	}
 
