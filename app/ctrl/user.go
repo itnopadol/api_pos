@@ -38,7 +38,7 @@ func ListUser(c *gin.Context) {
 
 	newUser := new(model.User)
 	fmt.Println("keyword =", keyword)
-	users, err := newUser.ListUser(dbc, keyword)
+	users, err := newUser.ListUser(dbc)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
