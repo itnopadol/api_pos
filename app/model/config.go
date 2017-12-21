@@ -68,7 +68,7 @@ func (c *Config) Update(db *sqlx.DB) error {
 
 	if (checkCount != 0) {
 		sql := `Update config set company_name=?, address=?, telephone=?, fax=?, line_id=?, facebook=?, tax_id=?, tax_rate=?, printer1_port=?, printer2_port=?, printer3_port=?, printer4_port=?, link_mikrotik=?, edited_by=?, edited=CURRENT_TIMESTAMP()`
-		_, err := db.Exec(sql, c.CompanyName, c.Address, c.Telephone, c.Fax, c.LineId, c.Facebook, c.TaxId, c.TaxRate, c.Printer1Port, c.Printer2Port, c.Printer3Port, c.Printer4Port, c.LinkMikrotik, c.CreatedBy)
+		_, err := db.Exec(sql, c.CompanyName, c.Address, c.Telephone, c.Fax, c.LineId, c.Facebook, c.TaxId, c.TaxRate, c.Printer1Port, c.Printer2Port, c.Printer3Port, c.Printer4Port, c.LinkMikrotik, c.EditedBy)
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
