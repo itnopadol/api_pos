@@ -993,7 +993,6 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 		month := docDate[5:7]
 		day := docDate[8:10]
 
-
 		pt.WriteRaw([]byte{28, 112, 1, 0})
 		pt.SetCharaterCode(26)
 		pt.SetAlign("center")
