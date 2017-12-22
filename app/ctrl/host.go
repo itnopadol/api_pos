@@ -9,6 +9,7 @@ import (
 )
 
 func SearchHost(c *gin.Context) {
+
 	log.Println("call GET Host")
 	c.Keys = headerKeys
 

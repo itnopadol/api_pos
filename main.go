@@ -21,9 +21,12 @@ func main() {
 	r := gin.New()
 	r.Use(cors.Default())
 
-	r.GET("/item/:id", ctrl.GetItemById)
-	r.GET("/menu/:id", ctrl.GetItemsByMenuId)
+	r.POST("/menu", ctrl.SaveMenu)
+	r.PUT("/menu", ctrl.UpdateMenu)
 	r.GET("/menu", ctrl.GetMenu)
+
+	r.GET("/menu/:id", ctrl.GetItemsByMenuId)
+	r.GET("/item/:id", ctrl.GetItemById)
 	r.GET("/items/print", ctrl.PrintTest)
 	r.POST("/item", ctrl.SaveItem)
 	r.PUT("/item", ctrl.UpdateItem)
