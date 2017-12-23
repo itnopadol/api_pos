@@ -63,18 +63,28 @@ func (m *Menu) Index(db *sqlx.DB) ([]*Lang, error) {
 }
 
 func (m *Menu) Save(db *sqlx.DB) error {
-	fmt.Println("Menu.Save()")
-	sql := `INSERT INTO menu(name, name_en, name_cn, image, link, active) VALUES (?,?,?,?,?,1)`
-	fmt.Println("sql = ",sql, m.Name, m.NameEn, m.NameCn, m.Image, m.Link)
-	rs, err := db.Exec(sql, m.Name, m.NameEn, m.NameCn, m.Image, m.Link)
+	var checkCount int
+
+	sqlCheck := `select count(*) as vCount from menu where id = ?`
+	err := db.Get(&checkCount, sqlCheck, m.Id)
 	if err != nil {
-		fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
-		return err
+		return nil
 	}
-	id, _ := rs.LastInsertId()
-	m.Id = id
-	fmt.Println("c.Id =", m.Id)
-	fmt.Printf("Save data success: category = %+v\n", m)
+
+	if (checkCount == 0) {
+		fmt.Println("Menu.Save()")
+		sql := `INSERT INTO menu(name, name_en, name_cn, image, link, active) VALUES (?,?,?,?,?,1)`
+		fmt.Println("sql = ", sql, m.Name, m.NameEn, m.NameCn, m.Image, m.Link)
+		rs, err := db.Exec(sql, m.Name, m.NameEn, m.NameCn, m.Image, m.Link)
+		if err != nil {
+			fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
+			return err
+		}
+		id, _ := rs.LastInsertId()
+		m.Id = id
+		fmt.Println("c.Id =", m.Id)
+		fmt.Printf("Save data success: category = %+v\n", m)
+	}
 	return nil
 }
 
