@@ -51,6 +51,8 @@ func main() {
 	r.GET("/report/tax", ctrl.ReportTax)
 
 	r.GET("/host", ctrl.SearchHost)
+	r.POST("/host", ctrl.SaveHost)
+	r.PUT ("/host" ,ctrl.UpdateHost)
 
 	r.GET("/user/login", ctrl.LogIn)
 	//r.GET("/user", ctrl.SearchUser)
