@@ -1009,8 +1009,8 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 							(select sum(change_begin) from cash_shift where doc_date = a.doc_date group by doc_date) as change_begin_all,
 							(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date group by doc_date) as expenses_amount_all,
 							(select sum(cash_amount) from cash_shift where doc_date = a.doc_date group by doc_date) as cash_amount_all,
-							(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as net_amount_all,
-							(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount
+							(select sum(pay_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) - (select sum(change_amount) from sale where doc_date = a.doc_date and host_code = a.host_code and is_cancel = 0 group by host_code,doc_date) as net_amount,
+							(select sum(pay_amount) from sale where doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where doc_date = a.doc_date and is_cancel = 0) as net_amount_all
 					from 	sale a
 							left join cash_shift b on a.doc_date = b.doc_date and a.host_code = b.host_code
 					where a.doc_date = ? and a.is_cancel = 0 order by a.host_code`
@@ -1022,6 +1022,7 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 							(select sum(change_begin) from cash_shift where host_code = a.host_code and doc_date = a.doc_date group by host_code,doc_date) as change_begin_all,
 							(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date group by host_code,doc_date) as expenses_amount_all,
 							(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date group by host_code,doc_date) as cash_amount_all,
+							(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as net_amount,
 							(select sum(pay_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0)- (select sum(change_amount) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as net_amount_all
 					from 	sale a
 							left join cash_shift b on a.doc_date = b.doc_date and a.host_code = b.host_code
@@ -1055,7 +1056,7 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 			//pt.WriteStringLines("    " + CommaFloat(s.SumCashAmount))
 			pt.WriteStringLines("    " + CommaFloat(s.ChangeBegin))
 			//pt.WriteStringLines("     " + CommaFloat(s.SumChangeAmount))
-			pt.WriteStringLines("     " + CommaFloat(s.NetAmountAll))
+			pt.WriteStringLines("     " + CommaFloat(s.NetAmount))
 			pt.WriteStringLines("     " + CommaFloat(s.ExpensesAmount))
 			//pt.WriteStringLines("      " + CommaFloat(s.NetAmount) + "\n")
 			pt.WriteStringLines("    " + CommaFloat(s.CashAmount) + "\n")
