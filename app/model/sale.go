@@ -490,7 +490,11 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	pt.WriteStringLines(" เงินทอน" + "                            " + CommaFloat(s.ChangeAmount) + "\n")
 	pt.WriteStringLines(" เลขที่:" + s.DocNo)
 	pt.SetFont("B")
-	pt.WriteStringLines(" วันที่ :" + s.Created.Format("02-01-2006 15:04:05") + "\n")
+
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	now := time.Now().In(loc)
+	pt.WriteStringLines(" วันที่ :" + now.Format("02-01-2006 15:04:05") + "\n")
+	
 	pt.SetFont("A")
 	//pt.WriteStringLines(" วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
 	pt.SetAlign("center")
