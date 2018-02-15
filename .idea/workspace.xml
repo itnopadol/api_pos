@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1a1ae10-9936-4c0c-9cc6-f48802070bbd" name="Default" comment="fixing jenkins">
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/model/tax.go" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/model/sale.go" afterPath="$PROJECT_DIR$/app/model/sale.go" />
+      <change beforePath="$PROJECT_DIR$/app/model/tax.go" afterPath="$PROJECT_DIR$/app/model/tax.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,7 +41,7 @@
       <file leaf-file-name="item.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/model/item.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
+            <state relative-caret-position="1292">
               <caret line="84" column="29" lean-forward="false" selection-start-line="84" selection-start-column="29" selection-end-line="84" selection-end-column="29" />
               <folding>
                 <marker date="1513828283442" expanded="true" signature="4812:4863" ph="select count... item" />
@@ -261,7 +260,7 @@
       <scroll-view-position x="0" y="0" />
     </layout>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
     <option name="width" value="1370" />
     <option name="height" value="735" />
@@ -281,7 +280,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -304,7 +303,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -368,18 +367,19 @@
     <option name="remove_strategy" value="false" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19033675" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18814056" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32755905" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3063063" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -641,7 +641,44 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
           <caret line="40" column="12" lean-forward="false" selection-start-line="40" selection-start-column="12" selection-end-line="40" selection-end-column="30" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/model/sale.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8262">
+          <caret line="496" column="4" lean-forward="false" selection-start-line="496" selection-start-column="4" selection-end-line="496" selection-end-column="4" />
+          <folding>
+            <marker date="1518498966351" expanded="true" signature="6870:7020" ph="INSERT INTO sale_sub... " />
+            <marker date="1518498966351" expanded="true" signature="9177:9230" ph="select count... sale" />
+            <marker date="1518498966351" expanded="true" signature="9647:9699" ph="Update sale_sub... " />
+            <marker date="1518498966351" expanded="true" signature="9982:10242" ph="select id,ho... sale" />
+            <marker date="1518498966351" expanded="true" signature="10420:10606" ph="select sale_... sale_sub" />
+            <marker date="1518498966351" expanded="true" signature="10819:11023" ph="select id,ho... sale" />
+            <marker date="1518498966351" expanded="true" signature="11130:11316" ph="select sale_... sale_sub" />
+            <marker date="1518498966351" expanded="true" signature="11646:11779" ph="Insert Into bill_error_logs... " />
+            <marker date="1518498966351" expanded="true" signature="20143:20276" ph="Insert Into bill_error_logs... " />
+            <marker date="1518498966351" expanded="true" signature="22615:22748" ph="Insert Into bill_error_logs... " />
+            <marker date="1518498966351" expanded="true" signature="25273:25406" ph="Insert Into bill_error_logs... " />
+            <marker date="1518498966351" expanded="true" signature="31586:31719" ph="Insert Into bill_error_logs... " />
+            <marker date="1518498966351" expanded="true" signature="37699:37925" ph="select id, h... sale" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/model/item.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1292">
+          <caret line="84" column="29" lean-forward="false" selection-start-line="84" selection-start-column="29" selection-end-line="84" selection-end-column="29" />
+          <folding>
+            <marker date="1513828283442" expanded="true" signature="4812:4863" ph="select count... item" />
+            <marker date="1513828283442" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
+            <marker date="1513828283442" expanded="true" signature="5536:5608" ph="select count... price_sub" />
+            <marker date="1513828283442" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
+            <marker date="1513828283442" expanded="true" signature="7097:7146" ph="select count... item" />
+            <marker date="1513828283442" expanded="true" signature="7356:7551" ph="UPDATE item... " />
+            <marker date="1513828283442" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -656,6 +693,14 @@
             <marker date="1513832230375" expanded="true" signature="2329:2563" ph="Update config... " />
             <marker date="1513832230375" expanded="true" signature="2908:3383" ph="select ifnul... config" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/ctrl/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="31" column="40" lean-forward="false" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -717,52 +762,6 @@
         <state relative-caret-position="289">
           <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/ctrl/config.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="31" column="40" lean-forward="false" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/model/sale.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8262">
-          <caret line="496" column="4" lean-forward="false" selection-start-line="496" selection-start-column="4" selection-end-line="496" selection-end-column="4" />
-          <folding>
-            <marker date="1518498966351" expanded="true" signature="6870:7020" ph="INSERT INTO sale_sub... " />
-            <marker date="1518498966351" expanded="true" signature="9177:9230" ph="select count... sale" />
-            <marker date="1518498966351" expanded="true" signature="9647:9699" ph="Update sale_sub... " />
-            <marker date="1518498966351" expanded="true" signature="9982:10242" ph="select id,ho... sale" />
-            <marker date="1518498966351" expanded="true" signature="10420:10606" ph="select sale_... sale_sub" />
-            <marker date="1518498966351" expanded="true" signature="10819:11023" ph="select id,ho... sale" />
-            <marker date="1518498966351" expanded="true" signature="11130:11316" ph="select sale_... sale_sub" />
-            <marker date="1518498966351" expanded="true" signature="11646:11779" ph="Insert Into bill_error_logs... " />
-            <marker date="1518498966351" expanded="true" signature="20143:20276" ph="Insert Into bill_error_logs... " />
-            <marker date="1518498966351" expanded="true" signature="22615:22748" ph="Insert Into bill_error_logs... " />
-            <marker date="1518498966351" expanded="true" signature="25273:25406" ph="Insert Into bill_error_logs... " />
-            <marker date="1518498966351" expanded="true" signature="31586:31719" ph="Insert Into bill_error_logs... " />
-            <marker date="1518498966351" expanded="true" signature="37699:37925" ph="select id, h... sale" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/model/item.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="84" column="29" lean-forward="false" selection-start-line="84" selection-start-column="29" selection-end-line="84" selection-end-column="29" />
-          <folding>
-            <marker date="1513828283442" expanded="true" signature="4812:4863" ph="select count... item" />
-            <marker date="1513828283442" expanded="true" signature="5011:5214" ph="INSERT INTO item... " />
-            <marker date="1513828283442" expanded="true" signature="5536:5608" ph="select count... price_sub" />
-            <marker date="1513828283442" expanded="true" signature="5791:5885" ph="INSERT INTO price_sub... " />
-            <marker date="1513828283442" expanded="true" signature="7097:7146" ph="select count... item" />
-            <marker date="1513828283442" expanded="true" signature="7356:7551" ph="UPDATE item... " />
-            <marker date="1513828283442" expanded="true" signature="8556:8637" ph="UPDATE price_sub... " />
-          </folding>
         </state>
       </provider>
     </entry>
