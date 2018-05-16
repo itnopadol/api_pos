@@ -65,6 +65,8 @@ func main() {
 	r.POST("/config", ctrl.SaveConfig)
 	r.PUT("/config", ctrl.UpdateConfig)
 
+	r.GET("/gentax", ctrl.GenTaxData)
+
 	r.Run(":8888")
 
 }
