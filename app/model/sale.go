@@ -1116,3 +1116,22 @@ func (s *Sale)ReportSaleDaily(db *sqlx.DB, date_start string, date_stop string)(
 	}
 	return sales, nil
 }
+
+
+func (s *Sale)SelectTaxData(db *sqlx.DB, month_select int, year_select int, tax_amount float64) error {
+
+	//set dateformat dmy
+	//
+	//declare @TotalAmount as money
+	//declare @vDay as int
+	//
+	//set @vDay = (select count(docdate) as day1 from (select distinct docdate from dbo.bcarinvoice where  docdate between '01/03/2018' and '31/03/2018') as aa)
+	//	set @TotalAmount = 200000
+	//
+	//
+	//	select round(@TotalAmount/@vDay,0) as amountperday
+	//
+	//
+	//
+			return nil
+}
