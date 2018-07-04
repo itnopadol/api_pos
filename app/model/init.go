@@ -29,6 +29,11 @@ func toFixed(num float64, precision int) float64 {
 	return float64(round(num*output)) / output
 }
 
+func daysIn(m time.Month, year int) int {
+	// This is equivalent to time.daysIn(m, year).
+	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
+}
+
 func GenDocno(db *sqlx.DB, host_code string) (doc_no string) {
 	var last_number1 int
 	var last_number string

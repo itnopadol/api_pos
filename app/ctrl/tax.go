@@ -19,8 +19,8 @@ func GenTaxData(c *gin.Context){
 
 	tax_amount1, err := strconv.ParseFloat(tax_amount, 64)
 
-	Tax := new(model.TaxData)
-	err = Tax.GenTaxData(dbc,begin_date,end_date,tax_amount1)
+	tax := new(model.TaxData)
+	err = tax.GenTaxData(dbc,begin_date,end_date,tax_amount1)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
@@ -28,7 +28,7 @@ func GenTaxData(c *gin.Context){
 		c.JSON(http.StatusNotFound, rs)
 	}else{
 		rs.Status = "success"
-		rs.Data = nil
+		rs.Data = tax
 		c.JSON(http.StatusOK, rs)
 	}
 
