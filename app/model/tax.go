@@ -195,7 +195,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 						snumber = last_number
 					}
 
-					new_tax_no := vyear1 + vmonth1 + vday1 + "-" + snumber //เลขที่เอกสารใหม่ส่งสรรพกร
+					new_tax_no := "01"+vyear1 + vmonth1 + vday1 + "-" + snumber //เลขที่เอกสารใหม่ส่งสรรพกร
 
 					sqlins := `Insert into tax_temp(month_tax,year_tax,doc_date,month_send,day_send,doc_no,tax_no,before_tax_amount,tax_amount,total_amount,create_by,created) values(?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 					fmt.Println("Insert tax_temp = ", tax.MonthTax, tax.YearTax, d.DocDate, tax.MonthSend, vAmountPerDay, d.DocNo, new_tax_no, d.BeforeTaxAmount, d.TaxAmount, d.TotalAmount, tax.CreateBy)
