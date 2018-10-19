@@ -82,8 +82,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 	config := new(Config)
 	config = GetConfig(db)
 
-	sqlsum := `select sum(total_amount) as sumtotal from sale where  doc_date between ? and ?`
-	err = db.Get(&vSumAll, sqlsum, begindate, enddate)
+	//sqlsum := `select sum(total_amount) as sumtotal from sale where  doc_date between ? and ?`
+	sqlsum := `select 	ifnull(sum(total_amount),0) as totalamount  from  sale  where doc_date between ? and ? and ifnull(doc_no,'') <> '' and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date between ? and ? and item_id in (select id from item where code like '%N%')) `
+	err = db.Get(&vSumAll, sqlsum, begindate, enddate, begindate, enddate)
 	if err != nil {
 		fmt.Println("vSumAll =", err.Error())
 		return err
@@ -105,7 +106,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 	tax.TaxRate = config.TaxRate
 
 	sqldel_taxtemp := `delete from tax_temp where doc_date between ? and ?`
-	fmt.Println("sqldel_taxtemp = ", sqldel_taxtemp, begindate, enddate)
+	fmt.Println("sqldel_taxtemp = ", sqldel_taxtemp, begindate, enddate, begindate, enddate)
 	_, err = db.Exec(sqldel_taxtemp, begindate, enddate)
 	if err != nil {
 		fmt.Println("sqldel_taxtemp =", err.Error())
@@ -119,8 +120,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 		DateAdd := BeginDate.AddDate(0, 0, i).Format("2006-01-02")
 
-		sql := `select ifnull(sum(total_amount),0) as totalamount from sale where  doc_date = ?`
-		err = db.Get(&vTotalDay, sql, DateAdd)
+		//sql := `select ifnull(sum(total_amount),0) as totalamount from sale where  doc_date = ?`
+		sql := `select 	ifnull(sum(total_amount),0) as totalamount  from  sale  where doc_date = ? and ifnull(doc_no,'') <> '' and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date = ? and item_id in (select id from item where code like '%N%'))  order by doc_no`
+		err = db.Get(&vTotalDay, sql, DateAdd, DateAdd)
 		fmt.Println("DateAdd = ", DateAdd)
 		if err != nil {
 			fmt.Println("vTotal =", err.Error())
@@ -147,8 +149,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 				return nil
 			}
 
-			sqlsub := `select doc_date,doc_no,ifnull(before_tax_amount,0) as before_tax_amount,ifnull(tax_amount,0) as tax_amount,ifnull(total_amount,'') as total_amount,'เงินสด'  as customer_name,ifnull(before_tax_amount,0) as sum_of_item_amount from sale where doc_date = ? and ifnull(doc_no,'') <> '' order by doc_no`
-			err = db.Select(&bill, sqlsub, DateAdd)
+			//sqlsub := `select doc_date,doc_no,ifnull(before_tax_amount,0) as before_tax_amount,ifnull(tax_amount,0) as tax_amount,ifnull(total_amount,'') as total_amount,'เงินสด'  as customer_name,ifnull(before_tax_amount,0) as sum_of_item_amount from sale where doc_date = ? and ifnull(doc_no,'') <> '' order by doc_no`
+			sqlsub := `select 	doc_date,doc_no,ifnull(before_tax_amount,0) as before_tax_amount,ifnull(tax_amount,0) as tax_amount,ifnull(total_amount,'') as total_amount,'เงินสด'  as customer_name,ifnull(before_tax_amount,0) as sum_of_item_amount from 	sale where doc_date = ? and ifnull(doc_no,'') <> '' and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date = ? and item_id in (select id from item where code like '%N%'))  order by doc_no`
+			err = db.Select(&bill, sqlsub, DateAdd, DateAdd)
 			fmt.Println("sqlsub = ", sqlsub, DateAdd)
 			if err != nil {
 				fmt.Println("sqlsub =", err.Error())
