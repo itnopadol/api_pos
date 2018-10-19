@@ -8,22 +8,38 @@ import (
 )
 
 type TaxData struct {
-	Id        int     `json:"id" db:"id"`
-	MonthTax  int     `json:"month_tax" db:"month"`
-	YearTax   int     `json:"year_tax" db:"year"`
-	MonthSend float64 `json:"month_send" db:"month_send"`
-	CreateBy  string  `json:"create_by" db:"create_by"`
-	ListDoc   []*Data `json:"data"`
+	//Id          int     `json:"id" db:"id"`
+	//MonthTax    int     `json:"report_month" db:"month"`
+	//YearTax     int     `json:"report_year" db:"year"`
+	//CompanyName string  `json:"company_name" db:""`
+	//Address     string  `json:"address" db:"Address"`
+	//TaxId       string  `json:"tax_id" db:"TaxId"`
+	//MonthSend   float64 `json:"month_send" db:"month_send"`
+	//CreateBy    string  `json:"create_by" db:"create_by"`
+	//ListDoc     []*Data `json:"details"`
+	MonthTax         string  `json:"report_month" db:"month"`
+	YearTax          string  `json:"report_year" db:"year"`
+	CompanyName      string  `json:"company_name" db:""`
+	EntrePreneurName string  `json:"entre_preneur_name" `
+	Address          string  `json:"address" db:"Address"`
+	TaxId            string  `json:"tax_id" db:"TaxId"`
+	MonthSend        float64 `json:"month_send" db:"month_send"`
+	TaxRate          int     `json:"tax_rate" db:"tax_rate"`
+	CreateBy         string  `json:"create_by" db:"create_by"`
+	ListDoc          []*Data `json:"details"`
 }
 
 type Data struct {
 	DaySend         float64 `json:"day_send" db:"day_send"`
 	DocDate         string  `json:"doc_date" db:"doc_date"`
 	DocNo           string  `json:"doc_no" db:"doc_no"`
+	CustomerName    string  `json:"customer_name" db:"customer_name"`
+	CustTaxId       string  `json:"cust_tax_id" db:"cust_tax_id"`
 	TaxNo           string  `json:"tax_no" db:"tax_no"`
+	SumOfItemAmount float64 `json:"sum_of_item_amount" db:"sum_of_item_amount"`
 	BeforeTaxAmount float64 `json:"before_tax_amount" db:"before_tax_amount"`
 	TaxAmount       float64 `json:"tax_amount" db:"tax_amount"`
-	TotalAmount     float64 `json:"total_amount" db:"total_amount"`
+	TotalAmount     float64 `json:"sum_total_amount" db:"total_amount"`
 }
 
 func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, SendTaxAmount float64) error {
@@ -63,6 +79,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 	fmt.Println("Count Day =", vDay)
 
+	config := new(Config)
+	config = GetConfig(db)
+
 	sqlsum := `select sum(total_amount) as sumtotal from sale where  doc_date between ? and ?`
 	err = db.Get(&vSumAll, sqlsum, begindate, enddate)
 	if err != nil {
@@ -76,9 +95,14 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 	fmt.Println("last_number = ", last_number)
 
-	tax.YearTax = BeginDate.Year()
-	tax.MonthTax = int(BeginDate.Month())
+	tax.YearTax = strconv.Itoa(BeginDate.Year())
+	tax.MonthTax = strconv.Itoa(int(BeginDate.Month()))
 	tax.MonthSend = SendTaxAmount
+	tax.CompanyName = config.CompanyName
+	tax.EntrePreneurName = config.CompanyName
+	tax.Address = config.Address
+	tax.TaxId = config.TaxId
+	tax.TaxRate = config.TaxRate
 
 	sqldel_taxtemp := `delete from tax_temp where doc_date between ? and ?`
 	fmt.Println("sqldel_taxtemp = ", sqldel_taxtemp, begindate, enddate)
@@ -123,7 +147,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 				return nil
 			}
 
-			sqlsub := `select doc_date,doc_no,ifnull(before_tax_amount,0) as before_tax_amount,ifnull(tax_amount,0) as tax_amount,ifnull(total_amount,'') as total_amount from sale where doc_date = ? and ifnull(doc_no,'') <> '' order by doc_no`
+			sqlsub := `select doc_date,doc_no,ifnull(before_tax_amount,0) as before_tax_amount,ifnull(tax_amount,0) as tax_amount,ifnull(total_amount,'') as total_amount,'เงินสด'  as customer_name,ifnull(before_tax_amount,0) as sum_of_item_amount from sale where doc_date = ? and ifnull(doc_no,'') <> '' order by doc_no`
 			err = db.Select(&bill, sqlsub, DateAdd)
 			fmt.Println("sqlsub = ", sqlsub, DateAdd)
 			if err != nil {
@@ -195,7 +219,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 						snumber = last_number
 					}
 
-					new_tax_no := "01"+vyear1 + vmonth1 + vday1 + "-" + snumber //เลขที่เอกสารใหม่ส่งสรรพกร
+					new_tax_no := "01" + vyear1 + vmonth1 + vday1 + "-" + snumber //เลขที่เอกสารใหม่ส่งสรรพกร
 
 					sqlins := `Insert into tax_temp(month_tax,year_tax,doc_date,month_send,day_send,doc_no,tax_no,before_tax_amount,tax_amount,total_amount,create_by,created) values(?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 					fmt.Println("Insert tax_temp = ", tax.MonthTax, tax.YearTax, d.DocDate, tax.MonthSend, vAmountPerDay, d.DocNo, new_tax_no, d.BeforeTaxAmount, d.TaxAmount, d.TotalAmount, tax.CreateBy)
@@ -214,11 +238,11 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 	}
 
-	tax.YearTax = BeginDate.Year()
-	tax.MonthTax = int(BeginDate.Month())
+	tax.YearTax = strconv.Itoa(BeginDate.Year())
+	tax.MonthTax = strconv.Itoa(int(BeginDate.Month()))
 	tax.MonthSend = SendTaxAmount
 
-	sqldata := `select doc_date,day_send,doc_no,tax_no,before_tax_amount,tax_amount,total_amount from tax_temp where doc_date between ? and ?`
+	sqldata := `select doc_date,day_send ,doc_no,tax_no,before_tax_amount,tax_amount,total_amount from tax_temp where doc_date between ? and ?`
 	err = db.Select(&tax.ListDoc, sqldata, begindate, enddate)
 	if err != nil {
 		return err
