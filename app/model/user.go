@@ -82,13 +82,17 @@ func (u *User) Update(db *sqlx.DB) error {
 		return err
 	}
 
+	fmt.Println("checkCount = ",checkCount,u.Id,u.UserCode)
+
 	if (checkCount != 0) {
-		sql := `Update user set user_name=?,password=?,confirm_password=?,role_id=?,active=?,edited_by=?, edited=CURRENT_TIMESTAMP()) where id = ? and user_code = ?`
+		sql := `Update user set user_name=?,password=?,confirm_password=?,role_id=?,active=?,edited_by=?, edited=CURRENT_TIMESTAMP() where id = ? and user_code = ?`
 		rs, err := db.Exec(sql, u.UserName, u.Password, u.ConfirmPassword, u.RoleId, u.Active, u.EditedBy, u.Id, u.UserCode)
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
 		}
+
+		fmt.Println("User Data =",u.Active, u.Id, u.UserCode)
 
 		Id, _ := rs.LastInsertId()
 		u.Id = Id

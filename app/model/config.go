@@ -1,35 +1,38 @@
 package model
 
 import (
-	"github.com/jmoiron/sqlx"
 	"fmt"
-	"time"
-	"net/http"
 	"io/ioutil"
+	"net/http"
+	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Config struct {
-	Id           int64      `json:"id" db:"Id"`
-	CompanyName  string     `json:"company_name" db:"company_name"`
-	Address      string     `json:"address" db:"address"`
-	Telephone    string     `json:"telephone" db:"telephone"`
-	Fax          string     `json:"fax" db:"fax"`
-	LineId       string     `json:"line_id" db:"line_id"`
-	Facebook     string     `json:"facebook" db:"facebook"`
-	TaxId        string     `json:"tax_id" db:"tax_id"`
-	TaxRate      int        `json:"tax_rate" db:"tax_rate"`
-	Printer1Port string     `json:"printer1_port" db:"printer1_port"`
-	Printer2Port string     `json:"printer2_port" db:"printer2_port"`
-	Printer3Port string     `json:"printer3_port" db:"printer3_port"`
-	Printer4Port string     `json:"printer4_port" db:"printer4_port"`
-	LinkMikrotik string     `json:"link_mikrotik" db:"link_mikrotik"`
-	Wifi_Password	string `json:"wifi_password" db:"wifi_password"`
-	CreatedBy    string     `json:"created_by" db:"created_by"`
-	Created      *time.Time `json:"created" db:"created"`
-	EditedBy     string     `json:"edited_by" db:"edited_by"`
-	Edited       *time.Time `json:"edited" db:"edited"`
+	Id            int64      `json:"id" db:"Id"`
+	CompanyName   string     `json:"company_name" db:"company_name"`
+	Address       string     `json:"address" db:"address"`
+	Telephone     string     `json:"telephone" db:"telephone"`
+	Fax           string     `json:"fax" db:"fax"`
+	LineId        string     `json:"line_id" db:"line_id"`
+	Facebook      string     `json:"facebook" db:"facebook"`
+	TaxId         string     `json:"tax_id" db:"tax_id"`
+	TaxRate       int        `json:"tax_rate" db:"tax_rate"`
+	Printer1Port  string     `json:"printer1_port" db:"printer1_port"`
+	Printer2Port  string     `json:"printer2_port" db:"printer2_port"`
+	Printer3Port  string     `json:"printer3_port" db:"printer3_port"`
+	Printer4Port  string     `json:"printer4_port" db:"printer4_port"`
+	LinkMikrotik  string     `json:"link_mikrotik" db:"link_mikrotik"`
+	Wifi_Password string     `json:"wifi_password" db:"wifi_password"`
+	BranchId      int        `json:"branch_id" db:"branch_id"`
+	BranchCode    string     `json:"branch_code" db:"branch_code"`
+	HeadDocSale   string     `json:"head_doc_sale" db:"head_doc_sale"`
+	CreatedBy     string     `json:"created_by" db:"created_by"`
+	Created       *time.Time `json:"created" db:"created"`
+	EditedBy      string     `json:"edited_by" db:"edited_by"`
+	Edited        *time.Time `json:"edited" db:"edited"`
 }
-
 
 func (c *Config) Save(db *sqlx.DB) error {
 
@@ -41,7 +44,7 @@ func (c *Config) Save(db *sqlx.DB) error {
 		return err
 	}
 
-	if (checkCount == 0) {
+	if checkCount == 0 {
 		sql := `INSERT INTO config(company_name,address,telephone,fax,line_id,facebook,tax_id,tax_rate,printer1_port,printer2_port,printer3_port,printer4_port,link_mikrotik,created_by,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 		rs, err := db.Exec(sql, c.CompanyName, c.Address, c.Telephone, c.Fax, c.LineId, c.Facebook, c.TaxId, c.TaxRate, c.Printer1Port, c.Printer2Port, c.Printer3Port, c.Printer4Port, c.LinkMikrotik, c.CreatedBy)
 		if err != nil {
@@ -66,7 +69,7 @@ func (c *Config) Update(db *sqlx.DB) error {
 		return err
 	}
 
-	if (checkCount != 0) {
+	if checkCount != 0 {
 		sql := `Update config set company_name=?, address=?, telephone=?, fax=?, line_id=?, facebook=?, tax_id=?, tax_rate=?, printer1_port=?, printer2_port=?, printer3_port=?, printer4_port=?, link_mikrotik=?, edited_by=?, edited=CURRENT_TIMESTAMP()`
 		_, err := db.Exec(sql, c.CompanyName, c.Address, c.Telephone, c.Fax, c.LineId, c.Facebook, c.TaxId, c.TaxRate, c.Printer1Port, c.Printer2Port, c.Printer3Port, c.Printer4Port, c.LinkMikrotik, c.EditedBy)
 		if err != nil {
@@ -98,9 +101,9 @@ func (c *Config) GenWifiPassword(db *sqlx.DB) error {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Println("Link Wifi : ",c.LinkMikrotik)
+	fmt.Println("Link Wifi : ", c.LinkMikrotik)
 
-	wifi_link := c.LinkMikrotik//"http://hapos.dyndns.org:9003/wifi/genuser.php"
+	wifi_link := c.LinkMikrotik //"http://hapos.dyndns.org:9003/wifi/genuser.php"
 	res, err := http.Get(wifi_link)
 	if err != nil {
 		return err

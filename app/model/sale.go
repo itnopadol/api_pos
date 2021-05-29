@@ -1,59 +1,65 @@
 package model
 
 import (
-	"time"
-	"fmt"
-	"github.com/jmoiron/sqlx"
 	"bufio"
-	"github.com/knq/escpos"
+	"fmt"
 	"net"
-	"github.com/itnopadol/api_pos/hw"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/itnopadol/api_pos/hw"
+	"github.com/jmoiron/sqlx"
+	"github.com/knq/escpos"
 )
 
 // Sale เป็นหัวเอกสารขายแต่ละครั้ง
 type Sale struct {
-	Id              uint64     `json:"id" db:"id"`
-	HostCode        string     `json:"host_code" db:"host_code"`
-	QueId           int        `json:"que_id" db:"que_id"`
-	DocNo           string     `json:"doc_no" db:"doc_no"`
-	DocDate         string     `json:"doc_date" db:"doc_date"`
-	TotalAmount     float64    `json:"total_amount" db:"total_amount"`
-	PayAmount       float64    `json:"pay_amount" db:"pay_amount"`
-	ChangeAmount    float64    `json:"change_amount" db:"change_amount"`
-	Type            string     `json:"type" db:"type"`
-	TaxRate         int        `json:"tax_rate" db:"tax_rate"`
-	ItemAmount      float64    `json:"item_amount" db:"item_amount"`
-	BeforeTaxAmount float64    `json:"before_tax_amount" db:"before_tax_amount"`
-	TaxAmount       float64    `json:"tax_amount" db:"tax_amount"`
-	WifiPassword	string 	   `json:"wifi_password" db:"wifi_password"`
-	CreateBy        string     `json:"create_by" db:"create_by"`
-	Created         *time.Time `json:"-" db:"created"`
-
-	IsPosted       bool       `json:"-" db:"is_posted"`
-	IsCancel       int        `json:"is_cancel" db:"is_cancel"`
-	PostedBy       string     `json:"posted_by" db:"posted_by"`
-	PostedDatetime *time.Time `json:"posted_datetime" db:"posted_datetime"`
-	CancelBy       string     `json:"cancel_by" db:"cancel_by"`
-	Canceled       *time.Time `json:"canceled" db:"canceled"`
-
-	SumCashAmount      float64 `json:"sum_cash_amount" db:"sum_cash_amount"`
-	SumChangeAmount    float64 `json:"sum_change_amount" db:"sum_change_amount"`
-	SumCashAmountAll   float64 `json:"sum_cash_amount_all" db:"sum_cash_amount_all"`
-	SumChangeAmountAll float64 `json:"sum_change_amount_all" db:"sum_change_amount_all"`
-	NetAmount          float64 `json:"net_amount" db:"net_amount"`
-	NetAmountAll       float64 `json:"net_amount_all" db:"net_amount_all"`
-	BillCount          int     `json:"bill_count" db:"bill_count"`
-	BillCountAll       int     `json:"bill_count_all" db:"bill_count_all"`
-	ChangeBegin        float64 `json:"change_begin" db:"change_begin"`
-	CashAmount         float64 `json:"cash_amount" db:"cash_amount"`
-	ExpensesAmount     float64 `json:"expenses_amount" db:"expenses_amount"`
-	ChangeBeginAll        float64 `json:"change_begin_all" db:"change_begin_all"`
-	CashAmountAll         float64 `json:"cash_amount_all" db:"cash_amount_all"`
-	ExpensesAmountAll     float64 `json:"expenses_amount_all" db:"expenses_amount_all"`
-
-	SaleSubs []*SaleSub `json:"sale_subs"`
+	Id                 uint64     `json:"id" db:"id"`
+	SaleUUID           string     `json:"sale_uuid" db:"sale_uuid"`
+	CompanyId          int        `json:"company_id" db:"company_id"`
+	BranchId           int        `json:"branch_id" db:"branch_id"`
+	HeadDocSale        string     `json:"head_doc_sale" db:"head_doc_sale"`
+	HostCode           string     `json:"host_code" db:"host_code"`
+	QueId              int        `json:"que_id" db:"que_id"`
+	DocNo              string     `json:"doc_no" db:"doc_no"`
+	DocDate            string     `json:"doc_date" db:"doc_date"`
+	TotalAmount        float64    `json:"total_amount" db:"total_amount"`
+	SaleType           string     `json:"sale_type" db:"sale_type"`
+	PayAmount          float64    `json:"pay_amount" db:"pay_amount"`
+	ChangeAmount       float64    `json:"change_amount" db:"change_amount"`
+	Type               string     `json:"type" db:"type"`
+	TaxRate            int        `json:"tax_rate" db:"tax_rate"`
+	ItemAmount         float64    `json:"item_amount" db:"item_amount"`
+	BeforeTaxAmount    float64    `json:"before_tax_amount" db:"before_tax_amount"`
+	TaxAmount          float64    `json:"tax_amount" db:"tax_amount"`
+	WifiPassword       string     `json:"wifi_password" db:"wifi_password"`
+	CustName           string     `json:"cust_name" db:"cust_name"`
+	CreateBy           string     `json:"create_by" db:"create_by"`
+	Created            *time.Time `json:"-" db:"created"`
+	NoVat              float64    `json:"no_vat" db:"no_vat"`
+	SumOfItemAmount    float64    `json:"sum_of_item_amount" db:"sum_of_item_amount"`
+	IsPosted           bool       `json:"-" db:"is_posted"`
+	IsCancel           int        `json:"is_cancel" db:"is_cancel"`
+	PostedBy           string     `json:"posted_by" db:"posted_by"`
+	PostedDatetime     *time.Time `json:"posted_datetime" db:"posted_datetime"`
+	CancelBy           string     `json:"cancel_by" db:"cancel_by"`
+	Canceled           *time.Time `json:"canceled" db:"canceled"`
+	SumCashAmount      float64    `json:"sum_cash_amount" db:"sum_cash_amount"`
+	SumChangeAmount    float64    `json:"sum_change_amount" db:"sum_change_amount"`
+	SumCashAmountAll   float64    `json:"sum_cash_amount_all" db:"sum_cash_amount_all"`
+	SumChangeAmountAll float64    `json:"sum_change_amount_all" db:"sum_change_amount_all"`
+	NetAmount          float64    `json:"net_amount" db:"net_amount"`
+	NetAmountAll       float64    `json:"net_amount_all" db:"net_amount_all"`
+	BillCount          int        `json:"bill_count" db:"bill_count"`
+	BillCountAll       int        `json:"bill_count_all" db:"bill_count_all"`
+	ChangeBegin        float64    `json:"change_begin" db:"change_begin"`
+	CashAmount         float64    `json:"cash_amount" db:"cash_amount"`
+	ExpensesAmount     float64    `json:"expenses_amount" db:"expenses_amount"`
+	ChangeBeginAll     float64    `json:"change_begin_all" db:"change_begin_all"`
+	CashAmountAll      float64    `json:"cash_amount_all" db:"cash_amount_all"`
+	ExpensesAmountAll  float64    `json:"expenses_amount_all" db:"expenses_amount_all"`
+	SaleSubs           []*SaleSub `json:"sale_subs"`
 }
 
 // SaleSub เป็นรายการสินค้าที่ขายใน Sale
@@ -66,6 +72,7 @@ type SaleSub struct {
 	Price       float64 `json:"price" db:"price"`
 	Qty         int     `json:"qty" db:"qty"`
 	Unit        string  `json:"unit" db:"unit"`
+	UnitRate    int     `json:"unit_rate" db:"unit_rate"`
 	Amount      float64 `json:"amount" db:"amount"`
 	IsKitchen   int     `json:"is_kitchen" db:"is_kitchen"`
 	IsAtHome    int     `json:"is_athome" db:"is_athome"`
@@ -119,7 +126,7 @@ func (s *Sale) CheckAmount() (status int, err error) {
 		ItemAmount = ItemAmount + Amount
 	}
 
-	if (TotalAmount != ItemAmount) {
+	if TotalAmount != ItemAmount {
 		status = 1
 	} else {
 		status = 0
@@ -132,7 +139,35 @@ func (s *Sale) CheckAmount() (status int, err error) {
 	return status, nil
 }
 
-func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitchen string, printbar string , err error) {
+func CurrentShift(db *sqlx.DB, company_id int, branch_id int, host_code string) int {
+	var shiftId int
+	var get_company_id int
+	var get_branch_id int
+
+	if company_id == 0 {
+		get_company_id = 1
+	} else {
+		get_company_id = company_id
+	}
+
+	if branch_id == 0 {
+		get_branch_id = 1
+	} else {
+		get_branch_id = branch_id
+	}
+
+	sql_shift := `select ifnull(id,0) as id from cash_shift where company_id = ? and branch_id = ? and host_code = ?  and is_closed = 0 order by id desc limit 1`
+	fmt.Println("sql_shift = ", sql_shift, get_company_id, get_branch_id, host_code)
+	rs := db.QueryRowx(sql_shift, get_company_id, get_branch_id, host_code)
+	err := rs.Scan(&shiftId)
+	if err != nil {
+		fmt.Println("err Shift Exist = ", err.Error())
+	}
+
+	return shiftId
+}
+
+func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitchen string, printbar string, err error) {
 	var CheckRemain float64
 	var CheckChange float64
 
@@ -154,24 +189,24 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 		s.ChangeAmount = 0
 	}
 
-	fmt.Println("Total = ", s.TotalAmount, "Pay = ", s.PayAmount)
+	//fmt.Println("Total = ", s.TotalAmount, "Pay = ", s.PayAmount)
 	CheckRemain = (s.TotalAmount - s.PayAmount) + s.ChangeAmount //(100-50)+0
 
-	fmt.Println("Total = ", s.TotalAmount, "Pay = ", s.PayAmount, "Remain = ", CheckRemain, "Change =", s.ChangeAmount)
+	//fmt.Println("Total = ", s.TotalAmount, "Pay = ", s.PayAmount, "Remain = ", CheckRemain, "Change =", s.ChangeAmount)
 
 	var vTaxAmount float64
 	var vBeforeTaxAmount float64
 
 	if CheckRemain == 0 {
 
-		fmt.Println("Host_Code = ", s.HostCode)
-		if (s.HostCode != "") {
+		//fmt.Println("Host_Code = ", s.HostCode)
+		if s.HostCode != "" {
 			checkAmount, _ := s.CheckAmount()
 			if err != nil {
-				return "Error Check ItemAmount", "","","",err
+				return "Error Check ItemAmount", "", "", "", err
 			}
 
-			if (checkAmount == 0) {
+			if checkAmount == 0 {
 				s.TotalAmount = toFixed(s.TotalAmount, 2)
 				vTaxAmount = toFixed(s.TotalAmount-((s.TotalAmount*100)/(100+float64(s.TaxRate))), 2)
 				vBeforeTaxAmount = toFixed(s.TotalAmount-vTaxAmount, 2)
@@ -179,21 +214,27 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 				s.BeforeTaxAmount = vBeforeTaxAmount
 				s.TaxAmount = vTaxAmount
 
-				s.DocNo = GenDocno(db, s.HostCode)
+				s.DocNo = GenDocno(db, s.HostCode, s.HeadDocSale)
 				s.QueId = LastQueId(db)
 
+				current_shift := CurrentShift(db, s.CompanyId, s.BranchId, s.HostCode)
+
 				fmt.Println("*Sale.Save() start")
-				sql1 := `INSERT INTO sale(host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted,create_by,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
+				sql1 := `INSERT INTO sale(company_id,branch_id,host_code,que_id,shift_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,sale_type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted,create_by,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 				fmt.Println("*Sale.Save()", sql1)
 				rs, err := db.Exec(sql1,
+					s.CompanyId,
+					s.BranchId,
 					s.HostCode,
 					s.QueId,
+					current_shift,
 					s.DocNo,
 					s.DocDate,
 					s.TotalAmount,
 					s.PayAmount,
 					s.ChangeAmount,
 					s.Type,
+					s.SaleType,
 					s.TaxRate,
 					s.ItemAmount,
 					s.BeforeTaxAmount,
@@ -203,7 +244,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 					s.CreateBy)
 				if err != nil {
 					fmt.Printf("Error when db.Exec(sql1) %v", err.Error())
-					return "","","","", err
+					return "", "", "", "", err
 				}
 				id, _ := rs.LastInsertId()
 				s.Id = uint64(id)
@@ -214,11 +255,14 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 				checkPrintSlipKitchen = 0
 				checkPrintSlipBar = 0
 
-				sql2 := `INSERT INTO sale_sub(sale_id,line,item_id,item_name,short_name,description,price,qty,unit,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
+				sql2 := `INSERT INTO sale_sub(company_id,branch_id,sale_id,shift_id,line,item_id,item_name,short_name,description,price,qty,unit,unit_rate,amount,is_kitchen,is_athome) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 				for _, ss := range s.SaleSubs {
 					fmt.Println("start for range s.SaleSubs")
 					rs, err = db.Exec(sql2,
+						s.CompanyId,
+						s.BranchId,
 						s.Id,
+						current_shift,
 						ss.Line,
 						ss.ItemId,
 						ss.ItemName,
@@ -227,20 +271,21 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 						ss.Price,
 						ss.Qty,
 						ss.Unit,
+						ss.UnitRate,
 						ss.Amount,
 						ss.IsKitchen,
 						ss.IsAtHome)
 					if err != nil {
 						fmt.Printf("Error when db.Exec(sql2) %v\n", err.Error())
-						return "","","","" ,err
+						return "", "", "", "", err
 					}
 					fmt.Println("Insert sale_sub line ", ss)
 
-					if (ss.IsKitchen == 1) {
+					if ss.IsKitchen == 1 {
 						checkPrintSlipKitchen = checkPrintSlipKitchen + 1
 					}
 
-					if (ss.IsKitchen == 2) {
+					if ss.IsKitchen == 2 {
 						checkPrintSlipBar = checkPrintSlipBar + 1
 					}
 				}
@@ -256,7 +301,7 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 				fmt.Println("Port1 ", host.HostCode, host.PrinterPort)
 				fmt.Println("Port2 ", config.Printer2Port)
 
-				if (host.PrinterPort != "") {
+				if host.PrinterPort != "" {
 					err = PrintBill(s, host, config, db)
 					if err != nil {
 						fmt.Println("error print billing ", err.Error())
@@ -264,8 +309,8 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 					}
 				}
 
-				if (config.Printer1Port != "") {
-					if (checkPrintSlipKitchen > 0) {
+				if config.Printer1Port != "" {
+					if checkPrintSlipKitchen > 0 {
 						fmt.Println("begin print pickup")
 						err = printPickup(s, config, db)
 						if err != nil {
@@ -275,8 +320,8 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 					}
 				}
 
-				if (config.Printer2Port != "") {
-					if (checkPrintSlipBar > 0) {
+				if config.Printer2Port != "" {
+					if checkPrintSlipBar > 0 {
 						err = printPickup2(s, config, db)
 						if err != nil {
 							fmt.Println("error print bar slip  ", err.Error())
@@ -286,19 +331,19 @@ func (s *Sale) SaleSave(db *sqlx.DB) (docno string, printbill string, printkitch
 				}
 
 			} else {
-				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", "","","",err
+				return "มูลค่ารวม ไม่เท่ากับ มูลค่าสินค้า กรุณาตรวจสอบ", "", "", "", err
 			}
 
 		} else {
-			return "Host Code ไม่แสดง กรุณาตรวจสอบ", "","","",err
+			return "Host Code ไม่แสดง กรุณาตรวจสอบ", "", "", "", err
 		}
 
 	} else {
-		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", "","","",nil
+		return "ลูกค้าชำระเงิน ยังไม่ครบกรุณาตรวจสอบ", "", "", "", nil
 	}
 	fmt.Println("Save data sucess: sale =", s)
 
-	return s.DocNo, err_bill,err_kitchen,err_bar,nil
+	return s.DocNo, err_bill, err_kitchen, err_bar, nil
 }
 
 //ยกเลิกบิล
@@ -311,7 +356,7 @@ func (s *Sale) SaleVoid(db *sqlx.DB) error {
 		return err
 	}
 
-	if (checkCount != 0) {
+	if checkCount != 0 {
 		fmt.Println("*Sale.Save() start")
 		sql := `Update sale set is_cancel = 1, cancel_by = ?, canceled = CURRENT_TIMESTAMP() where id = ?)`
 		fmt.Println("*Sale.Save()", sql)
@@ -335,7 +380,7 @@ func (s *Sale) SaleVoid(db *sqlx.DB) error {
 
 func (s *Sale) SearchSales(db *sqlx.DB, host_code string, doc_date string, keyword string) (sales []*Sale, err error) {
 
-	sql := `select id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where host_code = ? and doc_date = ? and (doc_no like CONCAT("%",?,"%")) order by created desc`
+	sql := `select id,company_id,branch_id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,sale_type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where host_code = ? and doc_date = ? and (doc_no like CONCAT("%",?,"%")) order by created desc`
 	err = db.Select(&sales, sql, host_code, doc_date, keyword)
 	if err != nil {
 		return nil, err
@@ -343,7 +388,7 @@ func (s *Sale) SearchSales(db *sqlx.DB, host_code string, doc_date string, keywo
 
 	for _, sub := range sales {
 		fmt.Println("SaleID = ", sub.Id)
-		sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ?`
+		sqlsub := `select company_id,branch_id,sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,unit_rate,amount,is_kitchen,is_athome from sale_sub where sale_id = ?`
 		err = db.Select(&sub.SaleSubs, sqlsub, sub.Id)
 		if err != nil {
 			return nil, err
@@ -354,14 +399,14 @@ func (s *Sale) SearchSales(db *sqlx.DB, host_code string, doc_date string, keywo
 
 func (s *Sale) SearchSaleById(db *sqlx.DB, id int64) error {
 	fmt.Println("ID = ", id)
-	sql := `select id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where id = ? order by id desc limit 20`
+	sql := `select id,company_id,branch_id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,sale_type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where id = ? order by id desc limit 20`
 	err := db.Get(s, sql, id)
 	if err != nil {
 		return err
 	}
 
 	fmt.Println("SaleID = ", s.Id)
-	sqlsub := `select sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = ? `
+	sqlsub := `select company_id,branch_id,sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,unit_rate,amount,is_kitchen,is_athome from sale_sub where sale_id = ? `
 	err = db.Select(&s.SaleSubs, sqlsub, id)
 	if err != nil {
 		return err
@@ -401,7 +446,17 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(1, 1)
-	pt.WriteStringLines("คิวเลขที่ : " + strconv.Itoa(s.QueId))
+	//pt.WriteStringLines("คิวเลขที่ : " + strconv.Itoa(s.QueId))
+	if s.CustName != "" {
+		pt.WriteStringLines("ชื่อลูกค้า : " + s.CustName + "(" + strconv.Itoa(s.QueId) + ")")
+		pt.LineFeed()
+		makeline(pt)
+	} else {
+		pt.WriteStringLines("คิวที่ : " + "(" + strconv.Itoa(s.QueId) + ")")
+		pt.LineFeed()
+		makeline(pt)
+	}
+
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	pt.SetAlign("center")
@@ -419,6 +474,15 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	//pt.WriteStringLines(" พนักงาน : "+s.CreateBy+"\n")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
+	//pt.SetFont("A")
+	//pt.SetAlign("center")
+
+	//if(s.WifiPassword != ""){
+	//	pt.WriteStringLines("ชื่อลูกค้า : "+ s.WifiPassword)
+	//	pt.LineFeed()
+	//	makeline(pt)
+	//}
+
 	var CountItem int
 	var CountQty int
 	for _, subcount := range s.SaleSubs {
@@ -436,13 +500,13 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 		var vItemPriceAmount string
 		var vPrice float64
 
-		if (sub.IsAtHome == 1) {
+		if sub.IsAtHome == 1 {
 			vAtHome = "H"
 		} else {
 			vAtHome = ""
 		}
 		pt.SetFont("A")
-		if (sub.Description == "") {
+		if sub.Description == "" {
 			pt.WriteStringLines(" " + sub.ItemName + "\n")
 		} else {
 			pt.WriteStringLines(" " + sub.ItemName + " (" + sub.Description + " )" + "\n")
@@ -454,7 +518,7 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 		vLen := len(vItemPriceAmount)
 		vDiff := 25 - (vLen / 3)
 
-		if (vDiff < 0) {
+		if vDiff < 0 {
 			vDiffEmpty = 0
 		} else {
 			vDiffEmpty = vDiff
@@ -465,7 +529,7 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 		fmt.Println("ItemName=", sub.ItemName)
 		fmt.Println("Len", vLen/3)
 		fmt.Println("Diff ", vDiff)
-		if (sub.Line == 0 ) {
+		if sub.Line == 0 {
 			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffEmpty))
 		} else {
 			pt.WriteStringLines(vItemPriceAmount + strings.Repeat(" ", vDiffOld))
@@ -488,13 +552,13 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	//pt.WriteStringLines(" ภาษีมูลค่าเพิ่ม"+strconv.Itoa(c.TaxRate)+"%"+"                                "+Commaf(vTaxAmount)+"\n")
 	pt.WriteStringLines(" ชำระด้วยเงินสด" + "                      " + CommaFloat(s.PayAmount) + "\n")
 	pt.WriteStringLines(" เงินทอน" + "                            " + CommaFloat(s.ChangeAmount) + "\n")
-	pt.WriteStringLines(" เลขที่:" + s.DocNo)
+	pt.WriteStringLines(" เลขที่:" + s.DocNo + "     " + "ประเภทการขาย = " + s.SaleType + "\n")
 	pt.SetFont("B")
 
 	loc, _ := time.LoadLocation("Asia/Bangkok")
 	now := time.Now().In(loc)
 	pt.WriteStringLines(" วันที่ :" + now.Format("02-01-2006 15:04:05") + "\n")
-	
+
 	pt.SetFont("A")
 	//pt.WriteStringLines(" วันที่ :"+ s.Created.Format("02-01-2006 15:04:05")+"\n")
 	pt.SetAlign("center")
@@ -511,8 +575,8 @@ func PrintBill(s *Sale, h *Host, c *Config, db *sqlx.DB) error {
 	//fmt.Println("Isnumberic Wifi ",IsNumeric(wifi_password))
 	//fmt.Println(">"+wifi_password+"<")
 
-	if(s.WifiPassword != ""){
-		pt.WriteStringLines("WIFI : "+ s.WifiPassword)
+	if s.WifiPassword != "" {
+		pt.WriteStringLines("WIFI : " + s.WifiPassword)
 	}
 
 	pt.Formfeed()
@@ -583,7 +647,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB) error {
 		vLen := len(sub.ItemName)
 		vDiff := 25 - (vLen / 3)
 
-		if (vDiff < 0) {
+		if vDiff < 0 {
 			vDiffEmpty = 0
 		} else {
 			vDiffEmpty = vDiff
@@ -595,7 +659,7 @@ func PrintInvoice(s *Sale, c *Config, db *sqlx.DB) error {
 		fmt.Println("Len", vLen/3)
 		fmt.Println("Diff ", vDiff)
 
-		if (sub.Line == 0 ) {
+		if sub.Line == 0 {
 			vLineNumber = sub.Line + 1
 			pt.SetFont("B")
 			pt.WriteStringLines(strconv.Itoa(vLineNumber) + "." + sub.ItemName + strings.Repeat(" ", vDiffEmpty))
@@ -668,7 +732,16 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(1, 1)
-	pt.WriteStringLines("คิวเลขที่ : " + strconv.Itoa(s.QueId))
+	//pt.WriteStringLines("คิวเลขที่ : " + strconv.Itoa(s.QueId))
+	if s.CustName != "" {
+		pt.WriteStringLines("ชื่อลูกค้า : " + s.CustName + "(" + strconv.Itoa(s.QueId) + ")")
+		pt.LineFeed()
+		makeline(pt)
+	} else {
+		pt.WriteStringLines("คิวที่ : " + "(" + strconv.Itoa(s.QueId) + ")")
+		pt.LineFeed()
+		makeline(pt)
+	}
 	pt.LineFeed()
 	pt.SetTextSize(0, 1)
 	pt.WriteStringLines("Kitchen Slip" + "\n")
@@ -688,23 +761,32 @@ func printPickup(s *Sale, c *Config, db *sqlx.DB) error {
 	pt.SetAlign("center")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
+	//pt.SetFont("A")
+	//pt.SetAlign("center")
+	//
+	//
+	//if(s.WifiPassword != ""){
+	//	pt.WriteStringLines("ชื่อลูกค้า : "+ s.WifiPassword)
+	//	pt.LineFeed()
+	//	makeline(pt)
+	//}
 
 	pt.SetAlign("left")
 	for _, sub := range s.SaleSubs {
 		var vAtHome string
 
-		if (sub.IsAtHome == 1) {
+		if sub.IsAtHome == 1 {
 			vAtHome = "H"
 		} else {
 			vAtHome = ""
 		}
-		if (sub.IsKitchen == 1) {
+		if sub.IsKitchen == 1 {
 			pt.SetTextSize(1, 1)
 			pt.SetFont("A")
 			pt.SetAlign("left")
 			pt.SetLeftMargin(20)
 			// แก้ไข ()
-			if (sub.Description != "") {
+			if sub.Description != "" {
 				//ph := "("
 				//pr := ")"
 				if sub.Description == "" {
@@ -764,14 +846,32 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(1, 1)
-	pt.WriteStringLines("คิวเลขที่ : " + strconv.Itoa(s.QueId))
+	//pt.WriteStringLines("คิวเลขที่ : " + strconv.Itoa(s.QueId))
+	if s.CustName != "" {
+		pt.WriteStringLines("ชื่อลูกค้า : " + s.CustName + "(" + strconv.Itoa(s.QueId) + ")")
+		pt.LineFeed()
+		makeline(pt)
+	} else {
+		pt.WriteStringLines("คิวที่ : " + "(" + strconv.Itoa(s.QueId) + ")")
+		pt.LineFeed()
+		makeline(pt)
+	}
 	pt.LineFeed()
 	pt.SetTextSize(0, 1)
 	pt.WriteStringLines("Bar Slip" + "\n")
 	pt.SetAlign("center")
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
-	//pt.LineFeed()
+	//pt.SetFont("A")
+	//pt.SetAlign("center")
+	//
+	//
+	//if(s.WifiPassword != ""){
+	//	pt.WriteStringLines("ชื่อลูกค้า : "+ s.WifiPassword)
+	//	pt.LineFeed()
+	//	makeline(pt)
+	//}
+
 	pt.SetTextSize(0, 0)
 	pt.SetFont("A")
 	//pt.SetAlign("left")
@@ -790,17 +890,17 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	for _, sub := range s.SaleSubs {
 		var vAtHome string
 
-		if (sub.IsAtHome == 1) {
+		if sub.IsAtHome == 1 {
 			vAtHome = "H"
 		} else {
 			vAtHome = ""
 		}
-		if (sub.IsKitchen == 2) {
+		if sub.IsKitchen == 2 {
 			pt.SetTextSize(1, 0)
 			pt.SetFont("A")
 			//pt.SetAlign("left")
 			//pt.SetLeftMargin(20)
-			if (sub.Description != "") {
+			if sub.Description != "" {
 				pt.WriteStringLines(sub.ItemName + "+" + sub.Description)
 			} else {
 				pt.WriteStringLines(sub.ItemName)
@@ -826,6 +926,24 @@ func printPickup2(s *Sale, c *Config, db *sqlx.DB) error {
 	return nil
 }
 
+func (s *Sale) SearchSaleByDocNo(db *sqlx.DB) (interface{}, error) {
+	fmt.Println("ID = ", s.Id)
+	sql := `select id,company_id,branch_id,host_code,que_id,doc_no,doc_date,total_amount,pay_amount,change_amount,type,sale_type,tax_rate,item_amount,before_tax_amount,tax_amount,is_cancel,is_posted from sale where id = 171351 order by id desc limit 20`
+	err := db.Get(s, sql)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("SaleID = ", s.Id)
+	sqlsub := `select company_id,branch_id,sale_id,line,item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount,is_kitchen,is_athome from sale_sub where sale_id = 171351 `
+	err = db.Select(&s.SaleSubs, sqlsub)
+	if err != nil {
+		return nil, err
+	}
+
+	return s, err
+}
+
 //รายงานยอดขายประจำวัน
 func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date string) (sales []*Sale, err error) {
 	var sql string
@@ -839,7 +957,7 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 	config = GetConfig(db)
 
 	fmt.Println("config.Printer4Port", config.Printer4Port)
-	if (config.Printer4Port != "") {
+	if config.Printer4Port != "" {
 		f, err := net.Dial("tcp", config.Printer4Port)
 		if err != nil {
 			sql_err := `Insert Into bill_error_logs(module_name,host_code,doc_no,error_log,user_code,err_datetime) Values("Sale",?,?,?,?,CURRENT_TIMESTAMP())`
@@ -868,7 +986,7 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 		pt.SetTextSize(0, 0)
 		makeline(pt)
 		///////////////////////////////////////////////////////////////////////////////////
-		if (s.HostCode == "") {
+		if s.HostCode == "" {
 			sql = `select distinct host_code,doc_date,
 			(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
 			(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
@@ -924,7 +1042,7 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 		makeline(pt)
 		//pt.SetAlign("left")
 		pt.SetFont("A")
-		if (s.HostCode == "") {
+		if s.HostCode == "" {
 			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCountAll) + " บิล\n")
 		} else {
 			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCount) + " บิล\n")
@@ -950,8 +1068,6 @@ func (s *Sale) PrintSaleDailyTotal(db *sqlx.DB, host_code string, doc_date strin
 	return nil, nil
 }
 
-
-
 //รายงานยอดขายประจำวัน สุทธิ
 func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date string) (sales []*Sale, err error) {
 	var sql string
@@ -965,7 +1081,7 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 	config = GetConfig(db)
 
 	fmt.Println("config.Printer4Port", config.Printer4Port)
-	if (config.Printer4Port != "") {
+	if config.Printer4Port != "" {
 
 		//f, err := os.Open("/dev/usb/lp0")
 		//f, err :=os.OpenFile("/dev/ttyUSB0", os.O_WRONLY, os.ModeDevice)
@@ -1001,12 +1117,12 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 		pt.SetCharaterCode(26)
 		pt.SetAlign("center")
 		pt.SetTextSize(0, 0)
-		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + day+"/"+month+"/"+year)
+		pt.WriteStringLines("สรุปยอดขายประจำวัน : " + day + "/" + month + "/" + year)
 		pt.LineFeed()
 		pt.SetTextSize(0, 0)
 		makeline(pt)
 		///////////////////////////////////////////////////////////////////////////////////
-		if (s.HostCode == "") {
+		if s.HostCode == "" {
 			sql = `select 	distinct a.host_code,a.doc_date,b.change_begin,b.cash_amount,b.expenses_amount,
 							(select count(doc_no) from sale where doc_date = a.doc_date and is_cancel = 0) as bill_count_all,
 							(select count(doc_no) from sale where host_code = a.host_code and doc_date = a.doc_date and is_cancel = 0) as bill_count,
@@ -1069,7 +1185,7 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 		makeline(pt)
 		//pt.SetAlign("left")
 		pt.SetFont("A")
-		if (s.HostCode == "") {
+		if s.HostCode == "" {
 			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCountAll) + " บิล\n")
 		} else {
 			pt.WriteStringLines("จำนวนบิลทั้งหมด " + strconv.Itoa(sales[0].BillCount) + " บิล\n")
@@ -1097,18 +1213,39 @@ func (s *Sale) PrintSaleNetAmountDaily(db *sqlx.DB, host_code string, doc_date s
 	return nil, nil
 }
 
-
-func (s *Sale)ReportSaleDaily(db *sqlx.DB, date_start string, date_stop string)(sales []*Sale, err error){
-	sql := `select id, host_code,que_id,doc_no,doc_date,tax_rate,item_amount,before_tax_amount,tax_amount,total_amount,pay_amount,change_amount,is_cancel,create_by,created from sale where doc_date between ? and ? order by doc_date, que_id`
-	err = db.Select(&sales, sql,date_start, date_stop)
-	fmt.Println("sql = ",sql,date_start , date_stop)
+func (s *Sale) ReportSaleDaily(db *sqlx.DB, date_start string, date_stop string) (sales []*Sale, err error) {
+	//sql := `select id, host_code,que_id,doc_no,doc_date,tax_rate,item_amount,before_tax_amount,tax_amount,total_amount,pay_amount,change_amount,is_cancel,create_by,created from sale where doc_date between ? and ? order by doc_date, que_id`
+	sql := `select 	s.id,s.host_code,s.que_id,s.tax_rate,s.item_amount,s.pay_amount,change_amount,s.is_cancel,
+					s.create_by,s.created,
+					result.* 
+			from (
+					select doc_date,doc_no,ifnull(sum(before_tax_amount),0) as before_tax_amount,ifnull(sum(tax_amount),0) as  tax_amount,ifnull(sum(no_vat_amount),0) as no_vat,ifnull(sum(amount),0) as total_amount,ifnull(sum(before_tax_amount),0) as sum_of_item_amount
+					from
+					(
+						select a.doc_no,a.doc_date,b.amount,c.code,b.item_name,
+						case when c.code like '%n' then 0 
+						else round((b.amount*100)/107,2) end as  before_tax_amount ,
+						case when c.code like '%n' then 0 
+						else round(b.amount- ((b.amount*100)/107),2) end as  tax_amount,
+						case when c.code like '%n' then b.amount 
+						else 0 end as  no_vat_amount  
+						from 	sale a 
+							  inner join sale_sub b on a.id = b.sale_id 
+							inner join item c on b.item_id = c.id
+						where a.doc_date between ? and ?
+					) as rs 
+						group by doc_no,doc_date) as result 
+						left join sale s on result.doc_date = s.doc_date and result.doc_no = s.doc_no
+			  order by result.doc_date,result.doc_no`
+	err = db.Select(&sales, sql, date_start, date_stop)
+	fmt.Println("sql = ", sql, date_start, date_stop)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, sale := range sales {
 		sqlsub := `select item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount from sale_sub where sale_id = ? `
-		fmt.Println("sqlsub = ",sqlsub)
+		fmt.Println("sqlsub = ", sqlsub)
 		err = db.Select(&sale.SaleSubs, sqlsub, sale.Id)
 		if err != nil {
 			return nil, err
@@ -1117,8 +1254,97 @@ func (s *Sale)ReportSaleDaily(db *sqlx.DB, date_start string, date_stop string)(
 	return sales, nil
 }
 
+type ListMenuSale struct {
+	DocDate     *time.Time      `json:"doc_date" db:"doc_date"'`
+	MenuId      int             `json:"menu_id" db:"menu_id"`
+	MenuName    string          `json:"menu_name" db:"menu_name"`
+	TotalAmount float64         `json:"total_amount" db:"total_amount"`
+	CountAllQty int             `json:"count_all_qty" db:"count_all_qty"`
+	Item        []*ListItemSale `json:"item"`
+}
 
-func (s *Sale)SelectTaxData(db *sqlx.DB, month_select int, year_select int, tax_amount float64) error {
+type ListItemSale struct {
+	ItemId       int             `json:"item_id" db:"item_id"`
+	ItemName     string          `json:"item_name" db:"item_name"`
+	ItemAmount   float64         `json:"item_amount" db:"item_amount"`
+	CountItemQty int             `json:"count_item_qty" db:"count_item_qty"`
+	ItemData     []*ListItemData `json:"item_data"`
+}
+
+type ListItemData struct {
+	Id          uint64  `json:"id" db:"id"`
+	HostCode    string  `json:"host_code" db:"host_code"`
+	QueId       int     `json:"que_id" db:"que_id"`
+	DocNo       string  `json:"doc_no" db:"doc_no"`
+	DocDate     string  `json:"doc_date" db:"doc_date"`
+	ItemId      int     `json:"item_id" db:"item_id"`
+	ItemName    string  `json:"item_name" db:"item_name"`
+	ShortName   string  `json:"short_name" db:"short_name"`
+	Description string  `json:"description" db:"description"`
+	Price       float64 `json:"price" db:"price"`
+	PriceSub    float64 `json:"price_sub" db:"price_sub"`
+	Qty         int     `json:"qty" db:"qty"`
+	Unit        string  `json:"unit" db:"unit"`
+	Amount      float64 `json:"amount" db:"amount"`
+	Line        int     `json:"line" db:"line"`
+}
+
+func (s *Sale) ReportSaleDailyByMenu(db *sqlx.DB, date_start string, date_stop string) (resp []*ListMenuSale, err error) {
+	sql := `select 	doc_date,menu_id,menu_name,amount as total_amount,count_all_qty 
+			FROM
+			(
+				select 	a.doc_date,c.menu_id,d.name as menu_name,sum(b.amount) as amount,sum(b.qty) as count_all_qty
+				from 	sale a 
+				inner join sale_sub b on a.id = b.sale_id 
+				inner join item c on b.item_id = c.id
+				inner join menu d on c.menu_id = d.id
+			where 	a.doc_date between ? and ? and a.is_cancel = 0 and b.is_cancel = 0
+			group by 	a.doc_date,c.menu_id,d.name
+			) AS		rs
+			order by menu_id`
+	err = db.Select(&resp, sql, date_start, date_stop)
+	fmt.Println("sql = ", sql, date_start, date_stop)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, s := range resp {
+		sqlsub := `	select 	b.item_id,b.item_name,sum(b.amount) as item_amount,sum(b.qty) as count_item_qty
+				from 	sale a 
+				inner join sale_sub b on a.id = b.sale_id 
+				inner join item c on b.item_id = c.id
+				inner join menu d on c.menu_id = d.id
+			where 	a.doc_date between ? and ? and c.menu_id = ? and a.is_cancel = 0 and b.is_cancel = 0
+			group by b.item_id,b.item_name`
+		fmt.Println("sqlsub = ", sqlsub, date_start, date_stop, s.MenuId)
+		err = db.Select(&s.Item, sqlsub, date_start, date_stop, s.MenuId)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, i := range s.Item {
+			sqlsub := `select a.id,a.host_code,a.que_id,a.doc_no,a.doc_date,b.item_id,b.item_name,ifnull(b.short_name,'') as short_name,ifnull(b.description,'') as description,b.price,b.qty,b.unit,b.amount,b.line,ifnull(d.price,0) as price_sub from sale a inner join sale_sub b on a.id = b.sale_id inner join item c on b.item_id = c.id left join price_sub d on b.item_id = d.item_id and b.description = d.name where a.doc_date between ? and ? and c.menu_id = ? and b.item_id = ? order by a.doc_date,a.que_id,b.line`
+			fmt.Println("sqlsub = ", sqlsub, date_start, date_stop, s.MenuId, i.ItemId)
+			err = db.Select(&i.ItemData, sqlsub, date_start, date_stop, s.MenuId, i.ItemId)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	//for _, s := range resp {
+	//	sqlsub := `select a.id,a.host_code,a.que_id,a.doc_no,a.doc_date,b.item_id,b.item_name,ifnull(b.short_name,'') as short_name,ifnull(b.description,'') as description,b.price,b.qty,b.unit,b.amount,b.line from sale a inner join sale_sub b on a.id = b.sale_id inner join item c on b.item_id = c.id where a.doc_date between ? and ? and c.menu_id = ? order by a.doc_date,a.que_id,b.line`
+	//	fmt.Println("sqlsub = ", sqlsub, date_start, date_stop, s.MenuId)
+	//	err = db.Select(&s.Item, sqlsub, date_start, date_stop, s.MenuId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
+
+	return resp, nil
+}
+
+func (s *Sale) SelectTaxData(db *sqlx.DB, month_select int, year_select int, tax_amount float64) error {
 
 	//set dateformat dmy
 	//
@@ -1133,5 +1359,46 @@ func (s *Sale)SelectTaxData(db *sqlx.DB, month_select int, year_select int, tax_
 	//
 	//
 	//
-			return nil
+	return nil
+}
+
+func (s *Sale) ReportBillSendTax(db *sqlx.DB, date_start string, date_stop string) (sales []*Sale, err error) {
+	sql := `select doc_date, doc_no, sum_ofItem_amount, after_discount_amount, tax_amount, before_tax_amount, tax_rate, net_debt_amount  from sale where doc_date between ? and ? order by doc_date, que_id`
+	//sql := `select 	s.id,s.host_code,s.que_id,s.tax_rate,s.item_amount,s.pay_amount,change_amount,s.is_cancel,
+	//				s.create_by,s.created,
+	//				result.*
+	//		from (
+	//				select doc_date,doc_no,ifnull(sum(before_tax_amount),0) as before_tax_amount,ifnull(sum(tax_amount),0) as  tax_amount,ifnull(sum(no_vat_amount),0) as no_vat,ifnull(sum(amount),0) as total_amount,ifnull(sum(before_tax_amount),0) as sum_of_item_amount
+	//				from
+	//				(
+	//					select a.doc_no,a.doc_date,b.amount,c.code,b.item_name,
+	//					case when c.code like '%n' then 0
+	//					else round((b.amount*100)/107,2) end as  before_tax_amount ,
+	//					case when c.code like '%n' then 0
+	//					else round(b.amount- ((b.amount*100)/107),2) end as  tax_amount,
+	//					case when c.code like '%n' then b.amount
+	//					else 0 end as  no_vat_amount
+	//					from 	sale a
+	//						  inner join sale_sub b on a.id = b.sale_id
+	//						inner join item c on b.item_id = c.id
+	//					where a.doc_date between ? and ?
+	//				) as rs
+	//					group by doc_no,doc_date) as result
+	//					left join sale s on result.doc_date = s.doc_date and result.doc_no = s.doc_no
+	//		  order by result.doc_date,result.doc_no`
+	err = db.Select(&sales, sql, date_start, date_stop)
+	fmt.Println("sql = ", sql, date_start, date_stop)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, sale := range sales {
+		sqlsub := `select item_id,item_name,ifnull(short_name,'') as short_name,ifnull(description,'') as description,price,qty,unit,amount from sale_sub where sale_id = ? `
+		fmt.Println("sqlsub = ", sqlsub)
+		err = db.Select(&sale.SaleSubs, sqlsub, sale.Id)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return sales, nil
 }

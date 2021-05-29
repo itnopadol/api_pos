@@ -133,6 +133,26 @@ func SearchSaleById(c *gin.Context){
 
 }
 
+func SearchSaleByDocNo(c *gin.Context){
+	log.Println("call Get SearchSaleById")
+	c.Keys = headerKeys
+
+
+	NewSale := new(model.Sale)
+	s, err := NewSale.SearchSaleByDocNo(dbc)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :"+ err.Error()
+		c.JSON(http.StatusNotFound, s)
+	}else{
+		rs.Status = "success"
+		rs.Data = NewSale
+		c.JSON(http.StatusOK, s)
+	}
+
+}
+
 func PrintSaleDailyTotal(c *gin.Context){
 	log.Println("call Get SearchSales")
 	c.Keys = headerKeys
@@ -188,6 +208,28 @@ func ReportSaleDaily(c *gin.Context){
 
 	NewSale := new(model.Sale)
 	sales, err := NewSale.ReportSaleDaily(dbc,date_start,date_stop)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content and Error :"+ err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	}else{
+		rs.Status = "success"
+		rs.Data = sales
+		c.JSON(http.StatusOK, rs)
+	}
+
+}
+
+func ReportSaleDailyByMenu(c *gin.Context){
+	log.Println("call Get ReportSaleDailyByMenu")
+	c.Keys = headerKeys
+
+	date_start := c.Request.URL.Query().Get("date_start")
+	date_stop := c.Request.URL.Query().Get("date_stop")
+
+	NewSale := new(model.Sale)
+	sales, err := NewSale.ReportSaleDailyByMenu(dbc,date_start,date_stop)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"

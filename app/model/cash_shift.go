@@ -117,13 +117,13 @@ func (ch *Shift) UpdateShift(db *sqlx.DB) error {
 			return err
 		}
 
-		sqlsub := `UPDATE host set status = 1 where host_code = ?`
-		fmt.Println("SQL Update Host =", sqlsub)
-		_, err = db.Exec(sqlsub, ch.HostCode)
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		}
+		//sqlsub := `UPDATE host set status = 1 where host_code = ?`
+		//fmt.Println("SQL Update Host =", sqlsub)
+		//_, err = db.Exec(sqlsub, ch.HostCode)
+		//if err != nil {
+		//	fmt.Println(err.Error())
+		//	return err
+		//}
 	}
 
 	return nil

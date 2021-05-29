@@ -35,7 +35,7 @@ type Item struct {
 
 type PricesSub struct {
 	Id     int64     `json:"id"`
-	ItemId int64   `json:"-" db:"item_id"`
+	ItemId int64   `json:"item_id" db:"item_id"`
 	Name   string  `json:"name" db:"name"`
 	NameEn string  `json:"name_en" db:"name_en"`
 	NameCn string  `json:"name_cn" db:"name_cn"`
@@ -44,7 +44,7 @@ type PricesSub struct {
 }
 
 func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
-	sql := `SELECT id,code,ifnull(short_name,'') as short_name,ifnull(name,'') as name, ifnull(name_en,'') as name_en, ifnull(name_cn,'') as name_cn, ifnull(unit,'') as unit, ifnull(unit_en,'') as unit_en, ifnull(unit_cn,'') as unit_cn, ifnull(menu_seq,0) as menu_seq, ifnull(menu_id,0) as menu_id, ifnull(image,'') as image, ifnull(price,0) as price, ifnull(active,0) as active, ifnull(is_kitchen,0) as is_kitchen, ifnull(created_by,'') as created_by FROM item WHERE active = 1 and id = ?`
+	sql := `SELECT id,code,ifnull(short_name,'') as short_name,ifnull(name,'') as name, ifnull(name_en,'') as name_en, ifnull(name_cn,'') as name_cn, ifnull(unit,'') as unit, ifnull(unit_en,'') as unit_en, ifnull(unit_cn,'') as unit_cn, ifnull(menu_seq,0) as menu_seq, ifnull(menu_id,0) as menu_id, ifnull(image,'') as image, ifnull(price,0) as price, ifnull(active,0) as active, ifnull(is_kitchen,0) as is_kitchen, ifnull(created_by,'') as created_by FROM item WHERE  id = ?`
 	fmt.Println("Item = ", sql, id)
 	err = db.Get(i, sql, id)
 
@@ -55,7 +55,7 @@ func (i *Item) Get(db *sqlx.DB, id int64) (err error) {
 
 	// ดึงข้อมูลราคาทั้งหมดของสินค้ารายการนี้
 	sizes := []*PricesSub{}
-	sql = `SELECT * FROM price_sub WHERE active = 1 and item_id = ?`
+	sql = `SELECT * FROM price_sub WHERE  item_id = ?`
 	fmt.Println("Price = ", sql)
 	err = db.Select(&sizes, sql, id)
 	if err != nil {
@@ -223,6 +223,7 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 			return err
 		}
 
+		fmt.Println("len price",len(i.Prices))
 		for _, sub := range i.Prices{
 
 			sqlCheckSubExist := `select count(id) as vCount from price_sub where item_id = ? and name = ?`
@@ -233,6 +234,7 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 				return err
 			}
 
+			fmt.Println("checkCountSub", checkCountSub)
 			if (checkCountSub == 0){
 				sql_sub := `INSERT INTO price_sub(item_id, name, name_en, name_cn, price, active) VALUES(?, ?, ?, ?, ?, 1)`
 				fmt.Println("sql_sub",sql_sub)
@@ -245,8 +247,10 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 				sub.Id = item_id
 				fmt.Println("Item_sub Id : ", item_id)
 			}else{
-				sql_sub := `UPDATE price_sub set name = ?, price = ?, active = ? where item_id = ? and id = ?`
-				_, err := db.Exec(sql_sub, sub.Name, sub.Price1, i.Active, i.Id, sub.Id)
+				fmt.Println("sub name = ",sub.Active,sub.Name,i.Id)
+				sql_sub := `UPDATE price_sub set price = ?, active = ? where item_id = ? and name = ?`
+				fmt.Println("sql_sub =",sql_sub,sub.Price1, sub.Active, i.Id, sub.Name)
+				_, err := db.Exec(sql_sub, sub.Price1, sub.Active, i.Id, sub.Name)
 				if err != nil {
 					return err
 				}

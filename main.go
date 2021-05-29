@@ -37,10 +37,12 @@ func main() {
 	r.POST("/sale", ctrl.SaleSave)
 	r.GET("/sales", ctrl.SearchSales)
 	r.GET("/sale/:id", ctrl.SearchSaleById)
+	r.POST("/sale/docno", ctrl.SearchSaleByDocNo)
 	r.GET("/sales/saledaily", ctrl.PrintSaleDailyTotal)
 	r.GET("/sales/salenetdaily", ctrl.PrintSaleNetDaily)
 	r.PUT("/sale/void", ctrl.SaleVoid)
 	r.GET("/sales/reportsale", ctrl.ReportSaleDaily)
+	r.GET("/sales/reportsalebymenu", ctrl.ReportSaleDailyByMenu)
 
 	r.POST("/shift/open", ctrl.SaveShift)
 	r.PUT("/shift/update", ctrl.UpdateShift)
@@ -66,6 +68,7 @@ func main() {
 	r.PUT("/config", ctrl.UpdateConfig)
 
 	r.GET("/gentax", ctrl.GenTaxData)
+	r.GET("/gentaxall", ctrl.GenTaxWithNoVatData)
 
 	r.Run(":8888")
 

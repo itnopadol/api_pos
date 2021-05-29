@@ -34,7 +34,7 @@ func daysIn(m time.Month, year int) int {
 	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
 }
 
-func GenDocno(db *sqlx.DB, host_code string) (doc_no string) {
+func GenDocno(db *sqlx.DB, host_code string,head_doc_sale string) (doc_no string) {
 	var last_number1 int
 	var last_number string
 	var snumber string
@@ -113,7 +113,9 @@ func GenDocno(db *sqlx.DB, host_code string) (doc_no string) {
 	fmt.Println(snumber)
 	fmt.Println(vHeader)
 
-	doc_no = host_code + vyear1 + vmonth1 + vday1 + "-" + snumber
+	//doc_no = "M1"+host_code + vyear1 + vmonth1 + vday1 + "-" + snumber // นิมมานต์
+	doc_no = head_doc_sale+host_code + vyear1 + vmonth1 + vday1 + "-" + snumber // แม่ริม
+	//doc_no = "M3"+host_code + vyear1 + vmonth1 + vday1 + "-" + snumber // แม่เหี๊ยะ
 	fmt.Println(snumber)
 	fmt.Println(vHeader)
 
