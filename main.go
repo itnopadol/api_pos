@@ -43,6 +43,8 @@ func main() {
 	r.PUT("/sale/void", ctrl.SaleVoid)
 	r.GET("/sales/reportsale", ctrl.ReportSaleDaily)
 	r.GET("/sales/reportsalebymenu", ctrl.ReportSaleDailyByMenu)
+	
+	r.GET("/saletype/search",ctrl.SearchSaleType)
 
 	r.POST("/shift/open", ctrl.SaveShift)
 	r.PUT("/shift/update", ctrl.UpdateShift)
