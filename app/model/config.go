@@ -28,6 +28,7 @@ type Config struct {
 	BranchId      int        `json:"branch_id" db:"branch_id"`
 	BranchCode    string     `json:"branch_code" db:"branch_code"`
 	HeadDocSale   string     `json:"head_doc_sale" db:"head_doc_sale"`
+	SyncLocal     string     `json:"sync_local" db:"sync_local"`
 	CreatedBy     string     `json:"created_by" db:"created_by"`
 	Created       *time.Time `json:"created" db:"created"`
 	EditedBy      string     `json:"edited_by" db:"edited_by"`
@@ -83,7 +84,7 @@ func (c *Config) Update(db *sqlx.DB) error {
 
 func (c *Config) Search(db *sqlx.DB) error {
 
-	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port,ifnull(link_mikrotik,'') as link_mikrotik from config`
+	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port,ifnull(link_mikrotik,'') as link_mikrotik,ifnull(sync_local,'') as sync_local from config`
 	err := db.Get(c, sql)
 	if err != nil {
 		fmt.Println(err.Error())
