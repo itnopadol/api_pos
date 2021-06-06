@@ -11,6 +11,8 @@ import (
 
 type Config struct {
 	Id            int64      `json:"id" db:"Id"`
+	CompanyID     int64      `json:"company_id" db:"company_id"`
+	BranchID      int64      `json:"branch_id" db:"branch_id"`
 	CompanyName   string     `json:"company_name" db:"company_name"`
 	Address       string     `json:"address" db:"address"`
 	Telephone     string     `json:"telephone" db:"telephone"`
@@ -84,7 +86,7 @@ func (c *Config) Update(db *sqlx.DB) error {
 
 func (c *Config) Search(db *sqlx.DB) error {
 
-	sql := `select ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port,ifnull(link_mikrotik,'') as link_mikrotik,ifnull(sync_local,'') as sync_local from config`
+	sql := `select 1 as company_id,branch_id,ifnull(company_name,'') as company_name,ifnull(address,'') as address,ifnull(telephone,'') as telephone,ifnull(fax,'') as fax,ifnull(line_id,'') as line_id,ifnull(facebook,'') as facebook,ifnull(tax_id,'') as tax_id,ifnull(tax_rate,0) as tax_rate,ifnull(printer1_port,'') as printer1_port,ifnull(printer2_port,'') as printer2_port,ifnull(printer3_port,'') as printer3_port,ifnull(printer4_port,'') as printer4_port,ifnull(link_mikrotik,'') as link_mikrotik,ifnull(sync_local,'') as sync_local from config`
 	err := db.Get(c, sql)
 	if err != nil {
 		fmt.Println(err.Error())
