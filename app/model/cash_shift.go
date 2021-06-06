@@ -1,24 +1,29 @@
 package model
 
 import (
-	"time"
-	"github.com/jmoiron/sqlx"
 	"fmt"
+	"time"
+
+	"github.com/jmoiron/sqlx"
+
 	//"strconv"
 	//"net"
 	//"bufio"
 	//"github.com/knq/escpos"
-	"github.com/itnopadol/api_pos/hw"
-	"net"
 	"bufio"
-	"github.com/knq/escpos"
+	"net"
 	"strconv"
+
+	"github.com/itnopadol/api_pos/hw"
+	"github.com/knq/escpos"
 	//"github.com/itnopadol/bc_api/bc_api/config"
 	//"github.com/itnopadol/bc_api/bc_api/config"
 )
 
 type Shift struct {
 	Id             int64     `json:"id" db:"id"`
+	CompanyID      int64     `json:"company_id" db:"company_id"`
+	BranchID       int64     `json:"branch_id" db:"branch_id"`
 	HostCode       string    `json:"host_code" db:"host_code"`
 	DocDate        string    `json:"doc_date" db:"doc_date"`
 	ChangeBegin    float64   `json:"change_begin" db:"change_begin"`
@@ -57,9 +62,9 @@ func (ch *Shift) SaveShift(db *sqlx.DB) error {
 		return err
 	}
 
-	if (checkCount == 0) {
-		sql := `INSERT INTO cash_shift(host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,my_description,created_by,created) VALUES(?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
-		res, err := db.Exec(sql, ch.HostCode, ch.DocDate, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.CreatedBy)
+	if checkCount == 0 {
+		sql := `INSERT INTO cash_shift(company_id,branch_id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,my_description,created_by,created) VALUES(?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
+		res, err := db.Exec(sql, ch.CompanyID,ch.BranchID, ch.HostCode, ch.DocDate, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.CreatedBy)
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
@@ -108,7 +113,7 @@ func (ch *Shift) UpdateShift(db *sqlx.DB) error {
 		return err
 	}
 	fmt.Println("Begin Have Docno", ch.HostCode)
-	if (checkCount != 0) {
+	if checkCount != 0 {
 		fmt.Println("Have Docno")
 		sql := `UPDATE cash_shift set change_begin = ?, change_amount = ?,cash_amount = ?,expenses_amount = ?,my_description=?,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
 		_, err = db.Exec(sql, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.EditedBy, ch.HostCode, ch.DocDate)
@@ -145,7 +150,7 @@ func (ch *Shift) ClosedShift(db *sqlx.DB) error {
 	fmt.Println("docdate = ", ch.DocDate)
 	fmt.Println("host_code = ", ch.HostCode)
 
-	if (checkCount != 0) {
+	if checkCount != 0 {
 		sql := `UPDATE cash_shift set change_amount = ?,cash_amount = ?,expenses_amount = ?,
 				is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
 		_, err = db.Exec(sql, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, 1, ch.ClosedBy, ch.HostCode, ch.DocDate)
@@ -209,15 +214,15 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	//fmt.Println("printer close shift ",H.PrinterPort)
 	f, err := net.Dial("tcp", config.Printer4Port)
 	if err != nil {
-		fmt.Println("err ",err.Error())
-		return  nil,err
+		fmt.Println("err ", err.Error())
+		return nil, err
 	}
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
 	p := escpos.New(w)
 
-	pt := hw.PosPrinter{p,w}
+	pt := hw.PosPrinter{p, w}
 	pt.Init()
 	pt.SetLeftMargin(40)
 
@@ -227,23 +232,23 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	pt.SetCharaterCode(26)
 	pt.SetAlign("center")
 	pt.SetTextSize(0, 0)
-	pt.WriteStringLines("สรุปยอดนำส่งประจำวัน : "+s.DocDate)
+	pt.WriteStringLines("สรุปยอดนำส่งประจำวัน : " + s.DocDate)
 	pt.LineFeed()
 	pt.SetTextSize(0, 0)
 	//pt.PrintRegistrationBitImage(byte(h.LogoImageId), 0)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
-	if(s.HostCode==""){
+	if s.HostCode == "" {
 		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(change_begin) from cash_shift where doc_date = a.doc_date) as sum_change_begin,(select sum(cash_amount) from cash_shift where doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where doc_date = ? order by host_code`
-		err = db.Select(&shifts, sql,s.DocDate)
-	} else{
+		err = db.Select(&shifts, sql, s.DocDate)
+	} else {
 		sql = `select id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,(select sum(change_begin) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_change_begin,(select sum(cash_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_cash_amount,(select sum(expenses_amount) from cash_shift where host_code = a.host_code and doc_date = a.doc_date) as sum_expenses_amount from cash_shift a where host_code = ? and doc_date = ? order by host_code;
  `
 		err = db.Select(&shifts, sql, s.HostCode, s.DocDate)
 	}
 	fmt.Println("sql = ", sql, s.HostCode, s.DocDate)
 	if err != nil {
-		fmt.Println("error sql ",err.Error())
+		fmt.Println("error sql ", err.Error())
 		return nil, err
 	}
 
@@ -255,7 +260,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	pt.WriteStringLines("      ")
 	pt.WriteStringLines("มูลค่าเงินทอน")
 	pt.WriteStringLines("     ")
-	pt.WriteStringLines("มูลค่าสุทธิ"+"\n")
+	pt.WriteStringLines("มูลค่าสุทธิ" + "\n")
 	//pt.FormfeedN(3)
 	makeline(pt)
 	///////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +276,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 		fmt.Println("Expense =", vLineNumber, s.ExpensesAmount)
 
 		pt.SetFont("A")
-		pt.WriteStringLines( strconv.Itoa(vLineNumber) + "." + s.HostCode)
+		pt.WriteStringLines(strconv.Itoa(vLineNumber) + "." + s.HostCode)
 		pt.WriteStringLines("     " + CommaFloat(s.CashAmount))
 		pt.WriteStringLines("      " + CommaFloat(s.ChangeBegin))
 		pt.WriteStringLines("     " + CommaFloat(vNetAmount) + "\n")
@@ -280,7 +285,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	makeline(pt)
 	////////////////////////////////////////////////////////////////////////////////////
 
-	vSumNetAmount =  shifts[0].SumCashAmount-shifts[0].SumChangeBegin
+	vSumNetAmount = shifts[0].SumCashAmount - shifts[0].SumChangeBegin
 
 	fmt.Println("SumCashAmount = ", CommaFloat(shifts[0].SumCashAmount))
 	pt.SetFont("B")
