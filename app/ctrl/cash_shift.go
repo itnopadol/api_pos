@@ -1,12 +1,13 @@
 package ctrl
 
 import (
-	"github.com/gin-gonic/gin"
 	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 	"github.com/itnopadol/api_pos/app/model"
 	"github.com/itnopadol/api_pos/app/resp"
-	"net/http"
-	"log"
 )
 
 func SaveShift(c *gin.Context) {
@@ -18,10 +19,17 @@ func SaveShift(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	ch := newShift.SaveShift(dbc)
-
-	rs := resp.Response{}
+	ch, err := newShift.SaveShift(dbc)
 	if err != nil {
+		fmt.Println(err.Error())
+	}
+	rs := resp.Response{}
+	fmt.Println("ch =", ch)
+	if ch != "" || err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content :" + ch
+		c.JSON(http.StatusNotFound, rs)
+	} else if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
@@ -42,10 +50,17 @@ func UpdateShift(c *gin.Context) {
 		fmt.Println(err.Error())
 	}
 
-	ch := newShift.UpdateShift(dbc)
-
-	rs := resp.Response{}
+	ch,err := newShift.UpdateShift(dbc)
 	if err != nil {
+		fmt.Println(err.Error())
+	}
+	rs := resp.Response{}
+	fmt.Println("ch =", ch)
+	if ch != "" || err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content :" + ch
+		c.JSON(http.StatusNotFound, rs)
+	} else if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
@@ -54,6 +69,15 @@ func UpdateShift(c *gin.Context) {
 		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
+	// if err != nil {
+	// 	rs.Status = "error"
+	// 	rs.Message = "No Content :" + err.Error()
+	// 	c.JSON(http.StatusNotFound, rs)
+	// } else {
+	// 	rs.Status = "success"
+	// 	rs.Data = ch
+	// 	c.JSON(http.StatusOK, rs)
+	// }
 }
 
 func ClosedShift(c *gin.Context) {
@@ -66,10 +90,17 @@ func ClosedShift(c *gin.Context) {
 		fmt.Println(err.Error())
 	}
 
-	ch := newShift.ClosedShift(dbc)
-
-	rs := resp.Response{}
+	ch,err := newShift.ClosedShift(dbc)
 	if err != nil {
+		fmt.Println(err.Error())
+	}
+	rs := resp.Response{}
+	fmt.Println("ch =", ch)
+	if ch != "" || err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content :" + ch
+		c.JSON(http.StatusNotFound, rs)
+	} else if err != nil {
 		rs.Status = "error"
 		rs.Message = "No Content :" + err.Error()
 		c.JSON(http.StatusNotFound, rs)
@@ -78,6 +109,16 @@ func ClosedShift(c *gin.Context) {
 		rs.Data = ch
 		c.JSON(http.StatusOK, rs)
 	}
+	// rs := resp.Response{}
+	// if err != nil {
+	// 	rs.Status = "error"
+	// 	rs.Message = "No Content :" + err.Error()
+	// 	c.JSON(http.StatusNotFound, rs)
+	// } else {
+	// 	rs.Status = "success"
+	// 	rs.Data = ch
+	// 	c.JSON(http.StatusOK, rs)
+	// }
 }
 
 func ShiftDetails(c *gin.Context) {

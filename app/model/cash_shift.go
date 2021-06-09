@@ -1,6 +1,7 @@
 package model
 
 import (
+	//"errors"
 	"fmt"
 	"time"
 
@@ -44,30 +45,51 @@ type Shift struct {
 	SumExpensesAmount float64 `json:"sum_expenses_amount" db:"sum_expenses_amount"`
 }
 
-func (ch *Shift) SaveShift(db *sqlx.DB) error {
+func (ch *Shift) SaveShift(db *sqlx.DB) (string, error) {
 	now := time.Now()
 	fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
 	DocDate := now.AddDate(0, 0, 0).Format("2006-01-02")
 
+	var get_company_id int64
+	var get_branch_id int64
+
+	if ch.CompanyID == 0 {
+		get_company_id = 1
+	} else {
+		get_company_id = ch.CompanyID
+	}
+
+	if ch.BranchID == 0 {
+		get_branch_id = 1
+	} else {
+		get_branch_id = ch.BranchID
+	}
+
 	ch.DocDate = DocDate
 	ch.Created = now
 
-	fmt.Println("HostCode = ", ch.HostCode)
+	//fmt.Println("HostCode = ", ch.HostCode)
 
 	var checkCount int
-	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
+	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and is_closed = 0 ` //and doc_date = ?`
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode)                                                      //, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
-		return err
+		return "", err
+	}
+
+	//fmt.Println("checkCount =", checkCount)
+
+	if checkCount > 1 {
+		return "มีจุดขายที่เปิดมากกว่า 1 จุด", nil
 	}
 
 	if checkCount == 0 {
 		sql := `INSERT INTO cash_shift(company_id,branch_id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,my_description,created_by,created) VALUES(?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
-		res, err := db.Exec(sql, ch.CompanyID,ch.BranchID, ch.HostCode, ch.DocDate, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.CreatedBy)
+		res, err := db.Exec(sql, get_company_id, get_branch_id, ch.HostCode, ch.DocDate, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.CreatedBy)
 		if err != nil {
 			fmt.Println(err.Error())
-			return err
+			return "", err
 		}
 
 		Id, _ := res.LastInsertId()
@@ -77,49 +99,52 @@ func (ch *Shift) SaveShift(db *sqlx.DB) error {
 		_, err = db.Exec(sqlsub, ch.HostCode)
 		if err != nil {
 			fmt.Println(err.Error())
-			return err
+			return "", err
 		}
-	} else {
+		// } else {
 
-		sql := `UPDATE cash_shift set is_closed = 0 ,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
-		_, err = db.Exec(sql, ch.EditedBy, ch.HostCode, ch.DocDate)
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		}
+		// 	sql := `UPDATE cash_shift set is_closed = 0 ,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
+		// 	_, err = db.Exec(sql, ch.EditedBy, ch.HostCode, ch.DocDate)
+		// 	if err != nil {
+		// 		fmt.Println(err.Error())
+		// 		return "", err
+		// 	}
 
-		sqlsub := `UPDATE host set status = 1 where host_code = ?`
-		_, err = db.Exec(sqlsub, ch.HostCode)
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		}
+		// 	sqlsub := `UPDATE host set status = 1 where host_code = ?`
+		// 	_, err = db.Exec(sqlsub, ch.HostCode)
+		// 	if err != nil {
+		// 		fmt.Println(err.Error())
+		// 		return "", err
+		// 	}
 	}
 
-	return nil
+	return "", nil
 }
 
-func (ch *Shift) UpdateShift(db *sqlx.DB) error {
+func (ch *Shift) UpdateShift(db *sqlx.DB) (string, error) {
 	now := time.Now()
 	fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
 
 	ch.Edited = now
 
 	var checkCount int
-	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
+	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and is_closed = 0 ` // and doc_date = ?`
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode)                                                       //, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
-		return err
+		return "", err
+	}
+	if checkCount > 1 {
+		return "มีจุดขายที่เปิดมากกว่า 1 จุด", nil
 	}
 	fmt.Println("Begin Have Docno", ch.HostCode)
 	if checkCount != 0 {
 		fmt.Println("Have Docno")
-		sql := `UPDATE cash_shift set change_begin = ?, change_amount = ?,cash_amount = ?,expenses_amount = ?,my_description=?,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
-		_, err = db.Exec(sql, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.EditedBy, ch.HostCode, ch.DocDate)
+		sql := `UPDATE cash_shift set change_begin = ?, change_amount = ?,cash_amount = ?,expenses_amount = ?,my_description=?,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and is_closed = 0` // and doc_date  = ?`
+		_, err = db.Exec(sql, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.EditedBy, ch.HostCode)                                                     //, ch.DocDate)
 		if err != nil {
 			fmt.Println(err.Error())
-			return err
+			return "", err
 		}
 
 		//sqlsub := `UPDATE host set status = 1 where host_code = ?`
@@ -131,43 +156,47 @@ func (ch *Shift) UpdateShift(db *sqlx.DB) error {
 		//}
 	}
 
-	return nil
+	return "", nil
 }
 
-func (ch *Shift) ClosedShift(db *sqlx.DB) error {
+func (ch *Shift) ClosedShift(db *sqlx.DB) (string, error) {
 	now := time.Now()
 	fmt.Println("yyyy-mm-dd date format : ", now.AddDate(0, 0, 0).Format("2006-01-02"))
 
 	ch.Closed = now
 	var checkCount int
-	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode, ch.DocDate)
+	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and is_closed = 0` // and doc_date = ?`
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode)                                                     //, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
-		return err
+		return "", err
 	}
 
 	fmt.Println("docdate = ", ch.DocDate)
 	fmt.Println("host_code = ", ch.HostCode)
 
+	if checkCount > 1 {
+		return "มีจุดขายที่เปิดมากกว่า 1 จุด", nil
+	}
+
 	if checkCount != 0 {
 		sql := `UPDATE cash_shift set change_amount = ?,cash_amount = ?,expenses_amount = ?,
-				is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and doc_date  = ?`
-		_, err = db.Exec(sql, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, 1, ch.ClosedBy, ch.HostCode, ch.DocDate)
+				is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and is_closed = 0`//and doc_date  = ?`
+		_, err = db.Exec(sql, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, 1, ch.ClosedBy, ch.HostCode)//, ch.DocDate)
 		if err != nil {
 			fmt.Println(err.Error())
-			return err
+			return "", err
 		}
 
 		sqlsub := `UPDATE host set status = 0 where host_code = ?`
 		_, err = db.Exec(sqlsub, ch.HostCode)
 		if err != nil {
 			fmt.Println(err.Error())
-			return err
+			return "", err
 		}
 	}
 
-	return nil
+	return "", nil
 }
 
 func (ch *Shift) ShiftDetails(db *sqlx.DB, host_code string, doc_date string) error {
