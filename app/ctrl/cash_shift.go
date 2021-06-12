@@ -145,6 +145,29 @@ func ShiftDetails(c *gin.Context) {
 	}
 }
 
+func ShiftLastID(c *gin.Context) {
+	fmt.Println("Call GET ShiftLastID")
+	c.Keys = headerKeys
+
+	host_code := c.Request.URL.Query().Get("host_code")
+
+	//host_code := hostcode//strconv.ParseInt(strId, 10, 64)
+
+	ch := new(model.Shift)
+
+	err := ch.ShiftLastID(dbc, host_code)
+	rs := resp.Response{}
+	if err != nil {
+		rs.Status = "error"
+		rs.Message = "No Content :" + err.Error()
+		c.JSON(http.StatusNotFound, rs)
+	} else {
+		rs.Status = "success"
+		rs.Data = ch
+		c.JSON(http.StatusOK, rs)
+	}
+}
+
 func SearchShiftByKeyword(c *gin.Context) {
 	fmt.Println("Call GET ShiftDetails")
 	c.Keys = headerKeys

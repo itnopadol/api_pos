@@ -1,10 +1,11 @@
 package model
 
 import (
-	"github.com/jmoiron/sqlx"
-	"time"
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type TaxData struct {
@@ -44,8 +45,8 @@ type Data struct {
 }
 
 func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate string, SendNoVatAmount float64, SendTotalAmount float64) error {
-	var vDay int;
-	var vSumAll float64;
+	var vDay int
+	var vSumAll float64
 	var last_number1 int
 	var last_number string
 	var snumber string
@@ -64,7 +65,7 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 	var vday1 string
 	var lenday int
 
-	BeginDate, err := time.Parse("2006-01-02", begindate);
+	BeginDate, err := time.Parse("2006-01-02", begindate)
 	fmt.Println("begindate,enddate,total", begindate, enddate, vDay, SendNoVatAmount)
 
 	fmt.Println("Day of Month = ", daysIn(BeginDate.Month(), BeginDate.Year()))
@@ -224,8 +225,8 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 
 					last_number = strconv.Itoa(last_number1)
 
-					DateGenDoc, err := time.Parse("2006-01-02", DateAdd);
-					if (DateGenDoc.Year() >= 2560) {
+					DateGenDoc, err := time.Parse("2006-01-02", DateAdd)
+					if DateGenDoc.Year() >= 2560 {
 						intyear = DateGenDoc.Year()
 					} else {
 						intyear = DateGenDoc.Year() + 543
@@ -240,7 +241,7 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 
 					lenmonth = len(vmonth)
 
-					if (lenmonth == 1) {
+					if lenmonth == 1 {
 						vmonth1 = "0" + vmonth
 					} else {
 						vmonth1 = vmonth
@@ -252,22 +253,22 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 
 					lenday = len(vday)
 
-					if (lenday == 1) {
+					if lenday == 1 {
 						vday1 = "0" + vday
 					} else {
 						vday1 = vday
 					}
 
-					if (len(string(last_number)) == 1) {
+					if len(string(last_number)) == 1 {
 						snumber = "000" + last_number
 					}
-					if (len(string(last_number)) == 2) {
+					if len(string(last_number)) == 2 {
 						snumber = "00" + last_number
 					}
-					if (len(string(last_number)) == 3) {
+					if len(string(last_number)) == 3 {
 						snumber = "0" + last_number
 					}
-					if (len(string(last_number)) == 4) {
+					if len(string(last_number)) == 4 {
 						snumber = last_number
 					}
 
@@ -295,7 +296,7 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var sum_total_tax float64
 
-	var vSumAllTotal float64;
+	var vSumAllTotal float64
 	//var last_numberVat1 int
 	//var last_number string
 	//var snumberVat string
@@ -436,7 +437,7 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 			if err != nil {
 				fmt.Println("sql_last_no", err.Error())
 			}
-			fmt.Println("sql_last_no = ", sql_last_no, DateAdd,last_number1)
+			fmt.Println("sql_last_no = ", sql_last_no, DateAdd, last_number1)
 
 			for _, d := range bill {
 
@@ -448,16 +449,16 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 					fmt.Println("sqlcheck", err.Error())
 				}
 
-				fmt.Println("sumtotal = ", sumtotal, " vAmountPerDay =", vAmountVatPerDay, "last number = ",last_number1)
+				fmt.Println("sumtotal = ", sumtotal, " vAmountPerDay =", vAmountVatPerDay, "last number = ", last_number1)
 
 				if sumtotal < vAmountVatPerDay {
 
 					last_number = strconv.Itoa(last_number1)
 
-					fmt.Println("last_number = ",last_number,"     ",strconv.Itoa(last_number1))
+					fmt.Println("last_number = ", last_number, "     ", strconv.Itoa(last_number1))
 
-					DateGenDoc, err := time.Parse("2006-01-02", DateAdd);
-					if (DateGenDoc.Year() >= 2560) {
+					DateGenDoc, err := time.Parse("2006-01-02", DateAdd)
+					if DateGenDoc.Year() >= 2560 {
 						intyear = DateGenDoc.Year()
 					} else {
 						intyear = DateGenDoc.Year() + 543
@@ -472,7 +473,7 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 
 					lenmonth = len(vmonth)
 
-					if (lenmonth == 1) {
+					if lenmonth == 1 {
 						vmonth1 = "0" + vmonth
 					} else {
 						vmonth1 = vmonth
@@ -484,31 +485,30 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 
 					lenday = len(vday)
 
-					if (lenday == 1) {
+					if lenday == 1 {
 						vday1 = "0" + vday
 					} else {
 						vday1 = vday
 					}
 
+					fmt.Println("len(string(last_number)) = ", len(string(last_number)))
 
-					fmt.Println("len(string(last_number)) = ",len(string(last_number)))
-
-					if (len(string(last_number)) == 1) {
+					if len(string(last_number)) == 1 {
 						snumber = "000" + last_number
 					}
-					if (len(string(last_number)) == 2) {
+					if len(string(last_number)) == 2 {
 						snumber = "00" + last_number
 					}
-					if (len(string(last_number)) == 3) {
+					if len(string(last_number)) == 3 {
 						snumber = "0" + last_number
 					}
-					if (len(string(last_number)) == 4) {
+					if len(string(last_number)) == 4 {
 						snumber = last_number
 					}
 
 					new_tax_no_sub := "01" + vyear1 + vmonth1 + vday1 + "-" + snumber //เลขที่เอกสารใหม่ส่งสรรพกร
 
-					fmt.Println("day send new_tax_no_sub = ", vAmountVatPerDay,new_tax_no_sub)
+					fmt.Println("day send new_tax_no_sub = ", vAmountVatPerDay, new_tax_no_sub)
 
 					sqlins := `Insert into tax_temp_all(month_tax,year_tax,doc_date,month_send,month_no_vat_send,day_send,doc_no,tax_no,before_tax_amount,tax_amount,no_vat,total_amount,create_by,created) values(?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 					//fmt.Println("Insert tax_temp Sub = ", tax.MonthTax, tax.YearTax, d.DocDate, SendTotalAmount, tax.MonthSend, vAmountVatPerDay, d.DocNo, new_tax_no, d.BeforeTaxAmount, d.TaxAmount, d.NoVat, d.TotalAmount, tax.CreateBy)
@@ -567,9 +567,9 @@ func (tax *TaxData) GenTaxWithNoVatData(db *sqlx.DB, begindate string, enddate s
 	return nil
 }
 
-func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, SendTotalAmount float64) error {
-	var vDay int;
-	var vSumAll float64;
+func (tax *TaxData) GenTaxData(db *sqlx.DB, company_id int64, branch_id int64, begindate string, enddate string, SendTotalAmount float64) error {
+	var vDay int
+	var vSumAll float64
 	var last_number1 int
 	var last_number string
 	var snumber string
@@ -595,7 +595,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 	//	return err
 	//}
 
-	BeginDate, err := time.Parse("2006-01-02", begindate);
+	BeginDate, err := time.Parse("2006-01-02", begindate)
 	fmt.Println("begindate,enddate,total", begindate, enddate, vDay, SendTotalAmount)
 
 	fmt.Println("Day of Month = ", daysIn(BeginDate.Month(), BeginDate.Year()))
@@ -607,9 +607,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 	config := new(Config)
 	config = GetConfig(db)
 
-	sqlsum := `select 	ifnull(sum(total_amount),0) as totalamount  from  sale  where doc_date between ? and ? and ifnull(doc_no,'') <> ''` //and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date between ? and ? and item_id in (select id from item where code like '%N%')) `
+	sqlsum := `select 	ifnull(sum(total_amount),0) as totalamount  from  sale  where company_id = ? and branch_id = ? and doc_date between ? and ? and ifnull(doc_no,'') <> ''` //and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date between ? and ? and item_id in (select id from item where code like '%N%')) `
 	fmt.Println("sql sum =", sqlsum, begindate, enddate)
-	err = db.Get(&vSumAll, sqlsum, begindate, enddate) //, begindate, enddate)
+	err = db.Get(&vSumAll, sqlsum, company_id, branch_id, begindate, enddate) //, begindate, enddate)
 	if err != nil {
 		fmt.Println("vSumAll =", err.Error())
 		return err
@@ -630,8 +630,8 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 	tax.TaxId = config.TaxId
 	tax.TaxRate = config.TaxRate
 
-	sqldel_taxtemp := `delete from tax_temp where doc_date between ? and ?`
-	fmt.Println("sqldel_taxtemp = ", sqldel_taxtemp, begindate, enddate, begindate, enddate)
+	sqldel_taxtemp := `delete from tax_temp where company_id = ? and branch_id = ? and doc_date between ? and ?`
+	fmt.Println("sqldel_taxtemp = ", sqldel_taxtemp, company_id, branch_id, begindate, enddate, begindate, enddate)
 	_, err = db.Exec(sqldel_taxtemp, begindate, enddate)
 	if err != nil {
 		fmt.Println("sqldel_taxtemp =", err.Error())
@@ -646,8 +646,8 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 		DateAdd := BeginDate.AddDate(0, 0, i).Format("2006-01-02")
 
 		//sql := `select ifnull(sum(total_amount),0) as totalamount from sale where  doc_date = ?`
-		sql := `select 	ifnull(sum(total_amount),0) as totalamount  from  sale  where doc_date = ? and ifnull(doc_no,'') <> '' order by doc_no` //and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date = ? and item_id in (select id from item where code like '%N%'))  order by doc_no`
-		err = db.Get(&vTotalDay, sql, DateAdd)                                                                                                     //, DateAdd)
+		sql := `select 	ifnull(sum(total_amount),0) as totalamount  from  sale  where company_id = ? and branch_id = ? and doc_date = ? and ifnull(doc_no,'') <> '' order by doc_no` //and id not in (select a.id from sale a inner join sale_sub b on a.id = b.sale_id where doc_date = ? and item_id in (select id from item where code like '%N%'))  order by doc_no`
+		err = db.Get(&vTotalDay, sql, company_id, branch_id, DateAdd)                                                                                                                //, DateAdd)
 		fmt.Println("DateAdd = ", DateAdd)
 		if err != nil {
 			fmt.Println("vTotal =", err.Error())
@@ -666,9 +666,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 			fmt.Println("vAmountPerDay = ", vAmountPerDay)
 
 			bill := tax.ListDoc
-			sqldel := `delete from Test_Sum_Vat where  SendDayTax = ?`
+			sqldel := `delete from Test_Sum_Vat where compny_id = ? and branch_id = ? and  SendDayTax = ?`
 			fmt.Println("sqldel = ", sqldel, DateAdd)
-			_, err = db.Exec(sqldel, DateAdd)
+			_, err = db.Exec(sqldel, company_id, branch_id, DateAdd)
 			if err != nil {
 				fmt.Println("sqldel =", err.Error())
 				return nil
@@ -689,10 +689,10 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 				from 	sale a 
 				inner join sale_sub b on a.id = b.sale_id 
 				inner join item c on b.item_id = c.id
-				where a.doc_date = ?
+				where a.company_id=? a.branch_id = ? and a.doc_date = ?
 			) as rs 
 			group by doc_no,doc_date) as result order by doc_date`
-			err = db.Select(&bill, sqlsub, DateAdd) //, DateAdd)
+			err = db.Select(&bill, sqlsub, company_id, branch_id, DateAdd) //, DateAdd)
 			fmt.Println("sqlsub = ", sqlsub, DateAdd)
 			if err != nil {
 				fmt.Println("sqlsub =", err.Error())
@@ -704,8 +704,8 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 				var sumtotal float64
 
-				sqlcheck := `select sum(ifnull(total_amount,0)) as sumtotal from tax_temp where doc_date = ?`
-				err = db.Get(&sumtotal, sqlcheck, DateAdd)
+				sqlcheck := `select sum(ifnull(total_amount,0)) as sumtotal from tax_temp where company_id = ? and branch_id = ? and doc_date = ?`
+				err = db.Get(&sumtotal, sqlcheck, company_id, branch_id, DateAdd)
 				if err != nil {
 					fmt.Println("sqlcheck", err.Error())
 				}
@@ -716,8 +716,8 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 					last_number = strconv.Itoa(last_number1)
 
-					DateGenDoc, err := time.Parse("2006-01-02", DateAdd);
-					if (DateGenDoc.Year() >= 2560) {
+					DateGenDoc, err := time.Parse("2006-01-02", DateAdd)
+					if DateGenDoc.Year() >= 2560 {
 						intyear = DateGenDoc.Year()
 					} else {
 						intyear = DateGenDoc.Year() + 543
@@ -732,7 +732,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 					lenmonth = len(vmonth)
 
-					if (lenmonth == 1) {
+					if lenmonth == 1 {
 						vmonth1 = "0" + vmonth
 					} else {
 						vmonth1 = vmonth
@@ -744,22 +744,22 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 					lenday = len(vday)
 
-					if (lenday == 1) {
+					if lenday == 1 {
 						vday1 = "0" + vday
 					} else {
 						vday1 = vday
 					}
 
-					if (len(string(last_number)) == 1) {
+					if len(string(last_number)) == 1 {
 						snumber = "000" + last_number
 					}
-					if (len(string(last_number)) == 2) {
+					if len(string(last_number)) == 2 {
 						snumber = "00" + last_number
 					}
-					if (len(string(last_number)) == 3) {
+					if len(string(last_number)) == 3 {
 						snumber = "0" + last_number
 					}
-					if (len(string(last_number)) == 4) {
+					if len(string(last_number)) == 4 {
 						snumber = last_number
 					}
 
@@ -767,9 +767,9 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 
 					fmt.Println("day send = ", vAmountPerDay)
 
-					sqlins := `Insert into tax_temp(month_tax,year_tax,doc_date,month_send,day_send,doc_no,tax_no,before_tax_amount,tax_amount,no_vat,total_amount,create_by,created) values(?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
+					sqlins := `Insert into tax_temp(company_id,branch_id,month_tax,year_tax,doc_date,month_send,day_send,doc_no,tax_no,before_tax_amount,tax_amount,no_vat,total_amount,create_by,created) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP())`
 					fmt.Println("Insert tax_temp = ", tax.MonthTax, tax.YearTax, d.DocDate, tax.MonthSend, vAmountPerDay, d.DocNo, new_tax_no, d.BeforeTaxAmount, d.TaxAmount, d.NoVat, d.TotalAmount, tax.CreateBy)
-					_, err = db.Exec(sqlins, tax.MonthTax, tax.YearTax, DateAdd, tax.MonthSend, vAmountPerDay, d.DocNo, new_tax_no, d.BeforeTaxAmount, d.TaxAmount, d.NoVat, d.TotalAmount, tax.CreateBy)
+					_, err = db.Exec(sqlins, company_id, branch_id, tax.MonthTax, tax.YearTax, DateAdd, tax.MonthSend, vAmountPerDay, d.DocNo, new_tax_no, d.BeforeTaxAmount, d.TaxAmount, d.NoVat, d.TotalAmount, tax.CreateBy)
 					fmt.Println("sqlins", sqlins, d.DocDate, d.DocNo, d.BeforeTaxAmount, d.TaxAmount, d.TotalAmount)
 					if err != nil {
 						fmt.Println("sqlins", err.Error())
@@ -788,8 +788,8 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, begindate string, enddate string, Se
 	tax.MonthTax = strconv.Itoa(int(BeginDate.Month()))
 	tax.MonthSend = SendTotalAmount
 
-	sqldata := `select doc_date,day_send ,tax_no as doc_no,doc_no as tax_no,before_tax_amount as sum_of_item_amount,tax_amount,no_vat,total_amount from tax_temp where doc_date between ? and ?`
-	err = db.Select(&tax.ListDoc, sqldata, begindate, enddate)
+	sqldata := `select doc_date,day_send ,tax_no as doc_no,doc_no as tax_no,before_tax_amount as sum_of_item_amount,tax_amount,no_vat,total_amount from tax_temp where company_id = ? and branch_id = ? and doc_date between ? and ?`
+	err = db.Select(&tax.ListDoc, sqldata, company_id,branch_id, begindate, enddate)
 	if err != nil {
 		return err
 	}
