@@ -789,7 +789,7 @@ func (tax *TaxData) GenTaxData(db *sqlx.DB, company_id int64, branch_id int64, b
 	tax.MonthSend = SendTotalAmount
 
 	sqldata := `select doc_date,day_send ,tax_no as doc_no,doc_no as tax_no,before_tax_amount as sum_of_item_amount,tax_amount,no_vat,total_amount from tax_temp where company_id = ? and branch_id = ? and doc_date between ? and ?`
-	err = db.Select(&tax.ListDoc, sqldata, company_id,branch_id, begindate, enddate)
+	err = db.Select(&tax.ListDoc, sqldata, company_id, branch_id, begindate, enddate)
 	if err != nil {
 		return err
 	}

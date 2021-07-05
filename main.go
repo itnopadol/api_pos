@@ -50,6 +50,7 @@ func main() {
 	r.PUT("/shift/update", ctrl.UpdateShift)
 	r.PUT("/shift/closed", ctrl.ClosedShift)
 	r.GET("/shift/search", ctrl.ShiftDetails)
+	r.GET("/shift/list", ctrl.ShiftList)
 	r.GET("/shift/last/id", ctrl.ShiftLastID)
 	r.GET("/shift/senddaily", ctrl.PrintSendDailyTotal)
 

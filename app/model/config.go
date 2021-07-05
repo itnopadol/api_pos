@@ -27,7 +27,6 @@ type Config struct {
 	Printer4Port  string     `json:"printer4_port" db:"printer4_port"`
 	LinkMikrotik  string     `json:"link_mikrotik" db:"link_mikrotik"`
 	Wifi_Password string     `json:"wifi_password" db:"wifi_password"`
-	BranchId      int        `json:"branch_id" db:"branch_id"`
 	BranchCode    string     `json:"branch_code" db:"branch_code"`
 	HeadDocSale   string     `json:"head_doc_sale" db:"head_doc_sale"`
 	SyncLocal     string     `json:"sync_local" db:"sync_local"`

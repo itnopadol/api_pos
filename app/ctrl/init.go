@@ -1,8 +1,9 @@
 package ctrl
 
 import (
-	"github.com/jmoiron/sqlx"
 	"fmt"
+
+	"github.com/jmoiron/sqlx"
 )
 
 var headerKeys = make(map[string]interface{})
@@ -26,11 +27,11 @@ func init() {
 }
 
 func ConnectMySql() (mydb *sqlx.DB) {
-	//dsn := "sa:[ibdkifu@tcp(192.168.1.250:3306)/" + "pos" + "?parseTime=true&charset=utf8&loc=Local" //ใช้เวลาอัพขึ้น server แม่ริม
+	//dsn := "it:[ibdkifu88@tcp(192.168.1.250:3306)/" + "pos" + "?parseTime=true&charset=utf8&loc=Local" //ใช้เวลาอัพขึ้น server แม่ริม
 	//dsn := "sa:[ibdkifu@tcp(hapos.dyndns.org:9010)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"//ลิงค์นอก เรียกข้อมูลจริง แม่ริม
 	dsn := "root:pordeeproject88@tcp(68.183.191.228:3306)/"+ "pos" +"?parseTime=true&charset=utf8&loc=Local"
 	mydb = sqlx.MustConnect("mysql", dsn)
-	if (mydb.Ping() != nil) {
+	if mydb.Ping() != nil {
 		fmt.Println("Error")
 	}
 	fmt.Println("mysql = ", mydb.DriverName(), "dsn = ", dsn)

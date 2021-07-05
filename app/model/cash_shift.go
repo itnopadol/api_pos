@@ -213,6 +213,21 @@ func (ch *Shift) ShiftDetails(db *sqlx.DB, host_code string, doc_date string) er
 }
 
 
+func (ch *Shift) ShiftList(db *sqlx.DB, host_code string, doc_date string) error {
+
+	fmt.Println("doc_date = ", doc_date)
+	fmt.Println("host_code = ", host_code)
+	sql := `select id, host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,ifnull(my_description,'') as my_description,is_closed,created_by,created from cash_shift where  host_code = ? and doc_date = ?`
+	fmt.Println("sql = ", sql)
+	err := db.Get(ch, sql, host_code, doc_date)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+
+
 func (ch *Shift) ShiftLastID(db *sqlx.DB, host_code string) error {
 	fmt.Println("host_code = ", host_code)
 	sql := `select id,company_id,branch_id,host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,ifnull(my_description,'') as my_description,is_closed,created_by,created from cash_shift where  host_code = ?  and is_closed = 0 order by id desc limit 1`
