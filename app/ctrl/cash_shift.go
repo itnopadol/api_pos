@@ -156,7 +156,7 @@ func ShiftList(c *gin.Context) {
 
 	ch := new(model.Shift)
 
-	err := ch.ShiftList(dbc, host_code, doc_date)
+	shift, err := ch.ShiftList(dbc, host_code, doc_date)
 	rs := resp.Response{}
 	if err != nil {
 		rs.Status = "error"
@@ -164,7 +164,7 @@ func ShiftList(c *gin.Context) {
 		c.JSON(http.StatusNotFound, rs)
 	} else {
 		rs.Status = "success"
-		rs.Data = ch
+		rs.Data = shift
 		c.JSON(http.StatusOK, rs)
 	}
 }

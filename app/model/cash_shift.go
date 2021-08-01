@@ -26,6 +26,7 @@ type Shift struct {
 	CompanyID      int64     `json:"company_id" db:"company_id"`
 	BranchID       int64     `json:"branch_id" db:"branch_id"`
 	HostCode       string    `json:"host_code" db:"host_code"`
+	ShiftUUID      string    `json:"shift_uuid" db:"shift_uuid"`
 	DocDate        string    `json:"doc_date" db:"doc_date"`
 	ChangeBegin    float64   `json:"change_begin" db:"change_begin"`
 	ChangeAmount   float64   `json:"change_amount" db:"change_amount"`
@@ -129,7 +130,7 @@ func (ch *Shift) UpdateShift(db *sqlx.DB) (string, error) {
 
 	var checkCount int
 	sqlCheckExist := `select count(host_code) as vCount from cash_shift where host_code = ? and is_closed = 0 ` // and doc_date = ?`
-	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode)                                                       //, ch.DocDate)
+	err := db.Get(&checkCount, sqlCheckExist, ch.HostCode)                                                      //, ch.DocDate)
 	if err != nil {
 		fmt.Println(err.Error())
 		return "", err
@@ -141,7 +142,7 @@ func (ch *Shift) UpdateShift(db *sqlx.DB) (string, error) {
 	if checkCount != 0 {
 		fmt.Println("Have Docno")
 		sql := `UPDATE cash_shift set change_begin = ?, change_amount = ?,cash_amount = ?,expenses_amount = ?,my_description=?,edited_by = ?, edited = CURRENT_TIMESTAMP() where  host_code = ? and is_closed = 0` // and doc_date  = ?`
-		_, err = db.Exec(sql, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.EditedBy, ch.HostCode)                                                     //, ch.DocDate)
+		_, err = db.Exec(sql, ch.ChangeBegin, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, ch.MyDescription, ch.EditedBy, ch.HostCode)                                                                       //, ch.DocDate)
 		if err != nil {
 			fmt.Println(err.Error())
 			return "", err
@@ -181,8 +182,8 @@ func (ch *Shift) ClosedShift(db *sqlx.DB) (string, error) {
 
 	if checkCount != 0 {
 		sql := `UPDATE cash_shift set change_amount = ?,cash_amount = ?,expenses_amount = ?,
-				is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and is_closed = 0`//and doc_date  = ?`
-		_, err = db.Exec(sql, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, 1, ch.ClosedBy, ch.HostCode)//, ch.DocDate)
+				is_closed = ?,closed_by = ?, closed = CURRENT_TIMESTAMP() where  host_code = ? and is_closed = 0` //and doc_date  = ?`
+		_, err = db.Exec(sql, ch.ChangeAmount, ch.CashAmount, ch.ExpensesAmount, 1, ch.ClosedBy, ch.HostCode) //, ch.DocDate)
 		if err != nil {
 			fmt.Println(err.Error())
 			return "", err
@@ -212,21 +213,19 @@ func (ch *Shift) ShiftDetails(db *sqlx.DB, host_code string, doc_date string) er
 	return nil
 }
 
-
-func (ch *Shift) ShiftList(db *sqlx.DB, host_code string, doc_date string) error {
+func (ch *Shift) ShiftList(db *sqlx.DB, host_code string, doc_date string) (shifts []Shift, err error) {
 
 	fmt.Println("doc_date = ", doc_date)
 	fmt.Println("host_code = ", host_code)
-	sql := `select id, host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,ifnull(my_description,'') as my_description,is_closed,created_by,created from cash_shift where  host_code = ? and doc_date = ?`
-	fmt.Println("sql = ", sql)
-	err := db.Get(ch, sql, host_code, doc_date)
+	sql := `select id, host_code,doc_date,change_begin,change_amount,cash_amount,expenses_amount,ifnull(my_description,'') as my_description,is_closed,created_by,created,ifnull(shift_uuid,'') as shift_uuid  from cash_shift where  host_code = ` + host_code + ` and doc_date = ` + doc_date
+	fmt.Println("sql = ", sql, host_code, doc_date)
+	err = db.Select(&shifts, sql)
 	if err != nil {
-		return err
+		fmt.Println(err.Error())
+		return nil, err
 	}
-	return nil
+	return shifts, nil
 }
-
-
 
 func (ch *Shift) ShiftLastID(db *sqlx.DB, host_code string) error {
 	fmt.Println("host_code = ", host_code)
