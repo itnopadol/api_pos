@@ -1,13 +1,15 @@
 package model
 
 import (
+	"bufio"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"log"
-	// "bufio"
-	// "github.com/knq/escpos"
-	// "net"
+	"net"
 	"time"
+
+	"github.com/itnopadol/api_pos/hw"
+	"github.com/jmoiron/sqlx"
+	"github.com/knq/escpos"
 )
 
 type Item struct {
@@ -262,60 +264,62 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 	return nil
 }
 
-// func (i *Item) PrintTest(db *sqlx.DB) error {
+func (i *Item) PrintTest(db *sqlx.DB) error {
 
-// 	config := new(Config)
-// 	config = GetConfig(db)
+	config := new(Config)
+	config = GetConfig(db)
 
-// 	//myPassword := genMikrotikPassword(config)
-// 	//fmt.Println("password =",myPassword)
+	//myPassword := genMikrotikPassword(config)
+	//fmt.Println("password =",myPassword)
 
-// 	fmt.Println(config.Printer3Port)
+	fmt.Println(config.Printer3Port)
 
-// 	f, err := net.Dial("tcp", config.Printer3Port)
+	f, err := net.Dial("tcp", config.Printer3Port)
 
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	defer f.Close()
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
 
-// 	w := bufio.NewWriter(f)
-// 	p := escpos.New(f)
+	w := bufio.NewWriter(f)
+	p := escpos.New(f)
 
-// 	p.Init()
-// 	p.SetSmooth(1)
-// 	p.SetFontSize(2, 3)
-// 	p.SetFont("A")
-// 	p.Write("test ")
-// 	p.SetFont("B")
-// 	p.Write("test2 ")
-// 	p.SetFont("C")
-// 	p.Write("test3 ")
-// 	p.Formfeed()
+	pt := hw.PosPrinter{p,w}
 
-// 	p.SetFont("B")
-// 	p.SetFontSize(1, 1)
+	pt.Init()
+	pt.SetSmooth(1)
+	pt.SetFontSize(2, 3)
+	pt.SetFont("A")
+	pt.Write("test ")
+	pt.SetFont("B")
+	pt.Write("test2 ")
+	pt.SetFont("C")
+	pt.Write("test3 ")
+	pt.Formfeed()
 
-// 	p.SetEmphasize(1)
-// 	p.Write("halle")
-// 	p.Formfeed()
+	pt.SetFont("B")
+	pt.SetFontSize(1, 1)
 
-// 	p.SetUnderline(1)
-// 	p.SetFontSize(4, 4)
-// 	p.Write("halle")
+	pt.SetEmphasize(1)
+	pt.Write("halle")
+	pt.Formfeed()
 
-// 	p.SetReverse(1)
-// 	p.SetFontSize(2, 4)
-// 	p.Write("halle")
-// 	p.Formfeed()
+	pt.SetUnderline(1)
+	pt.SetFontSize(4, 4)
+	pt.Write("halle")
 
-// 	p.SetFont("C")
-// 	p.SetFontSize(8, 8)
-// 	p.Write("halle")
-// 	p.FormfeedN(5)
+	pt.SetReverse(1)
+	pt.SetFontSize(2, 4)
+	pt.Write("halle")
+	pt.Formfeed()
 
-// 	p.Cut()
-// 	p.End()
+	pt.SetFont("C")
+	pt.SetFontSize(8, 8)
+	pt.Write("halle")
+	pt.FormfeedN(5)
 
-// 	return nil
-// }
+	pt.Cut()
+	pt.End()
+
+	return nil
+}
