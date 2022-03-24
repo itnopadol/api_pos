@@ -2,9 +2,10 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"gopkg.in/gin-contrib/cors.v1"
+	//"gopkg.in/gin-contrib/cors.v1"
 	"github.com/itnopadol/api_pos/app/ctrl"
 	_ "github.com/itnopadol/api_pos/app/model"
+	"github.com/gin-contrib/cors"
 )
 
 type item struct {
@@ -27,7 +28,7 @@ func main() {
 
 	r.GET("/menu/:id", ctrl.GetItemsByMenuId)
 	r.GET("/item/:id", ctrl.GetItemById)
-	r.GET("/items/print", ctrl.PrintTest)
+	//r.GET("/items/print", ctrl.PrintTest)
 	r.POST("/item", ctrl.SaveItem)
 	r.PUT("/item", ctrl.UpdateItem)
 

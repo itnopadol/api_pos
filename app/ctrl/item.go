@@ -97,16 +97,16 @@ func UpdateItem(c *gin.Context){
 }
 
 
-func PrintTest(c *gin.Context) {
-	fmt.Println("call Print Test")
-	c.Keys = headerKeys
+// func PrintTest(c *gin.Context) {
+// 	fmt.Println("call Print Test")
+// 	c.Keys = headerKeys
 
-	//var item model.Item
-	item := new(model.Item)
-	err := item.PrintTest(dbc)
-	if err != nil {
-		//ctx.HTML(http.StatusNotFound, "error.tpl", err.Error())
-		c.JSON(http.StatusNotFound, err.Error())
-	}
-	c.JSON(http.StatusOK, nil)
-}
+// 	//var item model.Item
+// 	item := new(model.Item)
+// 	err := item.PrintTest(dbc)
+// 	if err != nil {
+// 		//ctx.HTML(http.StatusNotFound, "error.tpl", err.Error())
+// 		c.JSON(http.StatusNotFound, err.Error())
+// 	}
+// 	c.JSON(http.StatusOK, nil)
+// }

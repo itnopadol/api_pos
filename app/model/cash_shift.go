@@ -275,7 +275,7 @@ func (s *Shift) PrintSendDailyTotal(db *sqlx.DB, host_code string, doc_date stri
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
-	p := escpos.New(w)
+	p := escpos.New(f)
 
 	pt := hw.PosPrinter{p, w}
 	pt.Init()

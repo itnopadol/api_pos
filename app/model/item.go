@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
-	"bufio"
-	"github.com/knq/escpos"
-	"net"
+	// "bufio"
+	// "github.com/knq/escpos"
+	// "net"
 	"time"
 )
 
@@ -262,60 +262,60 @@ func (i *Item) UpdateItem(db *sqlx.DB) error {
 	return nil
 }
 
-func (i *Item) PrintTest(db *sqlx.DB) error {
+// func (i *Item) PrintTest(db *sqlx.DB) error {
 
-	config := new(Config)
-	config = GetConfig(db)
+// 	config := new(Config)
+// 	config = GetConfig(db)
 
-	//myPassword := genMikrotikPassword(config)
-	//fmt.Println("password =",myPassword)
+// 	//myPassword := genMikrotikPassword(config)
+// 	//fmt.Println("password =",myPassword)
 
-	fmt.Println(config.Printer3Port)
+// 	fmt.Println(config.Printer3Port)
 
-	f, err := net.Dial("tcp", config.Printer3Port)
+// 	f, err := net.Dial("tcp", config.Printer3Port)
 
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	defer f.Close()
 
-	w := bufio.NewWriter(f)
-	p := escpos.New(w)
+// 	w := bufio.NewWriter(f)
+// 	p := escpos.New(f)
 
-	p.Init()
-	p.SetSmooth(1)
-	p.SetFontSize(2, 3)
-	p.SetFont("A")
-	p.Write("test ")
-	p.SetFont("B")
-	p.Write("test2 ")
-	p.SetFont("C")
-	p.Write("test3 ")
-	p.Formfeed()
+// 	p.Init()
+// 	p.SetSmooth(1)
+// 	p.SetFontSize(2, 3)
+// 	p.SetFont("A")
+// 	p.Write("test ")
+// 	p.SetFont("B")
+// 	p.Write("test2 ")
+// 	p.SetFont("C")
+// 	p.Write("test3 ")
+// 	p.Formfeed()
 
-	p.SetFont("B")
-	p.SetFontSize(1, 1)
+// 	p.SetFont("B")
+// 	p.SetFontSize(1, 1)
 
-	p.SetEmphasize(1)
-	p.Write("halle")
-	p.Formfeed()
+// 	p.SetEmphasize(1)
+// 	p.Write("halle")
+// 	p.Formfeed()
 
-	p.SetUnderline(1)
-	p.SetFontSize(4, 4)
-	p.Write("halle")
+// 	p.SetUnderline(1)
+// 	p.SetFontSize(4, 4)
+// 	p.Write("halle")
 
-	p.SetReverse(1)
-	p.SetFontSize(2, 4)
-	p.Write("halle")
-	p.Formfeed()
+// 	p.SetReverse(1)
+// 	p.SetFontSize(2, 4)
+// 	p.Write("halle")
+// 	p.Formfeed()
 
-	p.SetFont("C")
-	p.SetFontSize(8, 8)
-	p.Write("halle")
-	p.FormfeedN(5)
+// 	p.SetFont("C")
+// 	p.SetFontSize(8, 8)
+// 	p.Write("halle")
+// 	p.FormfeedN(5)
 
-	p.Cut()
-	p.End()
+// 	p.Cut()
+// 	p.End()
 
-	return nil
-}
+// 	return nil
+// }
